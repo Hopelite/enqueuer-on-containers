@@ -12,19 +12,25 @@ namespace Enqueuer.Queueing.API.Domain.Models;
 /// </remarks>
 internal class Queue
 {
-    private static readonly PositionComparer ReservedPositionComparer = new();
+    private static readonly IdentityComparer ParticipantIdentityComparer = new();
     private readonly HashSet<Participant> _participants;
 
-    public Queue(int id)
+    public Queue(int id, string name)
     {
         Id = id;
-        _participants = new(new IdentityComparer());
+        Name = name;
+        _participants = new(new PositionComparer());
     }
 
     /// <summary>
     /// The unique identifier of the queue entity.
     /// </summary>
-    public int Id { get; private set; }
+    public int Id { get; }
+
+    /// <summary>
+    /// The name of the queue.
+    /// </summary>
+    public string Name { get; }
 
     /// <summary>
     /// The ordered sequence of participants.
@@ -43,16 +49,16 @@ internal class Queue
     /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the <paramref name="participant"/> already exists in the queue.</exception>
     public void EnqueueParticipant(Participant participant)
     {
-        if (_participants.Contains(participant, ReservedPositionComparer))
+        if (_participants.Contains(participant, ParticipantIdentityComparer))
         {
-            throw new PositionReservedException(
-                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Id}'.");
+            throw new ParticipantAlreadyExistsException(
+                $"Participant '{participant.Id}' already exists in the queue '{Id}'.");
         }
 
         if (!_participants.Add(participant))
         {
-            throw new ParticipantAlreadyExistsException(
-                $"Participant '{participant.Id}' already exists in the queue '{Id}'.");
+            throw new PositionReservedException(
+                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Id}'.");
         }
     }
 
@@ -82,7 +88,7 @@ internal class Queue
                 _ => first.Position == second.Position,
             };
         }
-
+        
         public int GetHashCode([DisallowNull] Participant participant)
         {
             return participant.Position.GetHashCode();

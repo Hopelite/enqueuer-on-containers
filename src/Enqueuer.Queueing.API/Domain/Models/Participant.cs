@@ -17,7 +17,7 @@ public class Participant
     public int QueueId { get; init; }
 
     /// <summary>
-    /// The participant's position in queue.
+    /// The unique participant's position in queue.
     /// </summary>
     public uint Position { get; init; }
 }
