@@ -1,4 +1,4 @@
-﻿namespace Enqueuer.Queueing.API.Domain.Exceptions;
+﻿namespace Enqueuer.Queueing.Domain.Exceptions;
 
 public class ParticipantDoesNotExistException : Exception
 {
