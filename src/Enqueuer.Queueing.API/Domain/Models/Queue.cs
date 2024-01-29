@@ -15,10 +15,11 @@ internal class Queue
     private static readonly IdentityComparer ParticipantIdentityComparer = new();
     private readonly HashSet<Participant> _participants;
 
-    public Queue(int id, string name)
+    public Queue(int id, string name, long locationId)
     {
         Id = id;
         Name = name;
+        LocationId = locationId;
         _participants = new(new PositionComparer());
     }
 
@@ -31,6 +32,11 @@ internal class Queue
     /// The name of the queue.
     /// </summary>
     public string Name { get; }
+
+    /// <summary>
+    /// The unique identifier of the location this queue is related.
+    /// </summary>
+    public long LocationId { get; }
 
     /// <summary>
     /// The ordered sequence of participants.

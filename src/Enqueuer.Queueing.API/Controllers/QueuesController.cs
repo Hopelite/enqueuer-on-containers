@@ -1,4 +1,6 @@
-﻿using Enqueuer.Queueing.API.Contract.Commands;
+﻿using Enqueuer.Queueing.API.Application.Queries;
+using Enqueuer.Queueing.API.Contract.Commands;
+using Enqueuer.Queueing.API.Contract.Queries.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,18 +11,27 @@ namespace Enqueuer.Queueing.API.Controllers;
 public class QueuesController : ControllerBase
 {
     [HttpGet("{id}")]
-    public Task<IActionResult> GetQueue(int id, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Queue))]
+    public async Task<IActionResult> GetQueue(
+        [FromRoute] int id,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
     {
-        return Task.FromResult((IActionResult)Ok());
+        var getQueueQuery = new GetQueueQuery(id);
+
+        var requestedQueue = await mediator.Send(getQueueQuery, cancellationToken);
+
+        return Ok(requestedQueue);
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateQueue(
         [FromBody] CreateQueueCommand command,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var createQueueCommand = new Application.Commands.CreateQueueCommand(command.QueueName);
+        var createQueueCommand = new Application.Commands.CreateQueueCommand(command.QueueName, command.LocationId);
 
         var newQueueId = await mediator.Send(createQueueCommand, cancellationToken);
 
@@ -28,6 +39,7 @@ public class QueuesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> RenameQueue(
         [FromRoute] int id,
         [FromBody] RenameQueueCommand command,
@@ -42,6 +54,7 @@ public class QueuesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> RemoveQueue(
         [FromRoute] int id,
         [FromServices] IMediator mediator,

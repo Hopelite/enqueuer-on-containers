@@ -3,4 +3,6 @@
 public class CreateQueueCommand
 {
     public required string QueueName { get; init; }
+
+    public required long LocationId { get; init; }
 }
