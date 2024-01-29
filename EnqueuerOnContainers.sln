@@ -8,9 +8,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Queueing.API", "src\Enqueuer.Queueing.API\Enqueuer.Queueing.API.csproj", "{CF67A19F-B40D-48D8-8FAE-1014A26C74D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enqueuer.Queueing.API", "src\Enqueuer.Queueing.API\Enqueuer.Queueing.API.csproj", "{CF67A19F-B40D-48D8-8FAE-1014A26C74D3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D8C58154-9EE9-46A3-9BAA-F19FDA7BFE2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Queueing.Contract.V1", "src\Enqueuer.Queueing.Contract\Enqueuer.Queueing.Contract.V1.csproj", "{66A98A52-B8E7-44FC-A400-182E5A847294}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,12 +24,17 @@ Global
 		{CF67A19F-B40D-48D8-8FAE-1014A26C74D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF67A19F-B40D-48D8-8FAE-1014A26C74D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF67A19F-B40D-48D8-8FAE-1014A26C74D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66A98A52-B8E7-44FC-A400-182E5A847294}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66A98A52-B8E7-44FC-A400-182E5A847294}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66A98A52-B8E7-44FC-A400-182E5A847294}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66A98A52-B8E7-44FC-A400-182E5A847294}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CF67A19F-B40D-48D8-8FAE-1014A26C74D3} = {D8C58154-9EE9-46A3-9BAA-F19FDA7BFE2E}
+		{66A98A52-B8E7-44FC-A400-182E5A847294} = {D8C58154-9EE9-46A3-9BAA-F19FDA7BFE2E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6930BB8-DC56-41D8-A93D-D2BB3B2EC1C6}

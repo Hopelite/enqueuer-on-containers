@@ -1,4 +1,4 @@
-﻿using Enqueuer.Queueing.API.Contract.Queries.Models;
+﻿using Enqueuer.Queueing.Contract.V1.Queries.Models;
 using MediatR;
 
 namespace Enqueuer.Queueing.API.Application.Queries;
