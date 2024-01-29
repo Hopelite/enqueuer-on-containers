@@ -4,7 +4,7 @@
 /// The entity representing a member of a queue.
 /// </summary>
 /// <remarks>Combines the "Booking" and "User" models from the other Bounded Contexts.</remarks>
-public class Participant
+internal class Participant
 {
     /// <summary>
     /// The unique identifier of the participant entity.

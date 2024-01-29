@@ -1,6 +1,13 @@
-﻿namespace Enqueuer.Queueing.API.Application.Commands;
+﻿using MediatR;
 
-public class CreateQueueCommand
+namespace Enqueuer.Queueing.API.Application.Commands;
+
+public class CreateQueueCommand : IRequest<int>
 {
-    public required string QueueName { get; init; }
+    public CreateQueueCommand(string queueName)
+    {
+        QueueName = queueName;
+    }
+
+    public string QueueName { get; }
 }

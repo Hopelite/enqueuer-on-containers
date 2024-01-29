@@ -1,6 +1,16 @@
-﻿namespace Enqueuer.Queueing.API.Application.Commands;
+﻿using MediatR;
 
-public class RenameQueueCommand
+namespace Enqueuer.Queueing.API.Application.Commands;
+
+public class RenameQueueCommand : IRequest
 {
-    public required string NewQueueName { get; init; }
+    public RenameQueueCommand(int id, string newQueueName)
+    {
+        Id = id;
+        NewQueueName = newQueueName;
+    }
+
+    public int Id { get; }
+
+    public string NewQueueName { get; }
 }

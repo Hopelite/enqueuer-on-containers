@@ -1,4 +1,5 @@
-﻿using Enqueuer.Queueing.API.Application.Commands;
+﻿using Enqueuer.Queueing.API.Contract.Commands;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Controllers;
@@ -14,21 +15,43 @@ public class QueuesController : ControllerBase
     }
 
     [HttpPost]
-    public Task<IActionResult> CreateQueue(CreateQueueCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateQueue(
+        [FromBody] CreateQueueCommand command,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
     {
-        return Task.FromResult((IActionResult)Ok());
+        var createQueueCommand = new Application.Commands.CreateQueueCommand(command.QueueName);
+
+        var newQueueId = await mediator.Send(createQueueCommand, cancellationToken);
+
+        return CreatedAtAction(nameof(GetQueue), routeValues: new { id = newQueueId }, value: new { id = newQueueId });
     }
 
     [HttpPut("{id}")]
-    public Task<IActionResult> RenameQueue(int id, RenameQueueCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> RenameQueue(
+        [FromRoute] int id,
+        [FromBody] RenameQueueCommand command,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
     {
-        return Task.FromResult((IActionResult)Ok());
+        var renameQueueCommand = new Application.Commands.RenameQueueCommand(id, command.NewQueueName);
+
+        await mediator.Send(renameQueueCommand, cancellationToken);
+
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public Task<IActionResult> RemoveQueue(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemoveQueue(
+        [FromRoute] int id,
+        [FromServices] IMediator mediator,
+        CancellationToken cancellationToken)
     {
-        return Task.FromResult((IActionResult)Ok());
+        var deleteQueueCommand = new Application.Commands.RemoveQueueCommand(id);
+
+        await mediator.Send(deleteQueueCommand, cancellationToken);
+
+        return NoContent();
     }
 
     // POST {queueId}/participants
