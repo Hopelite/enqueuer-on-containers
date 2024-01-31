@@ -1,10 +1,19 @@
-﻿namespace Enqueuer.EventBus.RabbitMQ;
+﻿using Microsoft.Extensions.Configuration;
+
+namespace Enqueuer.EventBus.RabbitMQ;
 
 public class RabbitMQConfiguration
 {
-    public required string HostName { get; init; }
+    public RabbitMQConfiguration(IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("EventBus");
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new ArgumentException("Event bus connection string is required.");
+        }
 
-    public string? Username { get; init; }
+        ConnectionString = new Uri(connectionString);
+    }
 
-    public string? Password { get; init; }
+    public Uri ConnectionString { get; }
 }

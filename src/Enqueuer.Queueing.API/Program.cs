@@ -1,5 +1,3 @@
-using Enqueuer.EventBus.Abstractions;
-using Enqueuer.EventBus.RabbitMQ;
 using Enqueuer.Queueing.API.Application.Messaging;
 using Enqueuer.Queueing.API.Extensions;
 using Enqueuer.Queueing.Domain.Factories;
@@ -8,7 +6,6 @@ using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence;
 using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
-using RabbitMQ.Client;
 
 namespace Enqueuer.Queueing.API;
 
