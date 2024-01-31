@@ -9,6 +9,8 @@ internal class QueueEntityConfiguration : IEntityTypeConfiguration<Queue>
     public void Configure(EntityTypeBuilder<Queue> builder)
     {
         builder.HasKey(q => q.Id);
+        builder.Property(q => q.Id)
+            .UseHiLo("queue_sequence");
 
         builder.HasMany(q => q.Participants)
             .WithOne()

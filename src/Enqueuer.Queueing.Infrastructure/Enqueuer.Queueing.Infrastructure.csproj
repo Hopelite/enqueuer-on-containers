@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Enqueuer.Queueing.Domain\Enqueuer.Queueing.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

@@ -37,7 +37,7 @@ public class QueueRepository : IQueueRepository
             queue.Participants.Select(p => new Participant(p.Id, p.Number)));
     }
 
-    public async Task<Queue> CreateNewQueueAsync(string name, long locationId, CancellationToken cancellationToken)
+    public Queue CreateNewQueue(string name, long locationId)
     {
         var queue = new Entities.Queue
         {
@@ -46,9 +46,6 @@ public class QueueRepository : IQueueRepository
         };
 
         _context.Queues.Add(queue);
-
-        // TODO: possibly move this out of repository
-        await _context.SaveChangesAsync(cancellationToken);
 
         return _queueFactory.Create(queue.Id, name, locationId);
     }

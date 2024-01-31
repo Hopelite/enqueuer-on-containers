@@ -16,7 +16,7 @@ public interface IQueueRepository : IUnitOfWork
     /// <summary>
     /// Creates new and starts tracking <see cref="Queue"/> with the specified <paramref name="name"/> and <paramref name="locationId"/>.
     /// </summary>
-    Task<Queue> CreateNewQueueAsync(string name, long locationId, CancellationToken cancellationToken);
+    Queue CreateNewQueue(string name, long locationId);
 
     /// <summary>
     /// Updates the existing <paramref name="queue"/> in storage.
