@@ -14,8 +14,9 @@ public class Queue
 {
     private static readonly IdentityComparer ParticipantIdentityComparer = new();
     private readonly Dictionary<uint, Participant> _participants;
+    private string _name = null!;
 
-    public Queue(int id, string name, long locationId)
+    internal Queue(int id, string name, long locationId)
     {
         Id = id;
         Name = name;
@@ -31,7 +32,24 @@ public class Queue
     /// <summary>
     /// The name of the queue.
     /// </summary>
-    public string Name { get; }
+    public string Name
+    {
+        get => _name;
+        private set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidQueueNameException("Queue name can't be null, empty or a whitespace.");
+            }
+
+            if (value.Length > QueueLimits.MaxNameLength)
+            {
+                throw new InvalidQueueNameException($"Queue name can't be longer than {QueueLimits.MaxNameLength} symbols.");
+            }
+
+            _name = value;
+        }
+    }
 
     /// <summary>
     /// The unique identifier of the location this queue is related.
@@ -56,7 +74,7 @@ public class Queue
     /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the <paramref name="participant"/> already exists in the queue.</exception>
     public void EnqueueParticipant(long participantId, uint position)
     {
-        var participant = new Participant(participantId, position, queueId: Id);
+        var participant = new Participant(participantId, position);
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
         {
             throw new ParticipantAlreadyExistsException(
@@ -97,6 +115,17 @@ public class Queue
         }
 
         // TODO: notify about dequeued participant
+    }
+
+    /// <summary>
+    /// Changes the <see cref="Name"/> to <paramref name="newName"/>.
+    /// </summary>
+    /// <exception cref="ArgumentNullException"></exception>
+    public void ChangeName(string newName)
+    {
+        Name = newName;
+
+        // TODO: notify about changed name
     }
 
     private class IdentityComparer : IEqualityComparer<Participant>

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Enqueuer.Queueing.Contract.V1.Queries.Models
+namespace Enqueuer.Queueing.Contract.V1.Queries.ViewModels
 {
     public class Queue
     {

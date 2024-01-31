@@ -1,11 +1,24 @@
-﻿using MediatR;
+﻿using Enqueuer.Queueing.Contract.V1.Commands.ViewModels;
+using Enqueuer.Queueing.Domain.Repositories;
+using MediatR;
 
 namespace Enqueuer.Queueing.API.Application.Commands.Handlers;
 
-public class CreateQueueCommandHandler : IRequestHandler<CreateQueueCommand, int>
+public class CreateQueueCommandHandler : IRequestHandler<CreateQueueCommand, CreatedQueueViewModel>
 {
-    public Task<int> Handle(CreateQueueCommand request, CancellationToken cancellationToken)
+    private readonly IQueueRepository _queueRepository;
+
+    public CreateQueueCommandHandler(IQueueRepository queueRepository)
     {
-        throw new NotImplementedException();
+        _queueRepository = queueRepository;
+    }
+
+    public async Task<CreatedQueueViewModel> Handle(CreateQueueCommand request, CancellationToken cancellationToken)
+    {
+        var queue = await _queueRepository.CreateNewQueueAsync(request.QueueName, request.LocationId, cancellationToken);
+
+        await _queueRepository.SaveChangesAsync(cancellationToken);
+
+        return new CreatedQueueViewModel(queue.Id);
     }
 }

@@ -5,8 +5,8 @@
 /// </summary>
 public class Participant
 {
-    public Participant(long id, uint number, int queueId)
-        : this(id, new Position(number, queueId))
+    public Participant(long id, uint number)
+        : this(id, new Position(number))
     {
     }
 

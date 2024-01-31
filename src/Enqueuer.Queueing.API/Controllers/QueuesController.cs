@@ -1,6 +1,6 @@
 ﻿using Enqueuer.Queueing.API.Application.Queries;
 using Enqueuer.Queueing.Contract.V1.Commands;
-using Enqueuer.Queueing.Contract.V1.Queries.Models;
+using Enqueuer.Queueing.Contract.V1.Queries.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
