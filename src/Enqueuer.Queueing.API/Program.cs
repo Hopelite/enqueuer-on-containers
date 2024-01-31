@@ -8,6 +8,7 @@ using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence;
 using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
+using RabbitMQ.Client;
 
 namespace Enqueuer.Queueing.API;
 
@@ -57,7 +58,6 @@ public class Program
             configuration.RegisterServicesFromAssembly(typeof(Program).Assembly);
         });
 
-        builder.Services.AddSingleton<IEventBusClient, RabbitMQBusClient>();
         builder.Services.AddAutoMapper(configuration =>
         {
             configuration.MapDomainEvent<Domain.Events.QueueCreatedEvent, Contract.V1.Events.QueueCreatedEvent>();
@@ -65,5 +65,7 @@ public class Program
         });
 
         builder.Services.MigrateDatabase();
+
+        builder.AddRabbitMQ();
     }
 }

@@ -9,7 +9,7 @@ namespace Enqueuer.EventBus.Abstractions
     {
         /// <summary>
         /// The unique identifier of the event.
-        /// Can be used to avoid duplications and to store messages in persistence.
+        /// Can be used to avoid duplications and to store messages for resiliency.
         /// </summary>
         Guid Id { get; }
 

@@ -9,7 +9,7 @@ namespace Enqueuer.EventBus.Abstractions
     public interface IEventBusClient
     {
         /// <summary>
-        /// Publishes the <paramref name="event"/> via bus connection.
+        /// Publishes <paramref name="event"/> via bus connection.
         /// </summary>
         Task PublishAsync(IIntegrationEvent @event, CancellationToken cancellationToken);
     }
