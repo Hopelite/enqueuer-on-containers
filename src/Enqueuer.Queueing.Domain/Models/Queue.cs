@@ -1,4 +1,5 @@
-﻿using Enqueuer.Queueing.Domain.Exceptions;
+﻿using Enqueuer.Queueing.Domain.Events;
+using Enqueuer.Queueing.Domain.Exceptions;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Enqueuer.Queueing.Domain.Models;
@@ -10,7 +11,7 @@ namespace Enqueuer.Queueing.Domain.Models;
 /// Not thread safe. Intended to be used in a single thread.
 /// The concurrency must be handled by external code.
 /// </remarks>
-public class Queue
+public class Queue : Entity
 {
     private static readonly IdentityComparer ParticipantIdentityComparer = new();
     private readonly Dictionary<uint, Participant> _participants;
@@ -123,9 +124,11 @@ public class Queue
     /// <exception cref="ArgumentNullException"></exception>
     public void ChangeName(string newName)
     {
+        var oldName = Name;
+
         Name = newName;
 
-        // TODO: notify about changed name
+        AddDomainEvent(new QueueRenamedEvent(Id, oldName, newName));
     }
 
     private class IdentityComparer : IEqualityComparer<Participant>

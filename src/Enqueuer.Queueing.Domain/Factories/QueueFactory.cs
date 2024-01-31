@@ -1,12 +1,15 @@
-﻿using Enqueuer.Queueing.Domain.Models;
+﻿using Enqueuer.Queueing.Domain.Events;
+using Enqueuer.Queueing.Domain.Models;
 
 namespace Enqueuer.Queueing.Domain.Factories;
 
 public class QueueFactory : IQueueFactory
 {
-    public Queue Create(int id, string name, long locationId)
+    public Queue CreateNew(int id, string name, long locationId)
     {
-        return new Queue(id, name, locationId);
+        var queue = new Queue(id, name, locationId);
+        queue.AddDomainEvent(new QueueCreatedEvent(id, name, locationId));
+        return queue;
     }
 
     public Queue Create(int id, string name, long locationId, IEnumerable<Participant> participants)

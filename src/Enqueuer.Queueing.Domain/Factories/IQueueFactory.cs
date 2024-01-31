@@ -7,7 +7,7 @@ namespace Enqueuer.Queueing.Domain.Factories;
 /// </summary>
 public interface IQueueFactory
 {
-    Queue Create(int id, string name, long locationId);
+    Queue CreateNew(int id, string name, long locationId);
 
     Queue Create(int id, string name, long locationId, IEnumerable<Participant> participants);
 }

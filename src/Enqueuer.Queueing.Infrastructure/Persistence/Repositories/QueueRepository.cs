@@ -1,6 +1,7 @@
 ﻿using Enqueuer.Queueing.Domain.Factories;
 using Enqueuer.Queueing.Domain.Models;
 using Enqueuer.Queueing.Domain.Repositories;
+using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -11,12 +12,18 @@ public class QueueRepository : IQueueRepository
 {
     private readonly QueueingContext _context;
     private readonly IQueueFactory _queueFactory;
+    private readonly IEventDispatcher _eventDispatcher;
     private static readonly string[] QueueIdProperties = ["Id"];
+    private readonly Dictionary<int, Queue> _trackedQueues = new();
 
-    public QueueRepository(QueueingContext context, IQueueFactory queueFactory)
+    public QueueRepository(
+        QueueingContext context,
+        IQueueFactory queueFactory,
+        IEventDispatcher eventDispatcher)
     {
         _context = context;
         _queueFactory = queueFactory;
+        _eventDispatcher = eventDispatcher;
     }
 
     public async Task<Queue> GetQueueAsync(int id, CancellationToken cancellationToken)
@@ -47,7 +54,11 @@ public class QueueRepository : IQueueRepository
 
         _context.Queues.Add(queue);
 
-        return _queueFactory.Create(queue.Id, name, locationId);
+        var domainModel = _queueFactory.CreateNew(queue.Id, name, locationId);
+
+        _trackedQueues.TryAdd(queue.Id, domainModel);
+
+        return domainModel;
     }
 
     public void UpdateQueue(Queue queue)
@@ -58,6 +69,7 @@ public class QueueRepository : IQueueRepository
             throw new InvalidOperationException("Cannot update non-tracked queue entity.");
         }
 
+        _trackedQueues.TryAdd(queue.Id, queue);
         var storedQueue = storedQueueTracker.Entity;
 
         storedQueue.Name = queue.Name;
@@ -74,6 +86,7 @@ public class QueueRepository : IQueueRepository
         }
     }
 
+    // TODO: reconsider the domain model, possibly introducing the "Location" entity/aggregate root
     public void DeleteQueue(Queue queue)
     {
         var storedQueueTracker = GetTrackedQueue(queue.Id);
@@ -85,9 +98,16 @@ public class QueueRepository : IQueueRepository
         storedQueueTracker.State = EntityState.Deleted;
     }
 
-    public Task SaveChangesAsync(CancellationToken cancellationToken)
+    public async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
-        return _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        var eventsToDispatch = _trackedQueues.Values
+            .Where(q => q.DomainEvents.Any())
+            .SelectMany(q => q.DomainEvents)
+            .ToArray();
+
+        await _eventDispatcher.DispatchEventsAsync(eventsToDispatch, cancellationToken);
     }
 
     private EntityEntry<Entities.Queue>? GetTrackedQueue(int queueId)
