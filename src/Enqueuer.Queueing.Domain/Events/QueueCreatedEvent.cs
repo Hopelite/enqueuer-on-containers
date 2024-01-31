@@ -8,6 +8,7 @@ public class QueueCreatedEvent: DomainEvent
         QueueName = queueName;
         LocationId = locationId;
     }
+    public override string Name => nameof(QueueCreatedEvent);
 
     public int QueueId { get; }
 

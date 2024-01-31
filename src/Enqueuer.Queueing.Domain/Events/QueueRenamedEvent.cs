@@ -9,6 +9,8 @@ public class QueueRenamedEvent : DomainEvent
         NewName = newName;
     }
 
+    public override string Name => nameof(QueueRenamedEvent);
+
     public int QueueId { get; }
 
     public string OldName { get; }

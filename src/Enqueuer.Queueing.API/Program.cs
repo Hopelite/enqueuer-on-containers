@@ -1,6 +1,10 @@
+using Enqueuer.EventBus.Abstractions;
+using Enqueuer.EventBus.RabbitMQ;
+using Enqueuer.Queueing.API.Application.Messaging;
 using Enqueuer.Queueing.API.Extensions;
 using Enqueuer.Queueing.Domain.Factories;
 using Enqueuer.Queueing.Domain.Repositories;
+using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence;
 using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -46,10 +50,18 @@ public class Program
 
         builder.Services.AddScoped<IQueueRepository, QueueRepository>();
         builder.Services.AddTransient<IQueueFactory, QueueFactory>();
+        builder.Services.AddTransient<IEventDispatcher, BusEventDispatcher>();
 
         builder.Services.AddMediatR(configuration =>
         {
             configuration.RegisterServicesFromAssembly(typeof(Program).Assembly);
+        });
+
+        builder.Services.AddSingleton<IEventBusClient, RabbitMQBusClient>();
+        builder.Services.AddAutoMapper(configuration =>
+        {
+            configuration.MapDomainEvent<Domain.Events.QueueCreatedEvent, Contract.V1.Events.QueueCreatedEvent>();
+            configuration.MapDomainEvent<Domain.Events.QueueRenamedEvent, Contract.V1.Events.QueueRenamedEvent>();
         });
 
         builder.Services.MigrateDatabase();
