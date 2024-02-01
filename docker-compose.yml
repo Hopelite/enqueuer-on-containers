@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+  enqueuer.queueing.api:
+    image: ${DOCKER_REGISTRY-}enqueuerqueueingapi
+    build:
+      context: .
+      dockerfile: src/Enqueuer.Queueing.API/Dockerfile
+    environment:
+      - ConnectionStrings__QueueingDB=Server=sqlserver;Database=myDatabase;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;
+      - ConnectionStrings__EventBus=amqp://guest:guest@eventbus:5672
+    depends_on:
+      - sqlserver
+      - eventbus
+    networks:
+      - net
+  
+  eventbus:
+    image: rabbitmq:management-alpine
+    ports:
+      - "5672:5672" # AMQP protocol port
+      - "15672:15672" # Management interface port
+    networks:
+      - net
+
+  # TODO: replace with non-containerized database    
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "YourStrong!Passw0rd"
+    ports:
+      - "1433:1433"
+    networks:
+      - net
+
+networks:
+  net:
