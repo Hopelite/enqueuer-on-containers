@@ -12,16 +12,12 @@ services:
     depends_on:
       - sqlserver
       - eventbus
-    networks:
-      - net
   
   eventbus:
     image: rabbitmq:management-alpine
     ports:
       - "5672:5672" # AMQP protocol port
       - "15672:15672" # Management interface port
-    networks:
-      - net
 
   # TODO: replace with non-containerized database    
   sqlserver:
@@ -31,8 +27,14 @@ services:
       SA_PASSWORD: "YourStrong!Passw0rd"
     ports:
       - "1433:1433"
-    networks:
-      - net
 
-networks:
-  net:
+  enqueuer.telegram.notifications:
+    image: ${DOCKER_REGISTRY-}enqueuertelegramnotifications
+    build:
+      context: .
+      dockerfile: src/Enqueuer.Telegram.Notifications/Dockerfile
+    environment:
+      - ConnectionStrings__EventBus=amqp://guest:guest@eventbus:5672
+    depends_on:
+      - enqueuer.queueing.api
+      - eventbus

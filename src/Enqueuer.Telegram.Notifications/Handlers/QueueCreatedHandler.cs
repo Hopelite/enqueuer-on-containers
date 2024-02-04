@@ -1,61 +1,50 @@
-﻿using Enqueuer.Telegram.Notifications.Localization;
-using Enqueuer.Telegram.Notifications.Notifications;
+﻿using Enqueuer.EventBus.Abstractions;
+using Enqueuer.Queueing.Contract.V1.Events;
+using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Shared.Markup;
 using Enqueuer.Telegram.Shared.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Enqueuer.Telegram.Notifications.Handlers;
 
-internal class QueueCreatedHandler : INotificationHandler<QueueCreatedNotification>
+public class QueueCreatedHandler(ILocalizationProvider localizationProvider, IInlineMarkupBuilder markupBuilder, ITelegramBotClient telegramClient)
+    : IntegrationEventHandlerBase<QueueCreatedEvent>
 {
-    private readonly ILocalizationProvider _localizationProvider;
-    private readonly IInlineMarkupBuilder _markupBuilder;
-    private readonly ITelegramBotClient _telegramClient;
+    private readonly ILocalizationProvider _localizationProvider = localizationProvider;
+    private readonly IInlineMarkupBuilder _markupBuilder = markupBuilder;
+    private readonly ITelegramBotClient _telegramClient = telegramClient;
 
-    public QueueCreatedHandler(
-        ILocalizationProvider localizationProvider,
-        IInlineMarkupBuilder markupBuilder,
-        ITelegramBotClient telegramClient)
-    {
-        _localizationProvider = localizationProvider;
-        _markupBuilder = markupBuilder;
-        _telegramClient = telegramClient;
-    }
-
-    public Task HandleAsync(QueueCreatedNotification notification, CancellationToken cancellationToken)
+    public override Task HandleAsync(QueueCreatedEvent @event, CancellationToken cancellationToken)
     {
         // TODO: retrieve chat localization by ID
+        var chatCulture = new CultureInfo("en-US");
 
         var message = _localizationProvider.GetMessage(
-            NotificationKeys.QueueCreated,
-            new NotificationParameters(new System.Globalization.CultureInfo("en-US"), notification.CreatorId.ToString(), notification.QueueName));
+            NotificationKeys.QueueCreatedNotification,
+            new NotificationParameters(chatCulture, "Vadzim", @event.QueueName));
 
+        var buttonText = _localizationProvider.GetMessage(NotificationKeys.EnqueueMeButton, new NotificationParameters(chatCulture));
         var markup = _markupBuilder.Add(serializer =>
         {
             var callbackData = new CallbackData
             {
                 Command = "eqm", // TODO: possibly replace with enum
-                QueueId = notification.QueueId,
+                QueueId = @event.QueueId,
             };
 
             var jsonData = serializer.Serialize(callbackData);
 
-            // TODO: replace with localized "Enqueue me" message
-            return InlineKeyboardButton.WithCallbackData("Enqueue me!", jsonData);
+            return InlineKeyboardButton.WithCallbackData(buttonText, jsonData);
         }).Build();
 
         // TODO: consider working with forums
-        // TODO: retrive chat configuration to determine whether to add notification or not
+        // TODO: retrive chat configuration to determine whether to send notification with sound or not
         // TODO: add telegram client decorator with auto-configured parameters (like parse mode)
         return _telegramClient.SendTextMessageAsync(
-            notification.ChatId,
+            @event.LocationId,
             message,
             parseMode: ParseMode.Html,
             replyMarkup: markup,

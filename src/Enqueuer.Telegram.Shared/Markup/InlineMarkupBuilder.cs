@@ -3,18 +3,11 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Enqueuer.Telegram.Shared.Markup;
 
-public class InlineMarkupBuilder : IInlineMarkupBuilder
+public class InlineMarkupBuilder(IDataSerializer dataSerializer) : IInlineMarkupBuilder
 {
-    private readonly Queue<IEnumerable<InlineKeyboardButton>> _markup;
-    private readonly Queue<InlineKeyboardButton> _currentRow;
-    private readonly IDataSerializer _dataSerializer;
-
-    public InlineMarkupBuilder(IDataSerializer dataSerializer)
-    {
-        _markup = new Queue<IEnumerable<InlineKeyboardButton>>();
-        _currentRow = new Queue<InlineKeyboardButton>();
-        _dataSerializer = dataSerializer;
-    }
+    private readonly Queue<IEnumerable<InlineKeyboardButton>> _markup = new();
+    private readonly Queue<InlineKeyboardButton> _currentRow = new();
+    private readonly IDataSerializer _dataSerializer = dataSerializer;
 
     public IMarkupBuilder<InlineKeyboardMarkup, InlineKeyboardButton> OnNewRow
     {
@@ -22,8 +15,7 @@ public class InlineMarkupBuilder : IInlineMarkupBuilder
         {
             if (_currentRow.Count == 0)
             {
-                // TODO: Consider throwing an error since it's invalid behavior to have empty inline markup
-                return this;
+                throw new InvalidOperationException("Cannot move to the next buttons row, while current is empty: inline keyboard doesn't support empty ones.");
             }
 
             _markup.Enqueue(_currentRow);
@@ -41,12 +33,12 @@ public class InlineMarkupBuilder : IInlineMarkupBuilder
 
     public InlineKeyboardMarkup Build()
     {
+        // TODO: Consider throwing an error since it's invalid behavior to have empty inline markup
+
         if (_currentRow.Count != 0)
         {
             _markup.Enqueue(_currentRow);
         }
-
-        // TODO: Consider throwing an error since it's invalid behavior to have empty inline markup
 
         return new InlineKeyboardMarkup(_markup);
     }

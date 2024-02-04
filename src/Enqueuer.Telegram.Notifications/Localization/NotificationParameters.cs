@@ -5,7 +5,7 @@ namespace Enqueuer.Telegram.Notifications.Localization;
 /// <summary>
 /// Contains notification parameters for <see cref="ILocalizationProvider"/>.
 /// </summary>
-internal class NotificationParameters
+public class NotificationParameters
 {
     /// <summary>
     /// Constant for empty parameters.

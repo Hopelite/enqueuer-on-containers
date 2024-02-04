@@ -2,5 +2,7 @@
 
 public class NotificationKeys
 {
-    public const string QueueCreated = "QueueCreated_Notification";
+    public const string QueueCreatedNotification = "QueueCreated_Notification";
+
+    public const string EnqueueMeButton = "EnqueueMe_Button";
 }

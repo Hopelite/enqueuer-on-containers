@@ -1,3 +1,6 @@
+using Enqueuer.Queueing.Contract.V1.Events;
+using Enqueuer.Telegram.Notifications.Handlers;
+using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +18,13 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddHostedService<EventsListener>();
+
+        builder.Services.AddRabbitMQClient()
+            .AddSubscription<QueueCreatedEvent, QueueCreatedHandler>();
+
+        builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
+
+        builder.AddTelegramClient();
 
         var app = builder.Build();
 
@@ -33,8 +42,6 @@ public class Program
         app.MapPut("/chats/{chatId}/language", (long chatId, [FromBody] ChatLanguage chatLanguage) =>
         {
             // TODO: add validation whether user has rights to change language via Identity API
-
-
             return Results.Ok();
         })
         .WithName("SetChatLanguage")

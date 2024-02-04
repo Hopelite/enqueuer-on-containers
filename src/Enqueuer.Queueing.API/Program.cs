@@ -63,6 +63,6 @@ public class Program
 
         builder.Services.MigrateDatabase();
 
-        builder.AddRabbitMQ();
+        builder.Services.AddRabbitMQClient();
     }
 }

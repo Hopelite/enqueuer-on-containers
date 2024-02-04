@@ -1,6 +1,12 @@
 ﻿namespace Enqueuer.Telegram.Notifications.Models;
 
+/// <summary>
+/// Contains chat language.
+/// </summary>
 public class ChatLanguage
 {
-    public string LanguageCode { get; set; }
+    /// <summary>
+    /// The language code of the chat.
+    /// </summary>
+    public required string LanguageCode { get; init; }
 }

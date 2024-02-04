@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Enqueuer.Telegram.Notifications.Resources;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -18,7 +19,7 @@ internal class LocalizationProvider : ILocalizationProvider
         var formatKey = new FormatMessageKey(key, notificationParameters.Culture);
         if (!_formatMessages.TryGetValue(formatKey, out var format))
         {
-            //format = Messages.ResourceManager.GetString(key, notificationParameters.Culture);
+            format = Enqueuer_en_US_Notifications.ResourceManager.GetString(key, notificationParameters.Culture);
             if (format == null)
             {
                 throw new ArgumentException($"There is no message \"{key}\" specified in the \"{notificationParameters.Culture.Name}\" resource file.", nameof(key));
