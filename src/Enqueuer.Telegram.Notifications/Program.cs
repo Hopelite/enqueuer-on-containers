@@ -1,8 +1,11 @@
 using Enqueuer.Queueing.Contract.V1.Events;
 using Enqueuer.Telegram.Notifications.Handlers;
 using Enqueuer.Telegram.Notifications.Localization;
-using Enqueuer.Telegram.Notifications.Models;
+using Enqueuer.Telegram.Notifications.Persistence;
+using Enqueuer.Telegram.Notifications.Persistence.Entities;
+using Enqueuer.Telegram.Notifications.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Enqueuer.Telegram.Notifications;
 
@@ -18,6 +21,11 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddDbContext<NotificationsContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("NotificationsDB"))
+            .UseSnakeCaseNamingConvention());
+
+        builder.Services.AddTransient<IChatConfigurationService, ChatConfigurationService>();
 
         builder.Services.AddRabbitMQClient()
             .AddSubscription<QueueCreatedEvent, QueueCreatedHandler>();
@@ -39,12 +47,18 @@ public class Program
 
         app.UseAuthorization();
 
-        app.MapPut("/chats/{chatId}/language", (long chatId, [FromBody] ChatLanguage chatLanguage) =>
+        app.MapPut("/chats/{chatId}/language", async (long chatId, [FromBody] ChatNotificationsConfiguration chatConfiguration, [FromServices] IChatConfigurationService configurationService, CancellationToken cancellationToken) =>
         {
-            // TODO: add validation whether user has rights to change language via Identity API
+            // TODO: add validation whether user has rights to change language via Identity API (requests made on behalf of user)
+            if (chatConfiguration == null)
+            {
+                return Results.BadRequest("Chat's notifications configuration must be provided.");
+            }
+
+            await configurationService.ConfigureChatNotificationsAsync(chatConfiguration, cancellationToken);
             return Results.Ok();
         })
-        .WithName("SetChatLanguage")
+        .WithName("Configure Chat's Cotifications")
         .WithOpenApi();
 
         app.Run();

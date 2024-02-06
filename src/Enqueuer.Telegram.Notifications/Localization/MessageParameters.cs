@@ -5,12 +5,12 @@ namespace Enqueuer.Telegram.Notifications.Localization;
 /// <summary>
 /// Contains notification parameters for <see cref="ILocalizationProvider"/>.
 /// </summary>
-public class NotificationParameters
+public class MessageParameters
 {
     /// <summary>
     /// Constant for empty parameters.
     /// </summary>
-    public static readonly NotificationParameters None = new();
+    public static readonly MessageParameters None = new();
 
     /// <summary>
     /// Notification parameters to be inserted into the notification. Can be empty.
@@ -22,22 +22,22 @@ public class NotificationParameters
     /// </summary>
     public CultureInfo Culture { get; }
 
-    public NotificationParameters()
+    public MessageParameters()
         : this(Array.Empty<string>())
     {
     }
 
-    public NotificationParameters(CultureInfo? cultureInfo)
+    public MessageParameters(CultureInfo? cultureInfo)
         : this(cultureInfo, Array.Empty<string>())
     {
     }
 
-    public NotificationParameters(params string[] parameters)
+    public MessageParameters(params string[] parameters)
         : this(Thread.CurrentThread.CurrentCulture, parameters)
     {
     }
 
-    public NotificationParameters(CultureInfo? cultureInfo, params string[] parameters)
+    public MessageParameters(CultureInfo? cultureInfo, params string[] parameters)
     {
         if (parameters.Any(p => string.IsNullOrWhiteSpace(p)))
         {

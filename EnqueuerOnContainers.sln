@@ -24,9 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enqueuer.EventBus.RabbitMQ"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{E8273A16-DD52-436C-A570-362F5284BF1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.Notifications", "src\Enqueuer.Telegram.Notifications\Enqueuer.Telegram.Notifications.csproj", "{36C5C3F6-5543-4F87-AF4E-056FFBBD7E2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enqueuer.Telegram.Notifications", "src\Enqueuer.Telegram.Notifications\Enqueuer.Telegram.Notifications.csproj", "{36C5C3F6-5543-4F87-AF4E-056FFBBD7E2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.Shared", "src\Enqueuer.Telegram.Shared\Enqueuer.Telegram.Shared.csproj", "{8D543DE0-A235-4268-852B-0A204488171D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enqueuer.Telegram.Shared", "src\Enqueuer.Telegram.Shared\Enqueuer.Telegram.Shared.csproj", "{8D543DE0-A235-4268-852B-0A204488171D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

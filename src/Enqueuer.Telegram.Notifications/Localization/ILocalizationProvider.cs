@@ -5,5 +5,5 @@ public interface ILocalizationProvider
     /// <summary>
     /// Gets a formatted message by <paramref name="key"/> with the specified <paramref name="messageParameters"/>.
     /// </summary>
-    string GetMessage(string key, NotificationParameters messageParameters);
+    ValueTask<string> GetMessageAsync(string key, MessageParameters messageParameters, CancellationToken cancellationToken);
 }

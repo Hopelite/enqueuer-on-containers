@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Enqueuer.Telegram.Notifications.Resources {
+namespace Enqueuer.Telegram.Notifications {
     using System;
     
     
@@ -22,24 +22,24 @@ namespace Enqueuer.Telegram.Notifications.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Enqueuer_en_US_Notifications {
+    public class Enqueuer_ru_Notifications {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Enqueuer_en_US_Notifications() {
+        internal Enqueuer_ru_Notifications() {
         }
         
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Enqueuer.Telegram.Notifications.Resources.Enqueuer.en-US.Notifications", typeof(Enqueuer_en_US_Notifications).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Enqueuer.Telegram.Notifications.Resources.Enqueuer.ru.Notifications", typeof(Enqueuer_ru_Notifications).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Enqueuer.Telegram.Notifications.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,11 +61,20 @@ namespace Enqueuer.Telegram.Notifications.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to aaaaaaaaaaaaaaaaaaaaa.
+        ///   Looks up a localized string similar to Запиши меня!.
         /// </summary>
-        internal static string Test {
+        public static string EnqueueMe_Button {
             get {
-                return ResourceManager.GetString("Test", resourceCulture);
+                return ResourceManager.GetString("EnqueueMe_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Пользователь {0} создал новую очередь &quot;{1}&quot;!.
+        /// </summary>
+        public static string QueueCreated_Notification {
+            get {
+                return ResourceManager.GetString("QueueCreated_Notification", resourceCulture);
             }
         }
     }

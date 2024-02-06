@@ -1,28 +1,35 @@
-﻿using Enqueuer.Telegram.Notifications.Resources;
-using System;
+﻿using Enqueuer.Telegram.Notifications.Persistence;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Enqueuer.Telegram.Notifications.Localization;
 
 internal class LocalizationProvider : ILocalizationProvider
 {
     private readonly ConcurrentDictionary<FormatMessageKey, string> _formatMessages = new();
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public string GetMessage(string key, NotificationParameters notificationParameters)
+    public LocalizationProvider(IServiceScopeFactory scopeFactory)
+    {
+        _scopeFactory = scopeFactory;
+    }
+
+    public async ValueTask<string> GetMessageAsync(string key, MessageParameters notificationParameters, CancellationToken cancellationToken)
     {
         var formatKey = new FormatMessageKey(key, notificationParameters.Culture);
         if (!_formatMessages.TryGetValue(formatKey, out var format))
         {
-            format = Enqueuer_en_US_Notifications.ResourceManager.GetString(key, notificationParameters.Culture);
-            if (format == null)
+            using (var scope = _scopeFactory.CreateScope())
             {
-                throw new ArgumentException($"There is no message \"{key}\" specified in the \"{notificationParameters.Culture.Name}\" resource file.", nameof(key));
+                var notificationsContext = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
+                format = (await notificationsContext.LocalizedMessages
+                    .FindAsync(new object[] { notificationParameters.Culture.Name, key }, cancellationToken: cancellationToken))?.Value;
+
+                if (format == null)
+                {
+                    throw new MessageDoesNotExistException($"Message '{key}' either does not exist or is not localized for the '{notificationParameters.Culture.Name}'.");
+                }
             }
 
             _formatMessages.TryAdd(formatKey, format);
