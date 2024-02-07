@@ -1,8 +1,8 @@
 using Enqueuer.Queueing.Contract.V1.Events;
+using Enqueuer.Telegram.Notifications.Contract.V1.Models;
 using Enqueuer.Telegram.Notifications.Handlers;
 using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Persistence;
-using Enqueuer.Telegram.Notifications.Persistence.Entities;
 using Enqueuer.Telegram.Notifications.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

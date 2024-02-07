@@ -25,7 +25,7 @@ public class QueueCreatedHandler(
 
     public override async Task HandleAsync(QueueCreatedEvent @event, CancellationToken cancellationToken)
     {
-        var chatConfiguration = await _chatConfigurationService.GetChatNotificationsAsync(@event.LocationId, cancellationToken);
+        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.LocationId, cancellationToken);
         var chatCulture = new CultureInfo(chatConfiguration.NotificationsLanguageCode);
 
         var message = await _localizationProvider.GetMessageAsync(

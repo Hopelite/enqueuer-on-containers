@@ -3,33 +3,29 @@ using Enqueuer.Telegram.Notifications.Persistence.Entities;
 
 namespace Enqueuer.Telegram.Notifications.Services;
 
-public class ChatConfigurationService : IChatConfigurationService
+public class ChatConfigurationService(IServiceScopeFactory scopeFactory) : IChatConfigurationService
 {
-    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
 
-    public ChatConfigurationService(IServiceScopeFactory scopeFactory)
-    {
-        _scopeFactory = scopeFactory;
-    }
-
-    public Task ConfigureChatNotificationsAsync(ChatNotificationsConfiguration chatConfiguration, CancellationToken cancellationToken)
+    public Task ConfigureChatNotificationsAsync(Contract.V1.Models.ChatNotificationsConfiguration chatConfiguration, CancellationToken cancellationToken)
     {
         using var scope = _scopeFactory.CreateScope();
         var notificationsContext = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
 
-        if (notificationsContext.NotificationsConfigurations.Any(c => c.ChatId == chatConfiguration.ChatId))
+        var chatConfigurationEntity = ToEntity(chatConfiguration);
+        if (notificationsContext.NotificationsConfigurations.Any(c => c.ChatId == chatConfigurationEntity.ChatId))
         {
-            notificationsContext.Update(chatConfiguration);
+            notificationsContext.Update(chatConfigurationEntity);
         }
         else
         {
-            notificationsContext.Add(chatConfiguration);
+            notificationsContext.Add(chatConfigurationEntity);
         }
 
         return notificationsContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<ChatNotificationsConfiguration> GetChatNotificationsAsync(long chatId, CancellationToken cancellationToken)
+    public async Task<Contract.V1.Models.ChatNotificationsConfiguration> GetChatConfigurationAsync(long chatId, CancellationToken cancellationToken)
     {
         using var scope = _scopeFactory.CreateScope();
         var notificationsContext = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
@@ -42,6 +38,20 @@ public class ChatConfigurationService : IChatConfigurationService
             await notificationsContext.SaveChangesAsync(cancellationToken);
         }
 
-        return chatConfiguration;
+        return ToViewModel(chatConfiguration);
     }
+
+    private static ChatNotificationsConfiguration ToEntity(Contract.V1.Models.ChatNotificationsConfiguration viewModel)
+        => new()
+        {
+            ChatId = viewModel.ChatId,
+            NotificationsLanguageCode = viewModel.NotificationsLanguageCode,
+        };
+
+    private static Contract.V1.Models.ChatNotificationsConfiguration ToViewModel(ChatNotificationsConfiguration entity)
+        => new()
+        {
+            ChatId = entity.ChatId,
+            NotificationsLanguageCode = entity.NotificationsLanguageCode
+        };
 }
