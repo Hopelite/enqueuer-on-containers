@@ -11,13 +11,13 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY . .
 RUN dotnet restore
-WORKDIR "/src/src/Enqueuer.Queueing.API"
+WORKDIR "/src/src/Enqueuer.Telegram.Notifications"
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "Enqueuer.Queueing.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Enqueuer.Telegram.Notifications.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Enqueuer.Queueing.API.dll"]
+ENTRYPOINT ["dotnet", "Enqueuer.Telegram.Notifications.dll"]

@@ -13,7 +13,11 @@ public class RabbitMQConfiguration
         }
 
         ConnectionString = new Uri(connectionString);
+        SubscriptionClientName = configuration.GetRequiredSection("EventBus")["SubscriptionClientName"]
+            ?? throw new ArgumentException("SubscriptionClientName is a required configuration value.");
     }
 
     public Uri ConnectionString { get; }
+
+    public string SubscriptionClientName { get; }
 }

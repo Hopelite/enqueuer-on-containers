@@ -17,10 +17,5 @@ namespace Enqueuer.EventBus.Abstractions
         /// The timespamp when this event was created.
         /// </summary>
         DateTime CreationDate { get; }
-
-        /// <summary>
-        /// The name of the event used by clients to listen for.
-        /// </summary>
-        string Name { get; }
     }
 }

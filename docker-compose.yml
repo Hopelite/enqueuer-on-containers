@@ -7,32 +7,41 @@ services:
       context: .
       dockerfile: src/Enqueuer.Queueing.API/Dockerfile
     environment:
-      - ConnectionStrings__QueueingDB=Server=sqlserver;Database=myDatabase;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;
+      - ConnectionStrings__QueueingDB=Server=sqlserver;Database=myDatabase;User Id=sa;Password=${ENQUEUER_QUEUEING_DATABASE_PASSWORD};TrustServerCertificate=true;
       - ConnectionStrings__EventBus=amqp://guest:guest@eventbus:5672
     depends_on:
       - sqlserver
       - eventbus
-    networks:
-      - net
   
   eventbus:
     image: rabbitmq:management-alpine
     ports:
       - "5672:5672" # AMQP protocol port
       - "15672:15672" # Management interface port
-    networks:
-      - net
 
   # TODO: replace with non-containerized database    
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: "YourStrong!Passw0rd"
+      SA_PASSWORD: ${ENQUEUER_QUEUEING_DATABASE_PASSWORD}
     ports:
       - "1433:1433"
-    networks:
-      - net
 
-networks:
-  net:
+  enqueuer.telegram.notifications:
+    image: ${DOCKER_REGISTRY-}enqueuertelegramnotifications
+    build:
+      context: .
+      dockerfile: src/Enqueuer.Telegram.Notifications/Dockerfile
+    environment:
+      - ConnectionStrings__EventBus=amqp://guest:guest@eventbus:5672
+      - ConnectionStrings__NotificationsDB=Data Source=/data/NotificationsDB.db
+      - TelegramClient__AccessToken=${ENQUEUER_TELEGRAM_BOT_ACCESS_TOKEN}
+    depends_on:
+      - enqueuer.queueing.api
+      - eventbus
+    volumes:
+      - C:/Users/vkurd/DATA:/data
+
+volumes:
+  notificationsdb:
