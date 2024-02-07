@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: src/Enqueuer.Queueing.API/Dockerfile
     environment:
-      - ConnectionStrings__QueueingDB=Server=sqlserver;Database=myDatabase;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=true;
+      - ConnectionStrings__QueueingDB=Server=sqlserver;Database=myDatabase;User Id=sa;Password=${ENQUEUER_QUEUEING_DATABASE_PASSWORD};TrustServerCertificate=true;
       - ConnectionStrings__EventBus=amqp://guest:guest@eventbus:5672
     depends_on:
       - sqlserver
@@ -24,7 +24,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: "YourStrong!Passw0rd"
+      SA_PASSWORD: ${ENQUEUER_QUEUEING_DATABASE_PASSWORD}
     ports:
       - "1433:1433"
 
@@ -35,6 +35,13 @@ services:
       dockerfile: src/Enqueuer.Telegram.Notifications/Dockerfile
     environment:
       - ConnectionStrings__EventBus=amqp://guest:guest@eventbus:5672
+      - ConnectionStrings__NotificationsDB=Data Source=/data/NotificationsDB.db
+      - TelegramClient__AccessToken=${ENQUEUER_TELEGRAM_BOT_ACCESS_TOKEN}
     depends_on:
       - enqueuer.queueing.api
       - eventbus
+    volumes:
+      - C:/Users/vkurd/DATA:/data
+
+volumes:
+  notificationsdb:

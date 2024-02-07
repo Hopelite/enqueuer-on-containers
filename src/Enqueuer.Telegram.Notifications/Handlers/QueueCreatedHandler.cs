@@ -43,7 +43,6 @@ public class QueueCreatedHandler(
             };
 
             var jsonData = serializer.Serialize(callbackData);
-
             return InlineKeyboardButton.WithCallbackData(buttonText, jsonData);
         }).Build();
 

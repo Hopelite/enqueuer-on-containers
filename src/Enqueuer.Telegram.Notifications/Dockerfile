@@ -9,15 +9,13 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/Enqueuer.Telegram.Notifications/Enqueuer.Telegram.Notifications.csproj", "src/Enqueuer.Telegram.Notifications/"]
-RUN dotnet restore "./src/Enqueuer.Telegram.Notifications/./Enqueuer.Telegram.Notifications.csproj"
 COPY . .
+RUN dotnet restore
 WORKDIR "/src/src/Enqueuer.Telegram.Notifications"
-RUN dotnet build "./Enqueuer.Telegram.Notifications.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Enqueuer.Telegram.Notifications.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Enqueuer.Telegram.Notifications.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

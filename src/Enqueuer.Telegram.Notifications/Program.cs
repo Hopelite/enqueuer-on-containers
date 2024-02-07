@@ -30,6 +30,7 @@ public class Program
         builder.Services.AddRabbitMQClient()
             .AddSubscription<QueueCreatedEvent, QueueCreatedHandler>();
 
+        builder.Services.MigrateDatabase();
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
 
         builder.AddTelegramClient();

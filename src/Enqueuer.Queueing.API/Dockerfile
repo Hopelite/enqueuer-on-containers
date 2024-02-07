@@ -11,14 +11,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY . .
 RUN dotnet restore
-#COPY . .
 WORKDIR "/src/src/Enqueuer.Queueing.API"
-
-#COPY ["src/Enqueuer.Queueing.API/Enqueuer.Queueing.API.csproj", "src/Enqueuer.Queueing.API/"]
-#RUN dotnet restore "./src/Enqueuer.Queueing.API/./Enqueuer.Queueing.API.csproj"
-#COPY . .
-#WORKDIR "/src/src/Enqueuer.Queueing.API"
-#RUN dotnet build "./Enqueuer.Queueing.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release

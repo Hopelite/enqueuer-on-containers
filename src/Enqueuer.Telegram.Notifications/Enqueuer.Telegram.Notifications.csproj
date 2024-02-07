@@ -9,6 +9,7 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
 	<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+	<ContainerDevelopmentMode>Regular</ContainerDevelopmentMode>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,22 +31,6 @@
     <ProjectReference Include="..\Enqueuer.EventBus.RabbitMQ\Enqueuer.EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\Enqueuer.Queueing.Contract\Enqueuer.Queueing.Contract.V1.csproj" />
     <ProjectReference Include="..\Enqueuer.Telegram.Shared\Enqueuer.Telegram.Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Resources\Enqueuer.ru.Notifications.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Enqueuer.ru.Notifications.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\Enqueuer.ru.Notifications.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Enqueuer.ru.Notifications.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>Enqueuer.Telegram.Notifications</CustomToolNamespace>
-    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
