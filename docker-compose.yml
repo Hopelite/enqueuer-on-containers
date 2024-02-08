@@ -43,5 +43,11 @@ services:
     volumes:
       - C:/Users/vkurd/DATA:/data
 
+  enqueuer.telegram.bff:
+    image: ${DOCKER_REGISTRY-}enqueuertelegrambff
+    build:
+      context: .
+      dockerfile: src/Enqueuer.Telegram.BFF/Dockerfile
+
 volumes:
   notificationsdb:

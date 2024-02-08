@@ -1,0 +1,6 @@
+@Enqueuer.Telegram.BFF_HostAddress = http://localhost:5220
+
+GET {{Enqueuer.Telegram.BFF_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
