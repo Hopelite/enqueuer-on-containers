@@ -33,9 +33,9 @@ public class QueuesController : ControllerBase
     {
         var createQueueCommand = new Application.Commands.CreateQueueCommand(command.QueueName, command.LocationId);
 
-        var newQueueId = await mediator.Send(createQueueCommand, cancellationToken);
+        var newQueue = await mediator.Send(createQueueCommand, cancellationToken);
 
-        return CreatedAtAction(nameof(GetQueue), routeValues: new { id = newQueueId }, value: new { id = newQueueId });
+        return CreatedAtAction(nameof(GetQueue), routeValues: new { id = newQueue.Id }, value: newQueue);
     }
 
     [HttpPut("{id}")]

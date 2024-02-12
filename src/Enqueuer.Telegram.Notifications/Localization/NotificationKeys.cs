@@ -1,6 +1,6 @@
 ﻿namespace Enqueuer.Telegram.Notifications.Localization;
 
-public class NotificationKeys
+public static class NotificationKeys
 {
     public const string QueueCreatedNotification = "QueueCreated_Notification";
 

@@ -54,7 +54,7 @@ public class MessageContext
             return false;
         }
 
-        if (message.Text.TryGetCommand(out var command))
+        if (!message.Text.TryGetCommand(out var command))
         {
             // TODO: disable for plain text messaging is completed (ex. Queue name for Callback button)
             return false;

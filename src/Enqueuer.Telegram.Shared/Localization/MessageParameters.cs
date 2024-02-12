@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace Enqueuer.Telegram.Notifications.Localization;
+namespace Enqueuer.Telegram.Shared.Localization;
 
 /// <summary>
 /// Contains notification parameters for <see cref="ILocalizationProvider"/>.

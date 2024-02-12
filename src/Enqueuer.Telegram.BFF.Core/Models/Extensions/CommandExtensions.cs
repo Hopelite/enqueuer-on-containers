@@ -10,6 +10,43 @@ public static class CommandExtensions
     private const char BotNameSeparator = '@';
 
     /// <summary>
+    /// Gets queue name and possibly position from <paramref name="commandContext"/>.
+    /// </summary>
+    public static QueueNameContext GetQueueName(this CommandContext commandContext)
+    {
+        if (commandContext.Parameters.Length == 0)
+        {
+            return new QueueNameContext(QueueName: string.Empty, Position: null);
+        }
+
+        if (commandContext.Parameters.Length > 1 && int.TryParse(commandContext.Parameters[^1], out var position))
+        {
+            return new QueueNameContext(QueueName: string.Join(separator: Whitespace, commandContext.Parameters[..^1]), position);
+        }
+
+        return new QueueNameContext(QueueName: string.Join(separator: Whitespace, commandContext.Parameters), Position: null);
+    }
+
+    /// <summary>
+    /// Gets queue name from <paramref name="query"/>.
+    /// </summary>
+    /// <param name="startIndex">Start index where queue name starts.</param>
+    public static string GetQueueName(this string[] query, int startIndex = 1) // TODO: add unit tests
+    {
+        if (query.Length == 2 && int.TryParse(query[^1], out var _))
+        {
+            return query[^1];
+        }
+
+        if (int.TryParse(query[^1], out var _))
+        {
+            return string.Join(separator: Whitespace, query[startIndex..^1]);
+        }
+
+        return string.Join(separator: Whitespace, query[startIndex..]);
+    }
+
+    /// <summary>
     /// Splits <paramref name="messageText"/> to words by removing whitespaces.
     /// </summary>
     /// <returns>Array of message words.</returns>
@@ -60,3 +97,5 @@ public static class CommandExtensions
         return true;
     }
 }
+
+public record QueueNameContext(string QueueName, int? Position);

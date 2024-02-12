@@ -25,7 +25,8 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
+        // TODO: enable once add certificates
+        //app.UseHttpsRedirection();
 
         app.UseAuthorization();
 

@@ -2,6 +2,7 @@
 using Enqueuer.Queueing.Contract.V1.Events;
 using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Services;
+using Enqueuer.Telegram.Shared.Localization;
 using Enqueuer.Telegram.Shared.Markup;
 using Enqueuer.Telegram.Shared.Types;
 using System.Globalization;

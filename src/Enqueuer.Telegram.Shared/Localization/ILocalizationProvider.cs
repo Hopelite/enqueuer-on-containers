@@ -1,4 +1,4 @@
-﻿namespace Enqueuer.Telegram.Notifications.Localization;
+﻿namespace Enqueuer.Telegram.Shared.Localization;
 
 public interface ILocalizationProvider
 {

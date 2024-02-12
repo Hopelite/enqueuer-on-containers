@@ -4,6 +4,7 @@ using Enqueuer.Telegram.Notifications.Handlers;
 using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Persistence;
 using Enqueuer.Telegram.Notifications.Services;
+using Enqueuer.Telegram.Shared.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

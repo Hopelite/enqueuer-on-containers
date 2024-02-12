@@ -48,6 +48,11 @@ services:
     build:
       context: .
       dockerfile: src/Enqueuer.Telegram.BFF/Dockerfile
+    environment:
+      - ConnectionStrings__QueueingAPI=http://enqueuer.queueing.api:8080
+      - TelegramClient__AccessToken=${ENQUEUER_TELEGRAM_BOT_ACCESS_TOKEN}
+    depends_on:
+      - enqueuer.queueing.api
 
 volumes:
   notificationsdb:
