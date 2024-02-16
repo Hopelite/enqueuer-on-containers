@@ -6,7 +6,7 @@ public class Participant
 
     public uint Number { get; set; }
 
-    public int QueueId { get; set; }
+    public long QueueId { get; set; }
 
     public Queue Queue { get; set; }
 }

@@ -1,8 +1,8 @@
 ﻿namespace Enqueuer.Queueing.Domain.Events;
 
-public class QueueCreatedEvent: DomainEvent
+public class QueueRemovedEvent : DomainEvent
 {
-    public QueueCreatedEvent(long queueId, string queueName, long locationId)
+    public QueueRemovedEvent(long queueId, string queueName, long locationId)
     {
         QueueId = queueId;
         QueueName = queueName;

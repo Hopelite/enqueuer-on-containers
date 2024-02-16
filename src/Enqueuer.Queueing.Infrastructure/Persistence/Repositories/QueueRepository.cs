@@ -14,7 +14,7 @@ public class QueueRepository : IQueueRepository
     private readonly IQueueFactory _queueFactory;
     private readonly IEventDispatcher _eventDispatcher;
     private static readonly string[] QueueIdProperties = ["Id"];
-    private readonly Dictionary<int, Queue> _trackedQueues = new();
+    private readonly Dictionary<long, Queue> _trackedQueues = new();
 
     public QueueRepository(
         QueueingContext context,
@@ -26,7 +26,7 @@ public class QueueRepository : IQueueRepository
         _eventDispatcher = eventDispatcher;
     }
 
-    public async Task<Queue> GetQueueAsync(int id, CancellationToken cancellationToken)
+    public async Task<Queue> GetQueueAsync(long id, CancellationToken cancellationToken)
     {
         var queue = await _context.Queues.FindAsync(new object[] { id }, cancellationToken);
         if (queue == null)
@@ -44,17 +44,17 @@ public class QueueRepository : IQueueRepository
             queue.Participants.Select(p => new Participant(p.Id, p.Number)));
     }
 
-    public Queue CreateNewQueue(string name, long locationId)
+    public Queue CreateNewQueue(string name, long groupId)
     {
         var queue = new Entities.Queue
         {
             Name = name,
-            LocationId = locationId
+            LocationId = groupId
         };
 
         _context.Queues.Add(queue);
 
-        var domainModel = _queueFactory.CreateNew(queue.Id, name, locationId);
+        var domainModel = _queueFactory.CreateNew(queue.Id, name, groupId);
 
         _trackedQueues.TryAdd(queue.Id, domainModel);
 
@@ -110,7 +110,7 @@ public class QueueRepository : IQueueRepository
         await _eventDispatcher.DispatchEventsAsync(eventsToDispatch, cancellationToken);
     }
 
-    private EntityEntry<Entities.Queue>? GetTrackedQueue(int queueId)
+    private EntityEntry<Entities.Queue>? GetTrackedQueue(long queueId)
     {
         return _context.Queues.Local.FindEntry(QueueIdProperties, new object[] { queueId });
     }

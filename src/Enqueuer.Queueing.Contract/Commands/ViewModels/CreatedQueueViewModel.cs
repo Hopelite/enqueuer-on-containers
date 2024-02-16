@@ -2,11 +2,11 @@
 {
     public class CreatedQueueViewModel
     {
-        public CreatedQueueViewModel(int id)
+        public CreatedQueueViewModel(long id)
         {
             Id = id;
         }
 
-        public int Id { get; }
+        public long Id { get; }
     }
 }

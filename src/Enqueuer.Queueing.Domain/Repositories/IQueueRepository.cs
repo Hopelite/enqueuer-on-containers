@@ -8,15 +8,14 @@ namespace Enqueuer.Queueing.Domain.Repositories;
 public interface IQueueRepository : IUnitOfWork
 {
     /// <summary>
-    /// Gets the existing queue with the specified <paramref name="id"/>
+    /// Gets the existing queue with the specified <paramref name="id"/>.
     /// </summary>
-    /// <returns></returns>
-    Task<Queue> GetQueueAsync(int id, CancellationToken cancellationToken);
+    Task<Queue> GetQueueAsync(long id, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Creates new and starts tracking <see cref="Queue"/> with the specified <paramref name="name"/> and <paramref name="locationId"/>.
+    /// Creates new and starts tracking <see cref="Queue"/> with the specified <paramref name="name"/> and <paramref name="groupId"/>.
     /// </summary>
-    Queue CreateNewQueue(string name, long locationId);
+    Queue CreateNewQueue(string name, long groupId);
 
     /// <summary>
     /// Updates the existing <paramref name="queue"/> in storage.

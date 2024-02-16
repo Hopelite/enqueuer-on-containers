@@ -28,11 +28,14 @@ public class Program
         // TODO: enable once add certificates
         //app.UseHttpsRedirection();
 
+        // TODO: add correlationId
+
         app.UseAuthorization();
 
         app.MapControllers();
 
-        app.Run();
+        app.MigrateDatabase()
+            .Run();
     }
 
     private static void ConfigureServices(WebApplicationBuilder builder)
@@ -59,10 +62,9 @@ public class Program
         builder.Services.AddAutoMapper(configuration =>
         {
             configuration.MapDomainEvent<Domain.Events.QueueCreatedEvent, Contract.V1.Events.QueueCreatedEvent>();
+            configuration.MapDomainEvent<Domain.Events.QueueRemovedEvent, Contract.V1.Events.QueueRemovedEvent>();
             configuration.MapDomainEvent<Domain.Events.QueueRenamedEvent, Contract.V1.Events.QueueRenamedEvent>();
         });
-
-        builder.Services.MigrateDatabase();
 
         builder.Services.AddRabbitMQClient();
     }

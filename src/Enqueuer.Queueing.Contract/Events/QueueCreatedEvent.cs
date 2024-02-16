@@ -2,19 +2,17 @@
 {
     public class QueueCreatedEvent : EventBase
     {
-        public QueueCreatedEvent(int queueId, string queueName, long locationId)
+        public QueueCreatedEvent(int queueId, string queueName, long groupId)
         {
             QueueId = queueId;
             QueueName = queueName;
-            LocationId = locationId;
+            GroupId = groupId;
         }
-
-        public override string Name => nameof(QueueCreatedEvent);
 
         public int QueueId { get; }
 
         public string QueueName { get; }
 
-        public long LocationId { get; }
+        public long GroupId { get; }
     }
 }

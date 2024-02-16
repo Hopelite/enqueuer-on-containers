@@ -15,7 +15,7 @@ public class CreateQueueCommandHandler : IRequestHandler<CreateQueueCommand, Cre
 
     public async Task<CreatedQueueViewModel> Handle(CreateQueueCommand request, CancellationToken cancellationToken)
     {
-        var queue = _queueRepository.CreateNewQueue(request.QueueName, request.LocationId);
+        var queue = _queueRepository.CreateNewQueue(request.QueueName, request.GroupId);
 
         await _queueRepository.SaveChangesAsync(cancellationToken);
 

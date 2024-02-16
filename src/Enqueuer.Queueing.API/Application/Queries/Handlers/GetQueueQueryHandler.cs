@@ -20,7 +20,7 @@ public class GetQueueQueryHandler : IRequestHandler<GetQueueQuery, Queue>
         return new Queue(
             queue.Id,
             queue.Name,
-            queue.LocationId,
+            queue.GroupId,
             queue.Participants.Select(p => new Participant(p.Id, p.Position.Number)).ToArray());
     }
 }

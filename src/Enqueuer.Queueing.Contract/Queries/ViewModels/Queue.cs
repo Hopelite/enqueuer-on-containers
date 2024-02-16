@@ -4,19 +4,19 @@ namespace Enqueuer.Queueing.Contract.V1.Queries.ViewModels
 {
     public class Queue
     {
-        public Queue(int id, string name, long locationId, IReadOnlyCollection<Participant> participants)
+        public Queue(long id, string name, long groupId, IReadOnlyCollection<Participant> participants)
         {
             Id = id;
             Name = name;
-            LocationId = locationId;
+            GroupId = groupId;
             Participants = participants;
         }
 
-        public int Id { get; }
+        public long Id { get; }
 
         public string Name { get; }
 
-        public long LocationId { get; }
+        public long GroupId { get; }
 
         public IReadOnlyCollection<Participant> Participants { get; }
     }

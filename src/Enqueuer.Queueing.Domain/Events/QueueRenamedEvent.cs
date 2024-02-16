@@ -2,7 +2,7 @@
 
 public class QueueRenamedEvent : DomainEvent
 {
-    public QueueRenamedEvent(int queueId, string oldName, string newName)
+    public QueueRenamedEvent(long queueId, string oldName, string newName)
     {
         QueueId = queueId;
         OldName = oldName;
@@ -11,7 +11,7 @@ public class QueueRenamedEvent : DomainEvent
 
     public override string Name => nameof(QueueRenamedEvent);
 
-    public int QueueId { get; }
+    public long QueueId { get; }
 
     public string OldName { get; }
 

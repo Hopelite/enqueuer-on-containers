@@ -13,7 +13,7 @@ public class QueuesController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Queue))]
     public async Task<IActionResult> GetQueue(
-        [FromRoute] int id,
+        [FromRoute] long id,
         [FromServices] IMediator mediator,
         CancellationToken cancellationToken)
     {

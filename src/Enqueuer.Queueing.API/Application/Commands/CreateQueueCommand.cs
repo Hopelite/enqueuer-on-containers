@@ -5,13 +5,13 @@ namespace Enqueuer.Queueing.API.Application.Commands;
 
 public class CreateQueueCommand : IRequest<CreatedQueueViewModel>
 {
-    public CreateQueueCommand(string queueName, long locationId)
+    public CreateQueueCommand(string queueName, long groupId)
     {
         QueueName = queueName;
-        LocationId = locationId;
+        GroupId = groupId;
     }
 
     public string QueueName { get; }
 
-    public long LocationId { get; }
+    public long GroupId { get; }
 }

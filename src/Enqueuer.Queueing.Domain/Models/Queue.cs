@@ -17,18 +17,18 @@ public class Queue : Entity
     private readonly Dictionary<uint, Participant> _participants;
     private string _name = null!;
 
-    internal Queue(int id, string name, long locationId)
+    internal Queue(long id, string name, long groupId)
     {
         Id = id;
         Name = name;
-        LocationId = locationId;
+        GroupId = groupId;
         _participants = new();
     }
 
     /// <summary>
     /// The unique identifier of the queue entity.
     /// </summary>
-    public int Id { get; }
+    public long Id { get; }
 
     /// <summary>
     /// The name of the queue.
@@ -53,9 +53,9 @@ public class Queue : Entity
     }
 
     /// <summary>
-    /// The unique identifier of the location this queue is related.
+    /// The unique identifier of the group this queue is related.
     /// </summary>
-    public long LocationId { get; }
+    public long GroupId { get; }
 
     /// <summary>
     /// The ordered sequence of reserved positions.

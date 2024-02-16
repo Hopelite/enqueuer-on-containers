@@ -47,6 +47,11 @@ namespace Enqueuer.Queueing.Contract.V1
             return await response.Content.ReadFromJsonAsync<CreatedQueueViewModel>();
         }
 
+        public Task DeleteGroupQueue(DeleteGroupQueueCommand command, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Dispose()
         {
             _httpClient.Dispose();

@@ -4,10 +4,10 @@ namespace Enqueuer.Queueing.API.Application.Commands;
 
 public class RemoveQueueCommand : IRequest
 {
-    public RemoveQueueCommand(int id)
+    public RemoveQueueCommand(long id)
     {
         Id = id;
     }
 
-    public int Id { get; }
+    public long Id { get; }
 }

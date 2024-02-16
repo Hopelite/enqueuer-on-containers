@@ -4,57 +4,37 @@ using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Services;
 using Enqueuer.Telegram.Shared.Localization;
 using Enqueuer.Telegram.Shared.Markup;
-using Enqueuer.Telegram.Shared.Types;
 using System.Globalization;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Enqueuer.Telegram.Notifications.Handlers;
 
-public class QueueCreatedHandler(
+public class QueueRemovedHandler(
     IChatConfigurationService chatConfigurationService,
     ILocalizationProvider localizationProvider,
     IInlineMarkupBuilder markupBuilder,
-    ITelegramBotClient telegramClient)
-    : IntegrationEventHandlerBase<QueueCreatedEvent>
+    ITelegramBotClient telegramClient) : IntegrationEventHandlerBase<QueueRemovedEvent>
 {
     private readonly IChatConfigurationService _chatConfigurationService = chatConfigurationService;
     private readonly ILocalizationProvider _localizationProvider = localizationProvider;
     private readonly IInlineMarkupBuilder _markupBuilder = markupBuilder;
     private readonly ITelegramBotClient _telegramClient = telegramClient;
 
-    public override async Task HandleAsync(QueueCreatedEvent @event, CancellationToken cancellationToken)
+    public override async Task HandleAsync(QueueRemovedEvent @event, CancellationToken cancellationToken)
     {
         var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken);
         var chatCulture = new CultureInfo(chatConfiguration.NotificationsLanguageCode);
 
         var message = await _localizationProvider.GetMessageAsync(
-            key: NotificationKeys.QueueCreatedNotification,
-            messageParameters: new MessageParameters(chatCulture, "Vadzim", @event.QueueName),
+            key: NotificationKeys.QueueDeletedNotification,
+            messageParameters: new MessageParameters(chatCulture, @event.OnBehalfName, @event.QueueName),
             cancellationToken);
 
-        var buttonText = await _localizationProvider.GetMessageAsync(NotificationKeys.EnqueueMeButton, new MessageParameters(chatCulture), cancellationToken);
-        var markup = _markupBuilder.Add(serializer =>
-        {
-            var callbackData = new CallbackData
-            {
-                Command = "eqm", // TODO: possibly replace with enum
-                QueueId = @event.QueueId,
-            };
-
-            var jsonData = serializer.Serialize(callbackData);
-            return InlineKeyboardButton.WithCallbackData(buttonText, jsonData);
-        }).Build();
-
-        // TODO: consider working with forums
-        // TODO: retrive chat configuration to determine whether to send notification with sound or not
-        // TODO: add telegram client decorator with auto-configured parameters (like parse mode)
         await _telegramClient.SendTextMessageAsync(
             @event.GroupId,
             message,
             parseMode: ParseMode.Html,
-            replyMarkup: markup,
             cancellationToken: cancellationToken);
     }
 }

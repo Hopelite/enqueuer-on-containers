@@ -14,7 +14,5 @@ namespace Enqueuer.Queueing.Contract.V1.Events
         public Guid Id { get; }
 
         public DateTime CreationDate { get; }
-
-        public abstract string Name { get; }
     }
 }
