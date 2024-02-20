@@ -17,11 +17,6 @@ public class Queue : Entity
     private readonly Dictionary<uint, Participant> _participants;
     private string _name = null!;
 
-    internal Queue(string name, long groupId)
-    {
-
-    }
-
     internal Queue(long id, string name, long groupId)
     {
         Id = id;
@@ -69,16 +64,28 @@ public class Queue : Entity
 
     /// <summary>
     /// Adds the participant with the specified <paramref name="participantId"/>
+    /// at the first available position in the queue.
+    /// </summary>
+    /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the participant with the specified <paramref name="participantId"/> already exists in the queue.</exception>
+    public void EnqueueParticipant(long participantId)
+    {
+        // TODO: method to reconsider using event sourcing
+        // Thus we will not only move the logic of the available position calculation to database, but also ensure concurrency
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Adds the participant with the specified <paramref name="participantId"/>
     /// at the specified <paramref name="position"/> in queue.
     /// </summary>
-    /// <param name="participant">The participant to place in queue.</param>
+    /// <param name="participantId">The unique identifier of the participant placed in the queue.</param>
     /// <remarks>
-    /// Implemented as a separate method instead of making <see cref="Participants"/>
+    /// Implemented as a separate method instead of making the <see cref="Participants"/>
     /// of <see cref="ICollection{T}"/> type to enforce the CQRS pattern.
     /// </remarks>
-    /// <exception cref="PositionReservedException">Thrown, if the <paramref name="participant"/>'s position is reserved.</exception>
-    /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the <paramref name="participant"/> already exists in the queue.</exception>
-    public void EnqueueParticipant(long participantId, uint position)
+    /// <exception cref="PositionReservedException">Thrown, if participant's position is reserved.</exception>
+    /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the participant with the specified <paramref name="participantId"/> already exists in the queue.</exception>
+    public void EnqueueParticipantAt(long participantId, uint position)
     {
         var participant = new Participant(participantId, position);
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))

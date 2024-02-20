@@ -22,7 +22,7 @@ public class QueueFactory : IQueueFactory
         var queue = new Queue(id, name, groupId);
         foreach (var participant in participants)
         {
-            queue.EnqueueParticipant(participant.Id, participant.Position.Number);
+            queue.EnqueueParticipantAt(participant.Id, participant.Position.Number);
         }
 
         return queue;
