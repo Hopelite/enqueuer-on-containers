@@ -1,19 +1,25 @@
 ﻿namespace Enqueuer.Queueing.Domain.Events;
 
-public class QueueCreatedEvent: DomainEvent
+/// <summary>
+/// The domain event produced when new queue is created in the group.
+/// </summary>
+public class QueueCreatedEvent : DomainEvent
 {
-    public QueueCreatedEvent(long queueId, string queueName, long locationId)
+    public QueueCreatedEvent(long groupId, string queueName)
     {
-        QueueId = queueId;
+        GroupId = groupId;
         QueueName = queueName;
-        LocationId = locationId;
     }
 
-    public override string Name => nameof(QueueCreatedEvent);
+    public override string Name => "QueueCreated";
 
-    public long QueueId { get; }
+    /// <summary>
+    /// The unique identifier of the group where the queue has been created.
+    /// </summary>
+    public long GroupId { get; }
 
+    /// <summary>
+    /// The name of the created queue.
+    /// </summary>
     public string QueueName { get; }
-
-    public long LocationId { get; }
 }

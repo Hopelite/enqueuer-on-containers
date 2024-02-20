@@ -130,19 +130,6 @@ public class Queue : Entity
         // TODO: notify about dequeued participant
     }
 
-    /// <summary>
-    /// Changes the <see cref="Name"/> to <paramref name="newName"/>.
-    /// </summary>
-    /// <exception cref="ArgumentNullException"></exception>
-    public void ChangeName(string newName)
-    {
-        var oldName = Name;
-
-        Name = newName;
-
-        AddDomainEvent(new QueueRenamedEvent(Id, oldName, newName));
-    }
-
     private class IdentityComparer : IEqualityComparer<Participant>
     {
         public bool Equals(Participant? first, Participant? second)

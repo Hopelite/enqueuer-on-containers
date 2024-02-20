@@ -62,8 +62,7 @@ public class Program
         builder.Services.AddAutoMapper(configuration =>
         {
             configuration.MapDomainEvent<Domain.Events.QueueCreatedEvent, Contract.V1.Events.QueueCreatedEvent>();
-            configuration.MapDomainEvent<Domain.Events.QueueRemovedEvent, Contract.V1.Events.QueueRemovedEvent>();
-            configuration.MapDomainEvent<Domain.Events.QueueRenamedEvent, Contract.V1.Events.QueueRenamedEvent>();
+            configuration.MapDomainEvent<Domain.Events.QueueDeletedEvent, Contract.V1.Events.QueueRemovedEvent>();
         });
 
         builder.Services.AddRabbitMQClient();

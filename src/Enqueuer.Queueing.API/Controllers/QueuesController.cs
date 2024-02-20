@@ -38,21 +38,6 @@ public class QueuesController : ControllerBase
         return CreatedAtAction(nameof(GetQueue), routeValues: new { id = newQueue.Id }, value: newQueue);
     }
 
-    [HttpPut("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> RenameQueue(
-        [FromRoute] int id,
-        [FromBody] RenameQueueCommand command,
-        [FromServices] IMediator mediator,
-        CancellationToken cancellationToken)
-    {
-        var renameQueueCommand = new Application.Commands.RenameQueueCommand(id, command.NewQueueName);
-
-        await mediator.Send(renameQueueCommand, cancellationToken);
-
-        return NoContent();
-    }
-
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> RemoveQueue(
