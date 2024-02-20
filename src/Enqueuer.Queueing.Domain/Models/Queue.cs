@@ -17,6 +17,11 @@ public class Queue : Entity
     private readonly Dictionary<uint, Participant> _participants;
     private string _name = null!;
 
+    internal Queue(string name, long groupId)
+    {
+
+    }
+
     internal Queue(long id, string name, long groupId)
     {
         Id = id;

@@ -5,6 +5,11 @@ namespace Enqueuer.Queueing.Domain.Factories;
 
 public class QueueFactory : IQueueFactory
 {
+    public Queue CreateNew(string name, long groupId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Queue CreateNew(long id, string name, long groupId)
     {
         var queue = new Queue(id, name, groupId);

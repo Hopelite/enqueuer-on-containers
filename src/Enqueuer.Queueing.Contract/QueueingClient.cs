@@ -52,6 +52,11 @@ namespace Enqueuer.Queueing.Contract.V1
             throw new NotImplementedException();
         }
 
+        public Task<EnqueuedParticipantViewModel> EnqueueParticipant(int queueId, EnqueueParticipantCommand command, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Dispose()
         {
             _httpClient.Dispose();

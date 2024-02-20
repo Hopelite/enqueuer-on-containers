@@ -4,10 +4,13 @@ namespace Enqueuer.Queueing.API.Application.Commands;
 
 public class RemoveQueueCommand : IRequest
 {
-    public RemoveQueueCommand(long id)
+    public RemoveQueueCommand(long groupId, string queueName)
     {
-        Id = id;
+        GroupId = groupId;
+        QueueName = queueName;
     }
 
-    public long Id { get; }
+    public long GroupId { get; }
+
+    public string QueueName { get; }
 }
