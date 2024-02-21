@@ -1,9 +1,9 @@
 ﻿namespace Enqueuer.Queueing.Domain.Models;
 
 /// <summary>
-/// Defines the queue aggregate limits.
+/// Defines the queue model restrictions.
 /// </summary>
-public static class QueueLimits
+public static class QueueRestrictions
 {
     /// <summary>
     /// Maximum queue name length.

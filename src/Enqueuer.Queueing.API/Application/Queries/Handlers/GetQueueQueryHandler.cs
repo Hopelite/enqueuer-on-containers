@@ -1,26 +1,27 @@
 ﻿using Enqueuer.Queueing.Contract.V1.Queries.ViewModels;
 using Enqueuer.Queueing.Domain.Repositories;
-using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Application.Queries.Handlers;
 
-public class GetQueueQueryHandler : IRequestHandler<GetQueueQuery, Queue>
+public class GetQueueQueryHandler : IOperationHandler<GetGroupQueuesQuery>
 {
-    private readonly IQueueRepository _queueRepository;
+    private readonly IGroupRepository _groupRepository;
 
-    public GetQueueQueryHandler(IQueueRepository queueRepository)
+    public GetQueueQueryHandler(IGroupRepository groupRepository)
     {
-        _queueRepository = queueRepository;
+        _groupRepository = groupRepository;
     }
 
-    public async Task<Queue> Handle(GetQueueQuery request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Handle(GetGroupQueuesQuery request, CancellationToken cancellationToken)
     {
-        var queue = await _queueRepository.GetQueueAsync(request.Id, cancellationToken);
+        var group = await _groupRepository.GetGroupAsync(request.GroupId, cancellationToken);
 
-        return new Queue(
-            queue.Id,
-            queue.Name,
-            queue.GroupId,
-            queue.Participants.Select(p => new Participant(p.Id, p.Position.Number)).ToArray());
+        var queues = group.Queues.Select(q => new Queue(
+            q.GroupId,
+            q.Name,
+            q.Participants.Select(p => new Participant(p.Id, p.Position.Number)).ToArray()));
+
+        return new OkObjectResult(queues);
     }
 }

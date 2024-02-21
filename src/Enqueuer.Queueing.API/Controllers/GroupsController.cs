@@ -17,26 +17,21 @@ public class GroupsController : ControllerBase
     [HttpGet("{groupId}/queues")]
     public Task<IActionResult> GetGroupQueues(long groupId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var getGroupQueuesQuery = new Application.Queries.GetGroupQueuesQuery(groupId);
+        return _mediator.Send(getGroupQueuesQuery, cancellationToken);
     }
 
     [HttpPut("{groupId}/queues/{queueName}")]
-    public async Task<IActionResult> CreateQueue(long groupId, string queueName, CancellationToken cancellationToken)
+    public Task<IActionResult> CreateQueue(long groupId, string queueName, CancellationToken cancellationToken)
     {
-        var createQueueCommand = new Application.Commands.CreateQueueCommand(queueName, groupId);
-
-        await _mediator.Send(createQueueCommand, cancellationToken);
-        
-        return Ok();
+        var createQueueCommand = new Application.Commands.CreateQueueCommand(groupId, queueName);
+        return _mediator.Send(createQueueCommand, cancellationToken);
     }
 
     [HttpDelete("{groupId}/queues/{queueName}")]
-    public async Task<IActionResult> DeleteQueue(long groupId, string queueName, CancellationToken cancellationToken)
+    public Task<IActionResult> DeleteQueue(long groupId, string queueName, CancellationToken cancellationToken)
     {
         var removeQueueCommand = new Application.Commands.RemoveQueueCommand(groupId, queueName);
-
-        await _mediator.Send(removeQueueCommand, cancellationToken);
-
-        return Ok();
+        return _mediator.Send(removeQueueCommand, cancellationToken);
     }
 }

@@ -1,8 +1,6 @@
-﻿using MediatR;
+﻿namespace Enqueuer.Queueing.API.Application.Commands;
 
-namespace Enqueuer.Queueing.API.Application.Commands;
-
-public class RemoveQueueCommand : IRequest
+public class RemoveQueueCommand : IOperation
 {
     public RemoveQueueCommand(long groupId, string queueName)
     {

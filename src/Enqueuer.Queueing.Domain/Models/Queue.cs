@@ -5,57 +5,22 @@ using System.Diagnostics.CodeAnalysis;
 namespace Enqueuer.Queueing.Domain.Models;
 
 /// <summary>
-/// The aggregate root model representing an ordered sequence of participants.
+/// The domain model representing an ordered sequence of participants.
 /// </summary>
-/// <remarks>
-/// Not thread safe. Intended to be used in a single thread.
-/// The concurrency must be handled by external code.
-/// </remarks>
 public class Queue : Entity
 {
     private static readonly IdentityComparer ParticipantIdentityComparer = new();
-    private readonly Dictionary<uint, Participant> _participants;
-    private string _name = null!;
-
-    internal Queue(long id, string name, long groupId)
-    {
-        Id = id;
-        Name = name;
-        GroupId = groupId;
-        _participants = new();
-    }
-
-    /// <summary>
-    /// The unique identifier of the queue entity.
-    /// </summary>
-    public long Id { get; }
-
-    /// <summary>
-    /// The name of the queue.
-    /// </summary>
-    public string Name
-    {
-        get => _name;
-        private set
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new InvalidQueueNameException("Queue name can't be null, empty or a whitespace.");
-            }
-
-            if (value.Length > QueueLimits.MaxNameLength)
-            {
-                throw new InvalidQueueNameException($"Queue name can't be longer than {QueueLimits.MaxNameLength} symbols.");
-            }
-
-            _name = value;
-        }
-    }
+    private readonly Dictionary<uint, Participant> _participants = new();
 
     /// <summary>
     /// The unique identifier of the group this queue is related.
     /// </summary>
     public long GroupId { get; }
+
+    /// <summary>
+    /// The name of the queue. Must be unique within the group scope.
+    /// </summary>
+    public string Name { get; }
 
     /// <summary>
     /// The ordered sequence of reserved positions.
@@ -91,16 +56,16 @@ public class Queue : Entity
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
         {
             throw new ParticipantAlreadyExistsException(
-                $"Participant '{participant.Id}' already exists in the queue '{Id}'.");
+                $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
         }
 
         if (!_participants.TryAdd(position, participant))
         {
             throw new PositionReservedException(
-                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Id}'.");
+                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
         }
 
-        // TODO: notify about enqueued participant
+        AddDomainEvent(new ParticipantEnqueuedAtEvent(GroupId, queueName: Name, participantId, position));
     }
 
     public void DequeueParticipant(long participantId)
@@ -109,25 +74,10 @@ public class Queue : Entity
         if (participant == null || !_participants.Remove(participant.Position.Number))
         {
             throw new ParticipantDoesNotExistException(
-                $"Participant '{participantId}' does not exist in the queue '{Id}'.");
+                $"Participant '{participantId}' does not exist in the queue '{Name}'.");
         }
 
-        // TODO: notify about dequeued participant
-    }
-
-    /// <summary>
-    /// Removes participant at the specified <paramref name="position"/> from the queue.
-    /// </summary>
-    /// <exception cref="ParticipantDoesNotExistException">Thrown, if participant at the specified <paramref name="position"/> does not exist in the queue.</exception>
-    public void DequeueParticipantAt(uint position)
-    {
-        if (!_participants.Remove(position, out var participant))
-        {
-            throw new ParticipantDoesNotExistException(
-                $"Position '{position}' is not reserved in the queue '{Id}'.");
-        }
-
-        // TODO: notify about dequeued participant
+        AddDomainEvent(new ParticipantDequeuedEvent(GroupId, queueName: Name, participantId));
     }
 
     private class IdentityComparer : IEqualityComparer<Participant>

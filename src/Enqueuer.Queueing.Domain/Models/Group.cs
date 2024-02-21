@@ -1,5 +1,5 @@
-﻿using Enqueuer.Queueing.Domain.Exceptions;
-using Enqueuer.Queueing.Domain.Factories;
+﻿using Enqueuer.Queueing.Domain.Events;
+using Enqueuer.Queueing.Domain.Exceptions;
 
 namespace Enqueuer.Queueing.Domain.Models;
 
@@ -7,17 +7,9 @@ namespace Enqueuer.Queueing.Domain.Models;
 /// The aggregate root model representing a Telegram group chat with its queues.
 /// </summary>
 /// <remarks>Provides namespace for queues.</remarks>
-public class Group
+public class Group : Entity
 {
-    private readonly Dictionary<string, Queue> _queues;
-    private readonly IQueueFactory _queueFactory;
-
-    internal Group(long id, IQueueFactory queueFactory)
-    {
-        Id = id;
-        _queueFactory = queueFactory;
-        _queues = new Dictionary<string, Queue>();
-    }
+    private readonly Dictionary<string, Queue> _queues = new();
 
     /// <summary>
     /// The unique identifier of the Telegram group.
@@ -33,15 +25,25 @@ public class Group
     /// Creates queue with the specified <paramref name="queueName"/> in the group.
     /// </summary>
     /// <exception cref="QueueAlreadyExistsException">Thrown if queue with the specified <paramref name="queueName"/> already exists in the group.</exception>
+    /// <exception cref="InvalidQueueNameException">Thrown if specified <paramref name="queueName"/> is invalid.</exception>
     public void CreateQueue(string queueName)
     {
+        if (string.IsNullOrWhiteSpace(queueName))
+        {
+            throw new InvalidQueueNameException("Queue name can't be null, empty or a whitespace.");
+        }
+
+        if (queueName.Length > QueueRestrictions.MaxNameLength)
+        {
+            throw new InvalidQueueNameException($"Queue name can't be longer than {QueueRestrictions.MaxNameLength} symbols.");
+        }
+
         if (_queues.ContainsKey(queueName))
         {
             throw new QueueAlreadyExistsException($"Queue '{queueName}' already exists in the chat '{Id}'.");
         }
 
-        var queue = _queueFactory.CreateNew(queueName, groupId: Id);
-        _queues.TryAdd(queueName, queue);
+        AddDomainEvent(new QueueCreatedEvent(Id, queueName));
     }
 
     /// <summary>
@@ -54,6 +56,8 @@ public class Group
         {
             throw new QueueDoesNotExistException($"Queue '{queueName}' does not exist in the group '{Id}'.");
         }
+
+        AddDomainEvent(new QueueDeletedEvent(Id, queueName));
     }
 
     /// <summary>

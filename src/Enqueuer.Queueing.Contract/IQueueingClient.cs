@@ -13,7 +13,7 @@ namespace Enqueuer.Queueing.Contract.V1
         /// <summary>
         /// Creates a queue with the specified name and returns its unique identifier.
         /// </summary>
-        Task<CreatedQueueViewModel> CreateQueueAsync(CreateQueueCommand command, CancellationToken cancellationToken);
+        Task CreateQueueAsync(CreateQueueCommand command, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes a queue with the specified name.

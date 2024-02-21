@@ -21,7 +21,7 @@ namespace Enqueuer.Queueing.Contract.V1
             };
         }
 
-        public async Task<CreatedQueueViewModel> CreateQueueAsync(CreateQueueCommand command, CancellationToken cancellationToken)
+        public async Task CreateQueueAsync(CreateQueueCommand command, CancellationToken cancellationToken)
         {
             if (command == null)
             {
@@ -43,8 +43,6 @@ namespace Enqueuer.Queueing.Contract.V1
             {
                 throw new QueueingClientException("An error occured during Queueing API request.", ex);
             }
-
-            return await response.Content.ReadFromJsonAsync<CreatedQueueViewModel>();
         }
 
         public Task DeleteGroupQueue(DeleteGroupQueueCommand command, CancellationToken cancellationToken)

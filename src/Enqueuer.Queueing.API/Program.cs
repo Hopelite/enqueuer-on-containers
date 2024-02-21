@@ -4,7 +4,6 @@ using Enqueuer.Queueing.Domain.Factories;
 using Enqueuer.Queueing.Domain.Repositories;
 using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence;
-using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Enqueuer.Queueing.API;
@@ -50,7 +49,6 @@ public class Program
             options.UseSqlServer(builder.Configuration.GetConnectionString("QueueingDB"));
         });
 
-        builder.Services.AddScoped<IQueueRepository, QueueRepository>();
         builder.Services.AddTransient<IQueueFactory, QueueFactory>();
         builder.Services.AddTransient<IEventDispatcher, BusEventDispatcher>();
 

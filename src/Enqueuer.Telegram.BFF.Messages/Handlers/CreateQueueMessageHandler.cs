@@ -39,7 +39,7 @@ public class CreateQueueMessageHandler(
 
         try
         {
-            var queueId = await _queueingClient.CreateQueueAsync(new CreateQueueCommand(queueContext.QueueName, messageContext.Chat.Id), cancellationToken);
+            await _queueingClient.CreateQueueAsync(new CreateQueueCommand(queueContext.QueueName, messageContext.Chat.Id), cancellationToken);
         }
         catch (Exception ex)
         {
