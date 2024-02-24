@@ -10,7 +10,13 @@ namespace Enqueuer.Queueing.Domain.Models;
 public class Queue : Entity
 {
     private static readonly IdentityComparer ParticipantIdentityComparer = new();
-    private readonly Dictionary<uint, Participant> _participants = new();
+    internal readonly Dictionary<uint, Participant> _participants = new();
+
+    internal Queue(long groupId, string name)
+    {
+        GroupId = groupId;
+        Name = name;
+    }
 
     /// <summary>
     /// The unique identifier of the group this queue is related.
@@ -65,7 +71,7 @@ public class Queue : Entity
                 $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
         }
 
-        AddDomainEvent(new ParticipantEnqueuedAtEvent(GroupId, queueName: Name, participantId, position));
+        AddDomainEvent(new ParticipantEnqueuedAtEvent(GroupId, queueName: Name, participantId, position, DateTime.UtcNow));
     }
 
     public void DequeueParticipant(long participantId)
@@ -77,7 +83,7 @@ public class Queue : Entity
                 $"Participant '{participantId}' does not exist in the queue '{Name}'.");
         }
 
-        AddDomainEvent(new ParticipantDequeuedEvent(GroupId, queueName: Name, participantId));
+        AddDomainEvent(new ParticipantDequeuedEvent(GroupId, queueName: Name, participantId, DateTime.UtcNow));
     }
 
     private class IdentityComparer : IEqualityComparer<Participant>

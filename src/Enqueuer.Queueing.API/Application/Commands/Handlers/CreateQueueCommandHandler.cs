@@ -30,6 +30,7 @@ public class CreateQueueCommandHandler : IOperationHandler<CreateQueueCommand>
             return new ConflictObjectResult(ex.Message);
         }
 
+        await _groupRepository.SaveChangesAsync(group, cancellationToken);
         return new OkResult();
     }
 }

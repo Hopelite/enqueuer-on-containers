@@ -24,7 +24,8 @@ public class RemoveQueueCommandHandler : IOperationHandler<RemoveQueueCommand>
         {
             return new NotFoundObjectResult(ex.Message);
         }
-        
+
+        await _groupRepository.SaveChangesAsync(group, cancellationToken);
         return new OkResult();
     }
 }

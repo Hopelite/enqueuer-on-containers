@@ -1,24 +1,21 @@
-﻿namespace Enqueuer.Queueing.Domain.Events;
+﻿using Enqueuer.Queueing.Domain.Models;
+
+namespace Enqueuer.Queueing.Domain.Events;
 
 /// <summary>
 /// The domain event produced when participant was enqueued.
 /// </summary>
 public class ParticipantEnqueuedAtEvent : DomainEvent
 {
-    public ParticipantEnqueuedAtEvent(long groupId, string queueName, long participantId, uint position)
+    public ParticipantEnqueuedAtEvent(long groupId, string queueName, long participantId, uint position, DateTime timestamp)
+        : base(groupId, timestamp)
     {
-        GroupId = groupId;
         QueueName = queueName;
         ParticipantId = participantId;
         Position = position;
     }
 
     public override string Name => "ParticipantEnqueuedAt";
-
-    /// <summary>
-    /// The unique identifier of the group where the queue is located.
-    /// </summary>
-    public long GroupId { get; }
 
     /// <summary>
     /// The name of the queue where participant was enqueued.
@@ -34,4 +31,9 @@ public class ParticipantEnqueuedAtEvent : DomainEvent
     /// The position participant was enqueued at.
     /// </summary>
     public uint Position { get; }
+
+    public override void ApplyTo(Group group)
+    {
+        throw new NotImplementedException();
+    }
 }

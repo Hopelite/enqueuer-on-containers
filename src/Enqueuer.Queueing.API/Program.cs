@@ -3,8 +3,8 @@ using Enqueuer.Queueing.API.Extensions;
 using Enqueuer.Queueing.Domain.Factories;
 using Enqueuer.Queueing.Domain.Repositories;
 using Enqueuer.Queueing.Infrastructure.Messaging;
-using Enqueuer.Queueing.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
+using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
+using Enqueuer.Queueing.Infrastructure.Persistence.Storage;
 
 namespace Enqueuer.Queueing.API;
 
@@ -33,8 +33,7 @@ public class Program
 
         app.MapControllers();
 
-        app.MigrateDatabase()
-            .Run();
+        app.Run();
     }
 
     private static void ConfigureServices(WebApplicationBuilder builder)
@@ -44,13 +43,8 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        builder.Services.AddDbContext<QueueingContext>(options =>
-        {
-            options.UseSqlServer(builder.Configuration.GetConnectionString("QueueingDB"));
-        });
 
-        builder.Services.AddTransient<IQueueFactory, QueueFactory>();
-        builder.Services.AddTransient<IEventDispatcher, BusEventDispatcher>();
+        //builder.Services.AddTransient<IEventDispatcher, BusEventDispatcher>();
 
         builder.Services.AddMediatR(configuration =>
         {
@@ -63,6 +57,12 @@ public class Program
             configuration.MapDomainEvent<Domain.Events.QueueDeletedEvent, Contract.V1.Events.QueueRemovedEvent>();
         });
 
-        builder.Services.AddRabbitMQClient();
+        //builder.Services.AddRabbitMQClient();
+
+        // Event sourcing
+        builder.Services.AddTransient<IGroupRepository, GroupRepository>();
+        builder.Services.AddTransient<IGroupFactory, GroupFactory>();
+        builder.Services.AddSingleton<IEventStorage, DocumentEventStorage>();
+        builder.Services.Configure<EventsDatabaseSettings>(builder.Configuration.GetSection("EventsDatabase"));
     }
 }

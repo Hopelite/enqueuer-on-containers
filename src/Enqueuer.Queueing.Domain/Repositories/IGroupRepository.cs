@@ -7,5 +7,10 @@ public interface IGroupRepository
     /// <summary>
     /// Gets the existing or creates new group with the specified <paramref name="groupId"/>.
     /// </summary>
-    Task<Group> GetGroupAsync(long groupId, CancellationToken cancellationToken);
+    Task<IGroupAggregate> GetGroupAsync(long groupId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Saves all applied to <paramref name="group"/> changes.
+    /// </summary>
+    Task SaveChangesAsync(IGroupAggregate group, CancellationToken cancellationToken);
 }
