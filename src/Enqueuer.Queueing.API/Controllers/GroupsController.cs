@@ -36,6 +36,13 @@ public class GroupsController : ControllerBase
         return _mediator.Send(removeQueueCommand, cancellationToken);
     }
 
+    [HttpPost("{groupId}/queues/{queueName}/participants")]
+    public Task<IActionResult> EnqueueParticipant(long groupId, string queueName, EnqueueParticipantCommand command, CancellationToken cancellationToken)
+    {
+        var enqueueCommand = new Application.Commands.EnqueueParticipantCommand(groupId, queueName, command.ParticipantId);
+        return _mediator.Send(enqueueCommand, cancellationToken);
+    }
+
     [HttpPut("{groupId}/queues/{queueName}/participants/{position}")]
     public Task<IActionResult> EnqueueParticipantAt(long groupId, string queueName, uint position, EnqueueParticipantAtCommand command, CancellationToken cancellationToken)
     {

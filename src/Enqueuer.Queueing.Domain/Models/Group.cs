@@ -7,6 +7,10 @@ namespace Enqueuer.Queueing.Domain.Models;
 /// The aggregate root model representing a Telegram group chat with its queues.
 /// </summary>
 /// <remarks>Provides namespace for queues.</remarks>
+/// <remarks>
+/// Not thread safe. Intended to be used in a single thread.
+/// The concurrency must be handled by external code.
+/// </remarks>
 public class Group : Entity, IGroupAggregate
 {
     internal readonly Dictionary<string, Queue> _queues = new();
@@ -68,11 +72,7 @@ public class Group : Entity, IGroupAggregate
 
     public void DequeueParticipant(string queueName, long participantId)
     {
-        if (!_queues.TryGetValue(queueName, out var queue))
-        {
-            throw new QueueDoesNotExistException($"Queue '{queueName}' does not exist in the group '{Id}'.");
-        }
-
+        var queue = GetExistingQueueOrThrow(queueName);
         queue.DequeueParticipant(participantId);
     }
 

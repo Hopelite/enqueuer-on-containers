@@ -40,9 +40,27 @@ public class Queue : Entity, IQueueEntity
     /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the participant with the specified <paramref name="participantId"/> already exists in the queue.</exception>
     public void EnqueueParticipant(long participantId)
     {
-        // TODO: method to reconsider using event sourcing
-        // Thus we will not only move the logic of the available position calculation to database, but also ensure concurrency
-        throw new NotImplementedException();
+        (this as IQueueEntity).EnqueueParticipant(participantId);
+        AddDomainEvent(new ParticipantEnqueuedEvent(GroupId, queueName: Name, participantId, DateTime.UtcNow));
+    }
+
+    void IQueueEntity.EnqueueParticipant(long participantId)
+    {
+        var firstAvailablePosition = (uint)Enumerable.Range(1, _participants.Count + 1)
+            .FirstOrDefault(p => !_participants.ContainsKey((uint)p));
+
+        var participant = new Participant(participantId, firstAvailablePosition);
+        if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
+        {
+            throw new ParticipantAlreadyExistsException(
+                $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
+        }
+
+        if (!_participants.TryAdd(firstAvailablePosition, participant))
+        {
+            throw new PositionReservedException(
+                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
+        }
     }
 
     /// <summary>
