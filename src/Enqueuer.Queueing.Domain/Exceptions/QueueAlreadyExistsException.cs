@@ -1,6 +1,6 @@
 ﻿namespace Enqueuer.Queueing.Domain.Exceptions;
 
-public class QueueAlreadyExistsException : Exception
+public class QueueAlreadyExistsException : DomainException
 {
     public QueueAlreadyExistsException()
     {

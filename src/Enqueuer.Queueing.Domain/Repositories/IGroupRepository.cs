@@ -10,7 +10,7 @@ public interface IGroupRepository
     Task<IGroupAggregate> GetGroupAsync(long groupId, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Saves all applied to <paramref name="group"/> changes.
+    /// Saves all applied to the <paramref name="group"/> changes.
     /// </summary>
     Task SaveChangesAsync(IGroupAggregate group, CancellationToken cancellationToken);
 }

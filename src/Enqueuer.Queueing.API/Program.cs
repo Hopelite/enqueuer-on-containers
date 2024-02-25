@@ -1,6 +1,7 @@
 using Enqueuer.Queueing.API.Application.Messaging;
 using Enqueuer.Queueing.API.Extensions;
 using Enqueuer.Queueing.Domain.Factories;
+using Enqueuer.Queueing.Domain.Models;
 using Enqueuer.Queueing.Domain.Repositories;
 using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
@@ -61,7 +62,10 @@ public class Program
 
         // Event sourcing
         builder.Services.AddTransient<IGroupRepository, GroupRepository>();
+        builder.Services.AddSingleton<IEventWriterManager<Group>, EventWriterManager>();
+        builder.Services.AddTransient<IEventWriterFactory<Group>, GroupEventWriterFactory>();
         builder.Services.AddTransient<IGroupFactory, GroupFactory>();
+        builder.Services.AddTransient<IAggregateRootBuilder<Group>, GroupAggregateBuilder>();
         builder.Services.AddSingleton<IEventStorage, DocumentEventStorage>();
         builder.Services.Configure<EventsDatabaseSettings>(builder.Configuration.GetSection("EventsDatabase"));
     }

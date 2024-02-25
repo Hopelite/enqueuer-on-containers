@@ -1,6 +1,6 @@
 ﻿namespace Enqueuer.Queueing.Domain.Exceptions;
 
-public class InvalidQueueNameException : Exception
+public class InvalidQueueNameException : DomainException
 {
     public InvalidQueueNameException()
     {

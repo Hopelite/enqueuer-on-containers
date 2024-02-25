@@ -40,7 +40,7 @@ public class Group : Entity, IGroupAggregate
             throw new InvalidQueueNameException($"Queue name can't be longer than {QueueRestrictions.MaxNameLength} symbols.");
         }
 
-        if (_queues.TryAdd(queueName, new Queue(Id, queueName)))
+        if (!_queues.TryAdd(queueName, new Queue(Id, queueName)))
         {
             throw new QueueAlreadyExistsException($"Queue '{queueName}' already exists in the chat '{Id}'.");
         }

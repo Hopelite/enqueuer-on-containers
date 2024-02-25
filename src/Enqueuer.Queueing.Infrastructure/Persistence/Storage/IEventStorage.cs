@@ -2,6 +2,9 @@
 
 namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage;
 
+/// <summary>
+/// Provides functionality to read domain events from and write to storage.
+/// </summary>
 public interface IEventStorage
 {
     /// <summary>
@@ -10,7 +13,7 @@ public interface IEventStorage
     Task<IEnumerable<DomainEvent>> GetAggregateEventsAsync(long aggregateId, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Writes <paramref name="events"/> into the events storage.
+    /// Writes <paramref name="event"/> into the events storage.
     /// </summary>
-    Task WriteEventsAsync(IEnumerable<DomainEvent> events, CancellationToken cancellationToken);
+    Task WriteEventAsync(DomainEvent @event, CancellationToken cancellationToken);
 }

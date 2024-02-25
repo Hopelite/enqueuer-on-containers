@@ -74,8 +74,9 @@ public class DocumentEventStorage : IEventStorage
             .ToListAsync(cancellationToken);
     }
 
-    public Task WriteEventsAsync(IEnumerable<DomainEvent> events, CancellationToken cancellationToken)
+    public Task WriteEventAsync(DomainEvent @event, CancellationToken cancellationToken)
     {
-        return _eventCollection.InsertManyAsync(events, cancellationToken: cancellationToken);
+        // TODO: consider batch writting
+        return _eventCollection.InsertOneAsync(@event, cancellationToken: cancellationToken);
     }
 }

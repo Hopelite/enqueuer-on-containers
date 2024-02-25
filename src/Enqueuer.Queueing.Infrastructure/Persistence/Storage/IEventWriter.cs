@@ -1,8 +1,15 @@
-﻿using Enqueuer.Queueing.Domain.Models;
+﻿using Enqueuer.Queueing.Domain.Events;
+using Microsoft.Extensions.Hosting;
 
 namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage;
 
-public interface IEventWriter
+/// <summary>
+/// Provides functionality to write events for the <typeparamref name="TAggregate"/>.
+/// </summary>
+public interface IEventWriter<TAggregate> : IHostedService
 {
-    Task ApplyEventsAsync(IGroupAggregate group, CancellationToken cancellationToken);
+    /// <summary>
+    /// Writes <paramref name="events"/> to persistent storage.
+    /// </summary>
+    Task WriteEventsAsync(IEnumerable<DomainEvent> events, CancellationToken cancellationToken);
 }

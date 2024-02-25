@@ -1,6 +1,9 @@
 ﻿namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage;
 
-public interface IEventWriterFactory
+public interface IEventWriterFactory<TAggregate>
 {
-    IEventWriter GetEventWriterFor(long aggregateId, CancellationToken cancellationToken);
+    /// <summary>
+    /// Creates new <see cref="IEventWriter{TAggregate}"/> for <typeparamref name="TAggregate"/> with the specified <paramref name="aggregateId"/>.
+    /// </summary>
+    IEventWriter<TAggregate> CreateEventWriterFor(long aggregateId);
 }
