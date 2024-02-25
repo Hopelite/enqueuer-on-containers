@@ -1,4 +1,5 @@
-﻿using Enqueuer.Queueing.Domain.Models;
+﻿using Enqueuer.Queueing.Domain.Exceptions;
+using Enqueuer.Queueing.Domain.Models;
 
 namespace Enqueuer.Queueing.Domain.Events;
 
@@ -34,6 +35,11 @@ public class ParticipantEnqueuedAtEvent : DomainEvent
 
     public override void ApplyTo(Group group)
     {
-        throw new NotImplementedException();
+        if (!group._queues.TryGetValue(QueueName, out var queue))
+        {
+            throw new QueueDoesNotExistException($"Queue '{QueueName}' does not exist in the group '{Id}'.");
+        }
+
+        (queue as IQueueEntity).EnqueueParticipantAt(ParticipantId, Position);
     }
 }

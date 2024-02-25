@@ -36,7 +36,7 @@ public class Group : Entity, IGroupAggregate
             throw new InvalidQueueNameException($"Queue name can't be longer than {QueueRestrictions.MaxNameLength} symbols.");
         }
 
-        if (_queues.ContainsKey(queueName))
+        if (_queues.TryAdd(queueName, new Queue(Id, queueName)))
         {
             throw new QueueAlreadyExistsException($"Queue '{queueName}' already exists in the chat '{Id}'.");
         }
@@ -56,24 +56,24 @@ public class Group : Entity, IGroupAggregate
 
     public void EnqueueParticipant(string queueName, long participantId)
     {
-        // TODO: method to reconsider using event sourcing
-        // Thus we will not only move the logic of the available position calculation to database, but also ensure concurrency
-        if (!_queues.TryGetValue(queueName, out var queue))
-        {
-            throw new QueueDoesNotExistException($"Queue '{queueName}' does not exist in the group '{Id}'.");
-        }
-
+        var queue = GetExistingQueueOrThrow(queueName);
         queue.EnqueueParticipant(participantId);
     }
 
     public void EnqueueParticipantAt(string queueName, long participantId, uint position)
+    {
+        var queue = GetExistingQueueOrThrow(queueName);
+        queue.EnqueueParticipantAt(participantId, position);
+    }
+
+    public void DequeueParticipant(string queueName, long participantId)
     {
         if (!_queues.TryGetValue(queueName, out var queue))
         {
             throw new QueueDoesNotExistException($"Queue '{queueName}' does not exist in the group '{Id}'.");
         }
 
-        queue.EnqueueParticipantAt(participantId, position);
+        queue.DequeueParticipant(participantId);
     }
 
     /// <summary>
@@ -82,5 +82,15 @@ public class Group : Entity, IGroupAggregate
     public void Apply(DomainEvent domainEvent)
     {
         domainEvent.ApplyTo(this);
+    }
+
+    private Queue GetExistingQueueOrThrow(string queueName)
+    {
+        if (!_queues.TryGetValue(queueName, out var queue))
+        {
+            throw new QueueDoesNotExistException($"Queue '{queueName}' does not exist in the group '{Id}'.");
+        }
+
+        return queue;
     }
 }

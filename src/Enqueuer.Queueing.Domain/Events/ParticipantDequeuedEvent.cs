@@ -34,6 +34,6 @@ public class ParticipantDequeuedEvent : DomainEvent
             throw new QueueDoesNotExistException($"Queue '{QueueName}' does not exist.");
         }
 
-
+        (queue as IQueueEntity).DequeueParticipant(ParticipantId);
     }
 }

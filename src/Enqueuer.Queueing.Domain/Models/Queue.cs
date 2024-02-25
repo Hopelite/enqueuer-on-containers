@@ -7,7 +7,7 @@ namespace Enqueuer.Queueing.Domain.Models;
 /// <summary>
 /// The domain model representing an ordered sequence of participants.
 /// </summary>
-public class Queue : Entity
+public class Queue : Entity, IQueueEntity
 {
     private static readonly IdentityComparer ParticipantIdentityComparer = new();
     internal readonly Dictionary<uint, Participant> _participants = new();
@@ -58,6 +58,12 @@ public class Queue : Entity
     /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the participant with the specified <paramref name="participantId"/> already exists in the queue.</exception>
     public void EnqueueParticipantAt(long participantId, uint position)
     {
+        (this as IQueueEntity).EnqueueParticipantAt(participantId, position);
+        AddDomainEvent(new ParticipantEnqueuedAtEvent(GroupId, queueName: Name, participantId, position, DateTime.UtcNow));
+    }
+
+    void IQueueEntity.EnqueueParticipantAt(long participantId, uint position)
+    {
         var participant = new Participant(participantId, position);
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
         {
@@ -70,11 +76,15 @@ public class Queue : Entity
             throw new PositionReservedException(
                 $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
         }
-
-        AddDomainEvent(new ParticipantEnqueuedAtEvent(GroupId, queueName: Name, participantId, position, DateTime.UtcNow));
     }
 
     public void DequeueParticipant(long participantId)
+    {
+        (this as IQueueEntity).DequeueParticipant(participantId);
+        AddDomainEvent(new ParticipantDequeuedEvent(GroupId, queueName: Name, participantId, DateTime.UtcNow));
+    }
+
+    void IQueueEntity.DequeueParticipant(long participantId)
     {
         var participant = _participants.Values.FirstOrDefault(p => p.Id == participantId);
         if (participant == null || !_participants.Remove(participant.Position.Number))
@@ -82,8 +92,6 @@ public class Queue : Entity
             throw new ParticipantDoesNotExistException(
                 $"Participant '{participantId}' does not exist in the queue '{Name}'.");
         }
-
-        AddDomainEvent(new ParticipantDequeuedEvent(GroupId, queueName: Name, participantId, DateTime.UtcNow));
     }
 
     private class IdentityComparer : IEqualityComparer<Participant>
@@ -102,27 +110,6 @@ public class Queue : Entity
         public int GetHashCode([DisallowNull] Participant participant)
         {
             return participant.Id.GetHashCode();
-        }
-    }
-
-    private readonly struct ParticipantKey(long id, uint position) : IEquatable<ParticipantKey>
-    {
-        private readonly long _id = id;
-        private readonly uint _position = position;
-
-        public bool Equals(ParticipantKey other)
-        {
-            return _id == other._id || _position == other._position;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return obj is ParticipantKey key && Equals(key);
-        }
-
-        public override int GetHashCode()
-        {
-            return 1; // Skip hash code comparison
         }
     }
 }

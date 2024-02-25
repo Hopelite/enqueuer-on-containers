@@ -1,5 +1,4 @@
 ﻿using Enqueuer.Queueing.Contract.V1;
-using Enqueuer.Queueing.Contract.V1.Commands;
 using Enqueuer.Telegram.BFF.Core.Models.Extensions;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
 using Enqueuer.Telegram.BFF.Messages.Localization;
@@ -39,7 +38,7 @@ public class CreateQueueMessageHandler(
 
         try
         {
-            await _queueingClient.CreateQueueAsync(new CreateQueueCommand(queueContext.QueueName, messageContext.Chat.Id), cancellationToken);
+            await _queueingClient.CreateQueueAsync(messageContext.Chat.Id, queueContext.QueueName, cancellationToken);
         }
         catch (Exception ex)
         {

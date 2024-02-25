@@ -1,6 +1,4 @@
-﻿using Enqueuer.Queueing.Contract.V1.Commands;
-using Enqueuer.Queueing.Contract.V1.Commands.ViewModels;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enqueuer.Queueing.Contract.V1
@@ -11,15 +9,13 @@ namespace Enqueuer.Queueing.Contract.V1
     public interface IQueueingClient
     {
         /// <summary>
-        /// Creates a queue with the specified name and returns its unique identifier.
+        /// Creates a queue with the specified name.
         /// </summary>
-        Task CreateQueueAsync(CreateQueueCommand command, CancellationToken cancellationToken);
+        Task CreateQueueAsync(long groupId, string queueName, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes a queue with the specified name.
         /// </summary>
-        Task DeleteGroupQueue(DeleteGroupQueueCommand command, CancellationToken cancellationToken);
-
-        Task<EnqueuedParticipantViewModel> EnqueueParticipant(int queueId, EnqueueParticipantCommand command, CancellationToken cancellationToken);
+        Task DeleteGroupQueue(long groupId, string queueName, CancellationToken cancellationToken);
     }
 }

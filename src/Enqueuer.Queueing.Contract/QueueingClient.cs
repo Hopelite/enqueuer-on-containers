@@ -1,9 +1,6 @@
-﻿using Enqueuer.Queueing.Contract.V1.Commands;
-using Enqueuer.Queueing.Contract.V1.Commands.ViewModels;
-using Enqueuer.Queueing.Contract.V1.Exceptions;
+﻿using Enqueuer.Queueing.Contract.V1.Exceptions;
 using System;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,19 +18,12 @@ namespace Enqueuer.Queueing.Contract.V1
             };
         }
 
-        public async Task CreateQueueAsync(CreateQueueCommand command, CancellationToken cancellationToken)
+        public async Task CreateQueueAsync(long groupId, string queueName, CancellationToken cancellationToken)
         {
-            if (command == null)
-            {
-                throw new ArgumentNullException(nameof(command));
-            }
-
-            var content = JsonContent.Create(command);
-
             HttpResponseMessage response;
             try
             {
-                response = await _httpClient.PostAsync("/api/queues/", content, cancellationToken);
+                response = await _httpClient.PostAsync($"/api/groups/{groupId}/queues/{queueName}", content: null, cancellationToken);
                 if (!response.IsSuccessStatusCode)
                 {
                     throw new QueueingClientException("Response code for queue creation indicates failure.");
@@ -45,12 +35,7 @@ namespace Enqueuer.Queueing.Contract.V1
             }
         }
 
-        public Task DeleteGroupQueue(DeleteGroupQueueCommand command, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<EnqueuedParticipantViewModel> EnqueueParticipant(int queueId, EnqueueParticipantCommand command, CancellationToken cancellationToken)
+        public Task DeleteGroupQueue(long groupId, string queueName, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

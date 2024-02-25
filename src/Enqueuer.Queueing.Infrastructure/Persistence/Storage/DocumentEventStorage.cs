@@ -9,6 +9,7 @@ public class DocumentEventStorage : IEventStorage
 {
     private readonly IMongoCollection<DomainEvent> _eventCollection;
 
+    // TODO: refactor events serialization registration
     static DocumentEventStorage()
     {
         BsonClassMap.RegisterClassMap<DomainEvent>(c =>
@@ -30,6 +31,21 @@ public class DocumentEventStorage : IEventStorage
             c.MapMember(e => e.QueueName);
             c.MapCreator(e => new QueueDeletedEvent(e.AggregateId, e.QueueName, e.Timestamp));
         });
+
+        BsonClassMap.RegisterClassMap<ParticipantEnqueuedAtEvent>(c =>
+        {
+            c.MapMember(e => e.QueueName);
+            c.MapMember(e => e.ParticipantId);
+            c.MapMember(e => e.Position);
+            c.MapCreator(e => new ParticipantEnqueuedAtEvent(e.AggregateId, e.QueueName, e.ParticipantId, e.Position, e.Timestamp));
+        });
+
+        BsonClassMap.RegisterClassMap<ParticipantDequeuedEvent>(c =>
+        {
+            c.MapMember(e => e.QueueName);
+            c.MapMember(e => e.ParticipantId);
+            c.MapCreator(e => new ParticipantDequeuedEvent(e.AggregateId, e.QueueName, e.ParticipantId, e.Timestamp));
+        });
     }
 
     public DocumentEventStorage(IOptions<EventsDatabaseSettings> databaseSettings)
@@ -46,7 +62,8 @@ public class DocumentEventStorage : IEventStorage
 
     public async Task<IEnumerable<DomainEvent>> GetAggregateEventsAsync(long aggregateId, CancellationToken cancellationToken)
     {
-        return await (await _eventCollection.FindAsync(e => e.AggregateId == aggregateId, cancellationToken: cancellationToken))
+        return await _eventCollection.Find(e => e.AggregateId == aggregateId)
+            .SortBy(e => e.Timestamp)
             .ToListAsync(cancellationToken);
     }
 

@@ -33,6 +33,10 @@ public class GroupRepository : IGroupRepository
 
     public Task SaveChangesAsync(IGroupAggregate group, CancellationToken cancellationToken)
     {
-        return _eventStorage.WriteEventsAsync(((Group)group).DomainEvents, cancellationToken);
+        var domainEvents = ((Group)group).DomainEvents.Concat(
+            ((Group)group).Queues.SelectMany(q => q.DomainEvents))
+            .OrderBy(e => e.Timestamp);
+
+        return _eventStorage.WriteEventsAsync(domainEvents, cancellationToken);
     }
 }

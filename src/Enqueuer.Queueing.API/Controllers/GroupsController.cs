@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Enqueuer.Queueing.Contract.V1.Commands;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Controllers;
@@ -33,5 +34,19 @@ public class GroupsController : ControllerBase
     {
         var removeQueueCommand = new Application.Commands.RemoveQueueCommand(groupId, queueName);
         return _mediator.Send(removeQueueCommand, cancellationToken);
+    }
+
+    [HttpPut("{groupId}/queues/{queueName}/participants/{position}")]
+    public Task<IActionResult> EnqueueParticipantAt(long groupId, string queueName, uint position, EnqueueParticipantAtCommand command, CancellationToken cancellationToken)
+    {
+        var enqueueCommand = new Application.Commands.EnqueueParticipantAtCommand(groupId, queueName, command.ParticipantId, position);
+        return _mediator.Send(enqueueCommand, cancellationToken);
+    }
+
+    [HttpDelete("{groupId}/queues/{queueName}/participants")]
+    public Task<IActionResult> DequeueParticipant(long groupId, string queueName, DequeueParticipantCommand command, CancellationToken cancellationToken)
+    {
+        var dequeueCommand = new Application.Commands.DequeueParticipantCommand(groupId, queueName, command.ParticipantId);
+        return _mediator.Send(dequeueCommand, cancellationToken);
     }
 }
