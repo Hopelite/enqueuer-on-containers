@@ -78,6 +78,11 @@ public class Queue : Entity, IQueueEntity
         }
     }
 
+    /// <summary>
+    /// Dequeues a participant with the specified <paramref name="participantId"/> from the queue.
+    /// </summary>
+    /// <param name="participantId">The unique identifier of the participant removed from the queue.</param>
+    /// <remarks>
     public void DequeueParticipant(long participantId)
     {
         (this as IQueueEntity).DequeueParticipant(participantId);
