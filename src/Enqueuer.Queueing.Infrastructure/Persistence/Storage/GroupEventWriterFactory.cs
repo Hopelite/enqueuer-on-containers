@@ -1,4 +1,7 @@
 ﻿using Enqueuer.Queueing.Domain.Models;
+using Enqueuer.Queueing.Infrastructure.Messaging;
+using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
+using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Writing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -17,8 +20,9 @@ public class GroupEventWriterFactory : IEventWriterFactory<Group>
     {
         var eventStorage = _serviceProvider.GetRequiredService<IEventStorage>();
         var aggregateBuilder = _serviceProvider.GetRequiredService<IAggregateRootBuilder<Group>>();
+        var eventPublisher = _serviceProvider.GetRequiredService<IEventPublisher>();
         var logger = _serviceProvider.GetRequiredService<ILogger<EventWriter>>();
 
-        return new EventWriter(aggregateId, eventStorage, aggregateBuilder, logger);
+        return new EventWriter(aggregateId, eventStorage, aggregateBuilder, eventPublisher, logger);
     }
 }

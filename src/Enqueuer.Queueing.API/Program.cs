@@ -6,6 +6,8 @@ using Enqueuer.Queueing.Domain.Repositories;
 using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage;
+using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
+using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Writing;
 
 namespace Enqueuer.Queueing.API;
 
@@ -45,7 +47,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        //builder.Services.AddTransient<IEventDispatcher, BusEventDispatcher>();
+        builder.Services.AddTransient<IEventPublisher, BusEventPublisher>();
 
         builder.Services.AddMediatR(configuration =>
         {
@@ -55,7 +57,7 @@ public class Program
         builder.Services.AddAutoMapper(configuration =>
         {
             configuration.MapDomainEvent<Domain.Events.QueueCreatedEvent, Contract.V1.Events.QueueCreatedEvent>();
-            configuration.MapDomainEvent<Domain.Events.QueueDeletedEvent, Contract.V1.Events.QueueRemovedEvent>();
+            configuration.MapDomainEvent<Domain.Events.QueueDeletedEvent, Contract.V1.Events.QueueDeletedEvent>();
         });
 
         //builder.Services.AddRabbitMQClient();

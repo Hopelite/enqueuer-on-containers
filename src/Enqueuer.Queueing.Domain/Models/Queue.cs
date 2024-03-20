@@ -38,7 +38,7 @@ public class Queue : Entity, IQueueEntity
     /// at the first available position in the queue.
     /// </summary>
     /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the participant with the specified <paramref name="participantId"/> already exists in the queue.</exception>
-    public void EnqueueParticipant(long participantId)
+    internal void EnqueueParticipant(long participantId)
     {
         (this as IQueueEntity).EnqueueParticipant(participantId);
         AddDomainEvent(new ParticipantEnqueuedEvent(GroupId, queueName: Name, participantId, DateTime.UtcNow));
@@ -74,7 +74,7 @@ public class Queue : Entity, IQueueEntity
     /// </remarks>
     /// <exception cref="PositionReservedException">Thrown, if participant's position is reserved.</exception>
     /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the participant with the specified <paramref name="participantId"/> already exists in the queue.</exception>
-    public void EnqueueParticipantAt(long participantId, uint position)
+    internal void EnqueueParticipantAt(long participantId, uint position)
     {
         (this as IQueueEntity).EnqueueParticipantAt(participantId, position);
         AddDomainEvent(new ParticipantEnqueuedAtEvent(GroupId, queueName: Name, participantId, position, DateTime.UtcNow));
@@ -101,7 +101,7 @@ public class Queue : Entity, IQueueEntity
     /// </summary>
     /// <param name="participantId">The unique identifier of the participant removed from the queue.</param>
     /// <remarks>
-    public void DequeueParticipant(long participantId)
+    internal void DequeueParticipant(long participantId)
     {
         (this as IQueueEntity).DequeueParticipant(participantId);
         AddDomainEvent(new ParticipantDequeuedEvent(GroupId, queueName: Name, participantId, DateTime.UtcNow));

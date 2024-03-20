@@ -1,4 +1,5 @@
-﻿using Enqueuer.Queueing.Domain.Models;
+﻿using Enqueuer.Queueing.Domain.Exceptions;
+using Enqueuer.Queueing.Domain.Models;
 
 namespace Enqueuer.Queueing.Domain.Events;
 
@@ -23,6 +24,9 @@ public class QueueCreatedEvent : DomainEvent
     public override void ApplyTo(Group group)
     {
         var createdQueue = new Queue(groupId: AggregateId, QueueName);
-        group._queues.Add(createdQueue.Name, createdQueue);
+        if (!group._queues.TryAdd(createdQueue.Name, createdQueue))
+        {
+            throw new QueueAlreadyExistsException($"Queue '{QueueName}' already exists in the group '{AggregateId}'.");
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Enqueuer.Queueing.Domain.Events;
 
-namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage;
+namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
 
 /// <summary>
 /// Constructs <typeparamref name="TAggregate"/> from domain events.

@@ -1,9 +1,9 @@
 ﻿using Enqueuer.Queueing.Domain.Models;
 using System.Collections.Concurrent;
 
-namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage;
+namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage.Writing;
 
-public class EventWriterManager : IEventWriterManager<Group>, IDisposable
+public sealed class EventWriterManager : IEventWriterManager<Group>, IDisposable
 {
     private readonly ConcurrentDictionary<long, IEventWriter<Group>> _activeWriters;
     private readonly CancellationTokenSource _cancellationTokenSource;

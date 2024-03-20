@@ -40,7 +40,7 @@ public class QueueCreatedHandler(
             var callbackData = new CallbackData
             {
                 Command = "eqm", // TODO: possibly replace with enum
-                QueueId = @event.QueueId,
+                //QueueId = @event.QueueId,
             };
 
             var jsonData = serializer.Serialize(callbackData);

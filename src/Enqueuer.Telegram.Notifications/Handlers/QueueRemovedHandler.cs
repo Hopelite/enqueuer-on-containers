@@ -14,14 +14,14 @@ public class QueueRemovedHandler(
     IChatConfigurationService chatConfigurationService,
     ILocalizationProvider localizationProvider,
     IInlineMarkupBuilder markupBuilder,
-    ITelegramBotClient telegramClient) : IntegrationEventHandlerBase<QueueRemovedEvent>
+    ITelegramBotClient telegramClient) : IntegrationEventHandlerBase<QueueDeletedEvent>
 {
     private readonly IChatConfigurationService _chatConfigurationService = chatConfigurationService;
     private readonly ILocalizationProvider _localizationProvider = localizationProvider;
     private readonly IInlineMarkupBuilder _markupBuilder = markupBuilder;
     private readonly ITelegramBotClient _telegramClient = telegramClient;
 
-    public override async Task HandleAsync(QueueRemovedEvent @event, CancellationToken cancellationToken)
+    public override async Task HandleAsync(QueueDeletedEvent @event, CancellationToken cancellationToken)
     {
         var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken);
         var chatCulture = new CultureInfo(chatConfiguration.NotificationsLanguageCode);

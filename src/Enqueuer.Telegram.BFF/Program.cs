@@ -4,7 +4,6 @@ using Enqueuer.Telegram.BFF.Core.Models.Messages;
 using Enqueuer.Telegram.BFF.Messages;
 using Enqueuer.Telegram.BFF.Messages.Factories;
 using Enqueuer.Telegram.BFF.Messages.Handlers;
-using Enqueuer.Telegram.Shared.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;

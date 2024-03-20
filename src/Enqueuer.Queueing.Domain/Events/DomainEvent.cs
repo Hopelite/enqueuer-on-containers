@@ -7,6 +7,7 @@ namespace Enqueuer.Queueing.Domain.Events;
 /// </summary>
 public abstract class DomainEvent
 {
+    // TODO: possibly remove
     public string Id { get; set; }
 
     protected DomainEvent(long aggregateId, DateTime timestamp)

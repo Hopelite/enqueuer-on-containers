@@ -2,7 +2,7 @@
 using Enqueuer.Queueing.Domain.Factories;
 using Enqueuer.Queueing.Domain.Models;
 
-namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage;
+namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
 
 public class GroupAggregateBuilder : IAggregateRootBuilder<Group>
 {

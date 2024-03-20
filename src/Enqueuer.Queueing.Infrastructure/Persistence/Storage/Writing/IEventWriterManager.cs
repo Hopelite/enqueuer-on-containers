@@ -1,4 +1,4 @@
-﻿namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage;
+﻿namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage.Writing;
 
 /// <summary>
 /// Defines the manager of <see cref="IEventWriter{TAggregate}"/> instances.
