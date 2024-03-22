@@ -2,6 +2,7 @@
 using Enqueuer.Queueing.Contract.V1.Events;
 using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Services;
+using Enqueuer.Telegram.Shared.Localization;
 using Enqueuer.Telegram.Shared.Markup;
 using Enqueuer.Telegram.Shared.Types;
 using System.Globalization;
@@ -25,7 +26,7 @@ public class QueueCreatedHandler(
 
     public override async Task HandleAsync(QueueCreatedEvent @event, CancellationToken cancellationToken)
     {
-        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.LocationId, cancellationToken);
+        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken);
         var chatCulture = new CultureInfo(chatConfiguration.NotificationsLanguageCode);
 
         var message = await _localizationProvider.GetMessageAsync(
@@ -39,7 +40,7 @@ public class QueueCreatedHandler(
             var callbackData = new CallbackData
             {
                 Command = "eqm", // TODO: possibly replace with enum
-                QueueId = @event.QueueId,
+                //QueueId = @event.QueueId,
             };
 
             var jsonData = serializer.Serialize(callbackData);
@@ -50,7 +51,7 @@ public class QueueCreatedHandler(
         // TODO: retrive chat configuration to determine whether to send notification with sound or not
         // TODO: add telegram client decorator with auto-configured parameters (like parse mode)
         await _telegramClient.SendTextMessageAsync(
-            @event.LocationId,
+            @event.GroupId,
             message,
             parseMode: ParseMode.Html,
             replyMarkup: markup,

@@ -1,17 +1,14 @@
-﻿using Enqueuer.Queueing.Contract.V1.Commands.ViewModels;
-using MediatR;
+﻿namespace Enqueuer.Queueing.API.Application.Commands;
 
-namespace Enqueuer.Queueing.API.Application.Commands;
-
-public class CreateQueueCommand : IRequest<CreatedQueueViewModel>
+public class CreateQueueCommand : IOperation
 {
-    public CreateQueueCommand(string queueName, long locationId)
+    public CreateQueueCommand(long groupId, string queueName)
     {
+        GroupId = groupId;
         QueueName = queueName;
-        LocationId = locationId;
     }
 
-    public string QueueName { get; }
+    public long GroupId { get; }
 
-    public long LocationId { get; }
+    public string QueueName { get; }
 }

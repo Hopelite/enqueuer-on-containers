@@ -1,6 +1,6 @@
 ﻿namespace Enqueuer.Queueing.Domain.Exceptions;
 
-public class ParticipantDoesNotExistException : Exception
+public class ParticipantDoesNotExistException : DomainException
 {
     public ParticipantDoesNotExistException()
     {

@@ -5,16 +5,14 @@ namespace Enqueuer.Queueing.Contract.V1.Events
 {
     public abstract class EventBase : IIntegrationEvent
     {
-        public EventBase()
+        protected EventBase()
         {
             Id = Guid.NewGuid();
-            CreationDate = DateTime.Now;
+            Timestamp = DateTime.Now;
         }
 
         public Guid Id { get; }
 
-        public DateTime CreationDate { get; }
-
-        public abstract string Name { get; }
+        public DateTime Timestamp { get; }
     }
 }

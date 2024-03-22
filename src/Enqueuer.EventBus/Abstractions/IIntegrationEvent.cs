@@ -16,6 +16,6 @@ namespace Enqueuer.EventBus.Abstractions
         /// <summary>
         /// The timespamp when this event was created.
         /// </summary>
-        DateTime CreationDate { get; }
+        DateTime Timestamp { get; }
     }
 }

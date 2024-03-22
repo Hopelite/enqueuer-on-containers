@@ -5,57 +5,28 @@ using System.Diagnostics.CodeAnalysis;
 namespace Enqueuer.Queueing.Domain.Models;
 
 /// <summary>
-/// The aggregate root model representing an ordered sequence of participants.
+/// The domain model representing an ordered sequence of participants.
 /// </summary>
-/// <remarks>
-/// Not thread safe. Intended to be used in a single thread.
-/// The concurrency must be handled by external code.
-/// </remarks>
-public class Queue : Entity
+public class Queue : Entity, IQueueEntity
 {
     private static readonly IdentityComparer ParticipantIdentityComparer = new();
-    private readonly Dictionary<uint, Participant> _participants;
-    private string _name = null!;
+    internal readonly Dictionary<uint, Participant> _participants = new();
 
-    internal Queue(int id, string name, long locationId)
+    internal Queue(long groupId, string name)
     {
-        Id = id;
+        GroupId = groupId;
         Name = name;
-        LocationId = locationId;
-        _participants = new();
     }
 
     /// <summary>
-    /// The unique identifier of the queue entity.
+    /// The unique identifier of the group this queue is related.
     /// </summary>
-    public int Id { get; }
+    public long GroupId { get; }
 
     /// <summary>
-    /// The name of the queue.
+    /// The name of the queue. Must be unique within the group scope.
     /// </summary>
-    public string Name
-    {
-        get => _name;
-        private set
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new InvalidQueueNameException("Queue name can't be null, empty or a whitespace.");
-            }
-
-            if (value.Length > QueueLimits.MaxNameLength)
-            {
-                throw new InvalidQueueNameException($"Queue name can't be longer than {QueueLimits.MaxNameLength} symbols.");
-            }
-
-            _name = value;
-        }
-    }
-
-    /// <summary>
-    /// The unique identifier of the location this queue is related.
-    /// </summary>
-    public long LocationId { get; }
+    public string Name { get; }
 
     /// <summary>
     /// The ordered sequence of reserved positions.
@@ -64,71 +35,86 @@ public class Queue : Entity
 
     /// <summary>
     /// Adds the participant with the specified <paramref name="participantId"/>
+    /// at the first available position in the queue.
+    /// </summary>
+    /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the participant with the specified <paramref name="participantId"/> already exists in the queue.</exception>
+    internal void EnqueueParticipant(long participantId)
+    {
+        (this as IQueueEntity).EnqueueParticipant(participantId);
+        AddDomainEvent(new ParticipantEnqueuedEvent(GroupId, queueName: Name, participantId, DateTime.UtcNow));
+    }
+
+    void IQueueEntity.EnqueueParticipant(long participantId)
+    {
+        var firstAvailablePosition = (uint)Enumerable.Range(1, _participants.Count + 1)
+            .FirstOrDefault(p => !_participants.ContainsKey((uint)p));
+
+        var participant = new Participant(participantId, firstAvailablePosition);
+        if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
+        {
+            throw new ParticipantAlreadyExistsException(
+                $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
+        }
+
+        if (!_participants.TryAdd(firstAvailablePosition, participant))
+        {
+            throw new PositionReservedException(
+                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
+        }
+    }
+
+    /// <summary>
+    /// Adds the participant with the specified <paramref name="participantId"/>
     /// at the specified <paramref name="position"/> in queue.
     /// </summary>
-    /// <param name="participant">The participant to place in queue.</param>
+    /// <param name="participantId">The unique identifier of the participant placed in the queue.</param>
     /// <remarks>
-    /// Implemented as a separate method instead of making <see cref="Participants"/>
+    /// Implemented as a separate method instead of making the <see cref="Participants"/>
     /// of <see cref="ICollection{T}"/> type to enforce the CQRS pattern.
     /// </remarks>
-    /// <exception cref="PositionReservedException">Thrown, if the <paramref name="participant"/>'s position is reserved.</exception>
-    /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the <paramref name="participant"/> already exists in the queue.</exception>
-    public void EnqueueParticipant(long participantId, uint position)
+    /// <exception cref="PositionReservedException">Thrown, if participant's position is reserved.</exception>
+    /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the participant with the specified <paramref name="participantId"/> already exists in the queue.</exception>
+    internal void EnqueueParticipantAt(long participantId, uint position)
+    {
+        (this as IQueueEntity).EnqueueParticipantAt(participantId, position);
+        AddDomainEvent(new ParticipantEnqueuedAtEvent(GroupId, queueName: Name, participantId, position, DateTime.UtcNow));
+    }
+
+    void IQueueEntity.EnqueueParticipantAt(long participantId, uint position)
     {
         var participant = new Participant(participantId, position);
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
         {
             throw new ParticipantAlreadyExistsException(
-                $"Participant '{participant.Id}' already exists in the queue '{Id}'.");
+                $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
         }
 
         if (!_participants.TryAdd(position, participant))
         {
             throw new PositionReservedException(
-                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Id}'.");
+                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
         }
-
-        // TODO: notify about enqueued participant
     }
 
-    public void DequeueParticipant(long participantId)
+    /// <summary>
+    /// Dequeues a participant with the specified <paramref name="participantId"/> from the queue.
+    /// </summary>
+    /// <param name="participantId">The unique identifier of the participant removed from the queue.</param>
+    /// <remarks>
+    internal void DequeueParticipant(long participantId)
+    {
+        (this as IQueueEntity).DequeueParticipant(participantId);
+        AddDomainEvent(new ParticipantDequeuedEvent(GroupId, queueName: Name, participantId, DateTime.UtcNow));
+    }
+
+    void IQueueEntity.DequeueParticipant(long participantId)
     {
         var participant = _participants.Values.FirstOrDefault(p => p.Id == participantId);
         if (participant == null || !_participants.Remove(participant.Position.Number))
         {
             throw new ParticipantDoesNotExistException(
-                $"Participant '{participantId}' does not exist in the queue '{Id}'.");
+                $"Participant '{participantId}' does not exist in the queue '{Name}'.");
         }
-
-        // TODO: notify about dequeued participant
-    }
-
-    /// <summary>
-    /// Removes participant at the specified <paramref name="position"/> from the queue.
-    /// </summary>
-    /// <exception cref="ParticipantDoesNotExistException">Thrown, if participant at the specified <paramref name="position"/> does not exist in the queue.</exception>
-    public void DequeueParticipantAt(uint position)
-    {
-        if (!_participants.Remove(position, out var participant))
-        {
-            throw new ParticipantDoesNotExistException(
-                $"Position '{position}' is not reserved in the queue '{Id}'.");
-        }
-
-        // TODO: notify about dequeued participant
-    }
-
-    /// <summary>
-    /// Changes the <see cref="Name"/> to <paramref name="newName"/>.
-    /// </summary>
-    /// <exception cref="ArgumentNullException"></exception>
-    public void ChangeName(string newName)
-    {
-        var oldName = Name;
-
-        Name = newName;
-
-        AddDomainEvent(new QueueRenamedEvent(Id, oldName, newName));
     }
 
     private class IdentityComparer : IEqualityComparer<Participant>
@@ -147,27 +133,6 @@ public class Queue : Entity
         public int GetHashCode([DisallowNull] Participant participant)
         {
             return participant.Id.GetHashCode();
-        }
-    }
-
-    private readonly struct ParticipantKey(long id, uint position) : IEquatable<ParticipantKey>
-    {
-        private readonly long _id = id;
-        private readonly uint _position = position;
-
-        public bool Equals(ParticipantKey other)
-        {
-            return _id == other._id || _position == other._position;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            return obj is ParticipantKey key && Equals(key);
-        }
-
-        public override int GetHashCode()
-        {
-            return 1; // Skip hash code comparison
         }
     }
 }

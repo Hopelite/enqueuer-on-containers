@@ -1,24 +1,36 @@
-﻿using Enqueuer.Queueing.Contract.V1.Commands.ViewModels;
+﻿using Enqueuer.Queueing.Domain.Exceptions;
 using Enqueuer.Queueing.Domain.Repositories;
-using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Application.Commands.Handlers;
 
-public class CreateQueueCommandHandler : IRequestHandler<CreateQueueCommand, CreatedQueueViewModel>
+public class CreateQueueCommandHandler : IOperationHandler<CreateQueueCommand>
 {
-    private readonly IQueueRepository _queueRepository;
+    private readonly IGroupRepository _groupRepository;
 
-    public CreateQueueCommandHandler(IQueueRepository queueRepository)
+    public CreateQueueCommandHandler(IGroupRepository groupRepository)
     {
-        _queueRepository = queueRepository;
+        _groupRepository = groupRepository;
     }
 
-    public async Task<CreatedQueueViewModel> Handle(CreateQueueCommand request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Handle(CreateQueueCommand request, CancellationToken cancellationToken)
     {
-        var queue = _queueRepository.CreateNewQueue(request.QueueName, request.LocationId);
+        var group = await _groupRepository.GetGroupAsync(request.GroupId, cancellationToken);
 
-        await _queueRepository.SaveChangesAsync(cancellationToken);
+        try
+        {
+            group.CreateQueue(request.QueueName);
+        }
+        catch (InvalidQueueNameException ex)
+        {
+            return new BadRequestObjectResult(ex.Message);
+        }
+        catch (QueueAlreadyExistsException ex)
+        {
+            return new ConflictObjectResult(ex.Message);
+        }
 
-        return new CreatedQueueViewModel(queue.Id);
+        await _groupRepository.SaveChangesAsync(group, cancellationToken);
+        return new OkResult();
     }
 }

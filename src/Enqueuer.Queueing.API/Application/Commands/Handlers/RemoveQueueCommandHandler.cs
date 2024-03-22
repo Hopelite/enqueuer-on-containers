@@ -1,23 +1,31 @@
-﻿using Enqueuer.Queueing.Domain.Repositories;
-using MediatR;
+﻿using Enqueuer.Queueing.Domain.Exceptions;
+using Enqueuer.Queueing.Domain.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Application.Commands.Handlers;
 
-public class RemoveQueueCommandHandler : IRequestHandler<RemoveQueueCommand>
+public class RemoveQueueCommandHandler : IOperationHandler<RemoveQueueCommand>
 {
-    private readonly IQueueRepository _queueRepository;
+    private readonly IGroupRepository _groupRepository;
 
-    public RemoveQueueCommandHandler(IQueueRepository queueRepository)
+    public RemoveQueueCommandHandler(IGroupRepository groupRepository)
     {
-        _queueRepository = queueRepository;
+        _groupRepository = groupRepository;
     }
 
-    public async Task Handle(RemoveQueueCommand request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Handle(RemoveQueueCommand request, CancellationToken cancellationToken)
     {
-        var queue = await _queueRepository.GetQueueAsync(request.Id, cancellationToken);
+        var group = await _groupRepository.GetGroupAsync(request.GroupId, cancellationToken);
+        try
+        {
+            group.DeleteQueue(request.QueueName);
+        }
+        catch (QueueDoesNotExistException ex)
+        {
+            return new NotFoundObjectResult(ex.Message);
+        }
 
-        _queueRepository.DeleteQueue(queue);
-
-        await _queueRepository.SaveChangesAsync(cancellationToken);
+        await _groupRepository.SaveChangesAsync(group, cancellationToken);
+        return new OkResult();
     }
 }

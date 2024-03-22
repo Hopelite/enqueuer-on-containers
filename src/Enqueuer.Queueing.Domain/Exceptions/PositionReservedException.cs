@@ -1,6 +1,6 @@
 ﻿namespace Enqueuer.Queueing.Domain.Exceptions;
 
-public class PositionReservedException : Exception
+public class PositionReservedException : DomainException
 {
     public PositionReservedException()
     {
