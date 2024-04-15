@@ -58,6 +58,10 @@ public class Program
         {
             configuration.MapDomainEvent<Domain.Events.QueueCreatedEvent, Contract.V1.Events.QueueCreatedEvent>();
             configuration.MapDomainEvent<Domain.Events.QueueDeletedEvent, Contract.V1.Events.QueueDeletedEvent>();
+
+
+
+            configuration.MapRejectedDomainEvent<Infrastructure.Messaging.RejectedEvent, Contract.V1.Events.RejectedEvents.QueueAlreadyExistsEvent>();
         });
 
         //builder.Services.AddRabbitMQClient();

@@ -76,14 +76,6 @@ public class Group : Entity, IGroupAggregate
         queue.DequeueParticipant(participantId);
     }
 
-    /// <summary>
-    /// Applies <paramref name="domainEvent"/> to this group.
-    /// </summary>
-    public void Apply(DomainEvent domainEvent)
-    {
-        domainEvent.ApplyTo(this);
-    }
-
     private Queue GetExistingQueueOrThrow(string queueName)
     {
         if (!_queues.TryGetValue(queueName, out var queue))

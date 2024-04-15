@@ -6,14 +6,9 @@ namespace Enqueuer.Queueing.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GroupsController : ControllerBase
+public class GroupsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public GroupsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet("{groupId}/queues")]
     public Task<IActionResult> GetGroupQueues(long groupId, CancellationToken cancellationToken)

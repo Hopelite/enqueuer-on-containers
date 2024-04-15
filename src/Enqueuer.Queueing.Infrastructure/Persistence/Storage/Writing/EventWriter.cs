@@ -51,24 +51,41 @@ internal class EventWriter : BackgroundService, IEventWriter<Group>
         {
             try
             {
-                group.Apply(@event);
-                await _eventStorage.WriteEventAsync(@event, stoppingToken);
-
-
-                await _eventPublisher.PublishEventAsync(@event, stoppingToken);
+                @event.ApplyTo(group);
             }
             catch (DomainException ex)
             {
-                // TODO: notify about rejected event
                 _logger.LogInformation(ex, "Rejected event '{EventName}' for the group '{GroupId}'.", @event.Name, _aggregateId);
+                await TryPublishEventRejectedAsync(@event, ex, stoppingToken);
+                continue;
+            }
+
+            try
+            {
+                await _eventStorage.WriteEventAsync(@event, stoppingToken);
+                await _eventPublisher.PublishEventAsync(@event, stoppingToken);
             }
             catch (Exception ex)
             {
-                // TODO: possibly notify about rejected event
                 _logger.LogError(ex, "A non-domain exception was thrown during the '{EventName}' writing for the group '{GroupId}'.", @event.Name, _aggregateId);
+                await TryPublishEventRejectedAsync(@event, ex, stoppingToken);
             }
         }
 
         _logger.LogInformation("Stopped {EventWriter} for aggregate root '{AggregateId}'.", nameof(EventWriter), _aggregateId);
+    }
+
+    private Task TryPublishEventRejectedAsync(DomainEvent rejectedEvent, Exception exception, CancellationToken cancellationToken)
+    {
+        try
+        {
+            //return _eventPublisher.PublishEventAsync(new RejectedEvent(rejectedEvent, exception), cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to notify about rejected '{EventName}' for the group '{GroupId}'.", rejectedEvent.Name, _aggregateId);
+        }
+
+        return Task.CompletedTask;
     }
 }

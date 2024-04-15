@@ -4,21 +4,16 @@ using Enqueuer.Queueing.Domain.Models;
 
 namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
 
-public class GroupAggregateBuilder : IAggregateRootBuilder<Group>
+public class GroupAggregateBuilder(IGroupFactory groupFactory) : IAggregateRootBuilder<Group>
 {
-    private readonly IGroupFactory _groupFactory;
-
-    public GroupAggregateBuilder(IGroupFactory groupFactory)
-    {
-        _groupFactory = groupFactory;
-    }
+    private readonly IGroupFactory _groupFactory = groupFactory;
 
     public Group Build(long aggregateId, IEnumerable<DomainEvent> domainEvents)
     {
         var group = _groupFactory.Create(aggregateId);
         foreach (var @event in domainEvents)
         {
-            group.Apply(@event);
+            @event.ApplyTo(group);
         }
 
         return group;

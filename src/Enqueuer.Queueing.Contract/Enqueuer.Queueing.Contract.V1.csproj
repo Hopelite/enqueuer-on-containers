@@ -12,8 +12,4 @@
     <ProjectReference Include="..\Enqueuer.EventBus\Enqueuer.EventBus.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Events\RejectedEvents\" />
-  </ItemGroup>
-
 </Project>

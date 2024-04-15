@@ -14,7 +14,12 @@ services:
       # - sqlserver
       - eventbus
       - mongodb
-  
+    # healthcheck:
+    #     test: ["CMD-SHELL", "curl --fail http://localhost:8080/health || exit 1"]
+    #     interval: 30s
+    #     timeout: 30s
+    #     retries: 3
+
   eventbus:
     image: rabbitmq:management-alpine
     ports:

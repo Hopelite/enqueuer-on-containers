@@ -5,18 +5,11 @@ using Enqueuer.Queueing.Infrastructure.Messaging;
 
 namespace Enqueuer.Queueing.API.Application.Messaging;
 
-public class BusEventPublisher : IEventPublisher
+public class BusEventPublisher(IMapper mapper/*, IEventBusClient busClient*/, ILogger<BusEventPublisher> logger) : IEventPublisher
 {
-    private readonly IMapper _mapper;
-    private readonly IEventBusClient _busClient;
-    private readonly ILogger<BusEventPublisher> _logger;
-
-    public BusEventPublisher(IMapper mapper, /*IEventBusClient busClient,*/ ILogger<BusEventPublisher> logger)
-    {
-        _mapper = mapper;
-        //_busClient = busClient;
-        _logger = logger;
-    }
+    private readonly IMapper _mapper = mapper;
+    private readonly IEventBusClient _busClient/* = busClient*/;
+    private readonly ILogger<BusEventPublisher> _logger = logger;
 
     public async Task PublishEventAsync(DomainEvent @event, CancellationToken cancellationToken)
     {
