@@ -51,7 +51,7 @@ public class Program
             }
             else if (telegramUpdate.Type == UpdateType.CallbackQuery && CallbackContext.TryCreate(telegramUpdate.CallbackQuery!, out var callbackContext))
             {
-
+                throw new NotImplementedException();
             }
 
             return Results.Ok();

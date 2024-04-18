@@ -13,21 +13,19 @@ public class RemoveQueueMessageHandler(
     IQueueingClient queueingClient,
     ITelegramBotClient telegramClient,
     ILocalizationProvider localizationProvider,
-    ILogger<CreateQueueMessageHandler> logger) : IMessageHandler
+    ILogger<CreateQueueMessageHandler> logger) : MessageHandlerBase(telegramClient, localizationProvider)
 {
     private readonly IQueueingClient _queueingClient = queueingClient;
-    private readonly ITelegramBotClient _telegramClient = telegramClient;
-    private readonly ILocalizationProvider _localizationProvider = localizationProvider;
     private readonly ILogger<CreateQueueMessageHandler> _logger = logger;
 
-    public async Task HandleAsync(MessageContext messageContext, CancellationToken cancellationToken)
+    public override async Task HandleAsync(MessageContext messageContext, CancellationToken cancellationToken)
     {
         var queueContext = messageContext.Command!.GetQueueName();
 
         if (string.IsNullOrEmpty(queueContext.QueueName))
         {
-            var errorMessage = await _localizationProvider.GetMessageAsync(MessageKeys.DeleteQueueErrorMissingQueueName, MessageParameters.None, cancellationToken);
-            await _telegramClient.SendTextMessageAsync(
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.DeleteQueueErrorMissingQueueName, MessageParameters.None, cancellationToken);
+            await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,
                 parseMode: ParseMode.Html,
@@ -38,19 +36,12 @@ public class RemoveQueueMessageHandler(
 
         try
         {
-            await _queueingClient.DeleteGroupQueue(messageContext.Chat.Id, queueContext.QueueName, cancellationToken);
+            await _queueingClient.DeleteQueueAsync(messageContext.Chat.Id, queueContext.QueueName, cancellationToken);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occured during queue '{QueueName}' deletion in the chat '{ChatId}'.", queueContext.QueueName, messageContext.Chat.Id);
-
-            var errorMessage = await _localizationProvider.GetMessageAsync(MessageKeys.GeneralErrorInternal, MessageParameters.None, cancellationToken);
-            await _telegramClient.SendTextMessageAsync(
-                chatId: messageContext.Chat.Id,
-                text: errorMessage,
-                parseMode: ParseMode.Html,
-                cancellationToken: cancellationToken);
-
+            await NotifyUserAboutInternalErrorAsync(messageContext, cancellationToken);
             return;
         }
     }

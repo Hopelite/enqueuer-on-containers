@@ -82,6 +82,8 @@ public class Queue : Entity, IQueueEntity
 
     void IQueueEntity.EnqueueParticipantAt(long participantId, uint position)
     {
+        // TODO: add position validation
+
         var participant = new Participant(participantId, position);
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
         {

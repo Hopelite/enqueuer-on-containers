@@ -4,16 +4,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Application.Commands.Handlers;
 
-public class EnqueueParticipantAtCommandHandler : IOperationHandler<EnqueueParticipantAtCommand>
+public class EnqueueParticipantToCommandHandler : IOperationHandler<EnqueueParticipantToCommand>
 {
     private readonly IGroupRepository _groupRepository;
 
-    public EnqueueParticipantAtCommandHandler(IGroupRepository groupRepository)
+    public EnqueueParticipantToCommandHandler(IGroupRepository groupRepository)
     {
         _groupRepository = groupRepository;
     }
 
-    public async Task<IActionResult> Handle(EnqueueParticipantAtCommand request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Handle(EnqueueParticipantToCommand request, CancellationToken cancellationToken)
     {
         var group = await _groupRepository.GetGroupAsync(request.GroupId, cancellationToken);
         try

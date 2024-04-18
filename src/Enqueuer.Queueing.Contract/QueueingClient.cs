@@ -1,4 +1,5 @@
-﻿using Enqueuer.Queueing.Contract.V1.Exceptions;
+﻿using Enqueuer.Queueing.Contract.V1.Commands;
+using Enqueuer.Queueing.Contract.V1.Exceptions;
 using System;
 using System.Net.Http;
 using System.Threading;
@@ -35,7 +36,17 @@ namespace Enqueuer.Queueing.Contract.V1
             }
         }
 
-        public Task DeleteGroupQueue(long groupId, string queueName, CancellationToken cancellationToken)
+        public Task DeleteQueueAsync(long groupId, string queueName, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task EnqueueParticipant(long groupId, string queueName, EnqueueParticipantCommand command, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task EnqueueParticipantTo(long groupId, string queueName, uint position, EnqueueParticipantToCommand command, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

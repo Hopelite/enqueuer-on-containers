@@ -1,8 +1,8 @@
 ﻿namespace Enqueuer.Queueing.API.Application.Commands;
 
-public class EnqueueParticipantAtCommand : IOperation
+public class EnqueueParticipantToCommand : IOperation
 {
-    public EnqueueParticipantAtCommand(long groupId, string queueName, long participantId, uint position)
+    public EnqueueParticipantToCommand(long groupId, string queueName, long participantId, uint position)
     {
         GroupId = groupId;
         QueueName = queueName;
