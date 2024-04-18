@@ -1,4 +1,5 @@
 ﻿using Enqueuer.Queueing.Contract.V1;
+using Enqueuer.Queueing.Contract.V1.Commands;
 using Enqueuer.Telegram.BFF.Core.Models.Extensions;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
 using Enqueuer.Telegram.BFF.Messages.Localization;
@@ -9,7 +10,7 @@ using Telegram.Bot.Types.Enums;
 
 namespace Enqueuer.Telegram.BFF.Messages.Handlers;
 
-public class RemoveQueueMessageHandler(
+public class DequeueMessageHandler(
     IQueueingClient queueingClient,
     ITelegramBotClient telegramClient,
     ILocalizationProvider localizationProvider,
@@ -24,7 +25,7 @@ public class RemoveQueueMessageHandler(
 
         if (string.IsNullOrEmpty(queueContext.QueueName))
         {
-            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.RemoveQueueErrorMissingQueueName, MessageParameters.None, cancellationToken);
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorMissingQueueName, MessageParameters.None, cancellationToken);
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,
@@ -36,11 +37,12 @@ public class RemoveQueueMessageHandler(
 
         try
         {
-            await _queueingClient.DeleteQueueAsync(messageContext.Chat.Id, queueContext.QueueName, cancellationToken);
+            await _queueingClient.DequeueParticipant(messageContext.Chat.Id, queueContext.QueueName, new DequeueParticipantCommand(messageContext.Sender.Id), cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occured during queue '{QueueName}' deletion in the chat '{ChatId}'.", queueContext.QueueName, messageContext.Chat.Id);
+            _logger.LogError(ex, "An error occured when trying to dequeue participant with ID '{ParticipantId}' from the queue '{QueueName}' in the chat '{ChatId}'.",
+                messageContext.Sender.Id, queueContext.QueueName, messageContext.Chat.Id);
             await NotifyUserAboutInternalErrorAsync(messageContext, cancellationToken);
             return;
         }

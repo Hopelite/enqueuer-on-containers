@@ -28,5 +28,10 @@ namespace Enqueuer.Queueing.Contract.V1
         /// Enqueues participant to the queue with the specified name at the specified position.
         /// </summary>
         Task EnqueueParticipantTo(long groupId, string queueName, uint position, EnqueueParticipantToCommand command, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Dequeues user from the queue with the specified name.
+        /// </summary>
+        Task DequeueParticipant(long groupId, string queueName, DequeueParticipantCommand command, CancellationToken cancellationToken);
     }
 }
