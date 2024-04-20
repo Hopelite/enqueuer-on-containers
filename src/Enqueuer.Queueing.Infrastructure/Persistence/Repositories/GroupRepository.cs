@@ -22,7 +22,7 @@ public class GroupRepository : IGroupRepository
         _groupBuilder = groupBuilder;
     }
 
-    public async Task<IGroupAggregate> GetGroupAsync(long groupId, CancellationToken cancellationToken)
+    public async Task<IGroupAggregate> GetOrCreateGroupAsync(long groupId, CancellationToken cancellationToken)
     {
         var groupEvents = await _eventStorage.GetAggregateEventsAsync(groupId, cancellationToken);
         var group = _groupBuilder.Build(groupId, groupEvents);

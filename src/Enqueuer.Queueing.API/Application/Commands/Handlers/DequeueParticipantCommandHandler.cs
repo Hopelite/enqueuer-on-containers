@@ -15,7 +15,7 @@ public class DequeueParticipantCommandHandler : IOperationHandler<DequeuePartici
 
     public async Task<IActionResult> Handle(DequeueParticipantCommand request, CancellationToken cancellationToken)
     {
-        var group = await _groupRepository.GetGroupAsync(request.GroupId, cancellationToken);
+        var group = await _groupRepository.GetOrCreateGroupAsync(request.GroupId, cancellationToken);
         try
         {
             group.DequeueParticipant(request.QueueName, request.ParticipantId);

@@ -79,13 +79,12 @@ internal class EventWriter : BackgroundService, IEventWriter<Group>
     {
         try
         {
-            //return _eventPublisher.PublishEventAsync(new RejectedEvent(rejectedEvent, exception), cancellationToken);
+            return _eventPublisher.PublishEventAsync(new RejectedEvent(rejectedEvent, exception), cancellationToken);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to notify about rejected '{EventName}' for the group '{GroupId}'.", rejectedEvent.Name, _aggregateId);
+            return Task.CompletedTask;
         }
-
-        return Task.CompletedTask;
     }
 }

@@ -24,7 +24,7 @@ public static class ServiceCollectionExtensions
 
             foreach (var type in types)
             {
-                services.AddScoped(typeof(IMessageHandler), type);
+                services.AddScoped(type);
             }
         }
 

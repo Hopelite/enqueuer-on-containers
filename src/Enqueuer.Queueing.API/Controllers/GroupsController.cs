@@ -27,7 +27,7 @@ public class GroupsController(IMediator mediator) : ControllerBase
     [HttpDelete("{groupId}/queues/{queueName}")]
     public Task<IActionResult> DeleteQueue(long groupId, string queueName, CancellationToken cancellationToken)
     {
-        var removeQueueCommand = new Application.Commands.RemoveQueueCommand(groupId, queueName);
+        var removeQueueCommand = new Application.Commands.DeleteQueueCommand(groupId, queueName);
         return _mediator.Send(removeQueueCommand, cancellationToken);
     }
 

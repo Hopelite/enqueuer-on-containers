@@ -4,18 +4,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Application.Commands.Handlers;
 
-public class RemoveQueueCommandHandler : IOperationHandler<RemoveQueueCommand>
+public class DeleteQueueCommandHandler : IOperationHandler<DeleteQueueCommand>
 {
     private readonly IGroupRepository _groupRepository;
 
-    public RemoveQueueCommandHandler(IGroupRepository groupRepository)
+    public DeleteQueueCommandHandler(IGroupRepository groupRepository)
     {
         _groupRepository = groupRepository;
     }
 
-    public async Task<IActionResult> Handle(RemoveQueueCommand request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Handle(DeleteQueueCommand request, CancellationToken cancellationToken)
     {
-        var group = await _groupRepository.GetGroupAsync(request.GroupId, cancellationToken);
+        var group = await _groupRepository.GetOrCreateGroupAsync(request.GroupId, cancellationToken);
         try
         {
             group.DeleteQueue(request.QueueName);

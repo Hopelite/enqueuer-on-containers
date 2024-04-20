@@ -61,10 +61,10 @@ public class Program
 
 
 
-            configuration.MapRejectedDomainEvent<Infrastructure.Messaging.RejectedEvent, Contract.V1.Events.RejectedEvents.QueueAlreadyExistsEvent>();
+            //configuration.MapRejectedDomainEvent<Infrastructure.Messaging.RejectedEvent, Contract.V1.Events.RejectedEvents.QueueAlreadyExistsEvent>();
         });
 
-        //builder.Services.AddRabbitMQClient();
+        builder.Services.AddRabbitMQClient();
 
         // Event sourcing
         builder.Services.AddTransient<IGroupRepository, GroupRepository>();

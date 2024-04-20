@@ -6,6 +6,10 @@ public static class MessageKeys
 
     public const string CreateQueueErrorMissingQueueName = "CreateQueue_Error_MissingQueueName";
 
+    public const string CreateQueueErrorQueueAlreadyExists = "CreateQueue_Error_QueueAlreadyExists";
+
+    public const string CreateQueueErrorInvalidQueueName = "CreateQueue_Error_InvalidQueueName";
+
     public const string CreateQueueErrorPositionMustBePositive = "CreateQueue_Error_PositionMustBePositive";
 
     public const string RemoveQueueErrorMissingQueueName = "RemoveQueue_Error_MissingQueueName";

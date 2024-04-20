@@ -1,5 +1,6 @@
 ﻿using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Commands;
+using Enqueuer.Queueing.Contract.V1.Exceptions;
 using Enqueuer.Telegram.BFF.Core.Models.Extensions;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
 using Enqueuer.Telegram.BFF.Messages.Localization;
@@ -39,6 +40,28 @@ public class CreateQueueMessageHandler(
         {
             await _queueingClient.CreateQueueAsync(messageContext.Chat.Id, queueContext.QueueName, cancellationToken);
         }
+        catch (ResourceAlreadyExistsException)
+        {
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorQueueAlreadyExists, new MessageParameters(queueContext.QueueName), cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: errorMessage,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
+
+            return;
+        }
+        catch (InvalidQueueNameException)
+        {
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorInvalidQueueName, MessageParameters.None, cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: errorMessage,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
+            
+            return;
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occured during queue '{QueueName}' creation in the chat '{ChatId}'.", queueContext.QueueName, messageContext.Chat.Id);
@@ -46,13 +69,16 @@ public class CreateQueueMessageHandler(
             return;
         }
 
-        if (!queueContext.Position.HasValue)
+        if (queueContext.Position.HasValue)
         {
-            return;
+           await EnqueueUserOnSpecifiedPosition(messageContext, queueContext, cancellationToken);
         }
+    }
 
-        // TODO: extract validation to separate other class
-        if (queueContext.Position.Value <= 0)
+    private async Task EnqueueUserOnSpecifiedPosition(MessageContext messageContext, QueueNameContext queueContext, CancellationToken cancellationToken)
+    {        
+        // TODO: extract validation to separate class
+        if (queueContext.Position!.Value <= 0)
         {
             var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorPositionMustBePositive, MessageParameters.None, cancellationToken);
             await telegramClient.SendTextMessageAsync(
@@ -73,7 +99,6 @@ public class CreateQueueMessageHandler(
             _logger.LogError(ex, "An error occured when trying to enqueue participant with ID '{ParticipantId}' to the new queue '{QueueName}' to position '{Position}' in the chat '{ChatId}'.",
                 messageContext.Sender.Id, queueContext.QueueName, queueContext.Position.Value, messageContext.Chat.Id);
             await NotifyUserAboutInternalErrorAsync(messageContext, cancellationToken);
-            return;
         }
     }
 }

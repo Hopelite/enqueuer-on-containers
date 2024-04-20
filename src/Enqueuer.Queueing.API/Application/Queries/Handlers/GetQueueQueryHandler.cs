@@ -15,7 +15,7 @@ public class GetQueueQueryHandler : IOperationHandler<GetGroupQueuesQuery>
 
     public async Task<IActionResult> Handle(GetGroupQueuesQuery request, CancellationToken cancellationToken)
     {
-        var group = await _groupRepository.GetGroupAsync(request.GroupId, cancellationToken);
+        var group = await _groupRepository.GetOrCreateGroupAsync(request.GroupId, cancellationToken);
 
         var queues = group.Queues.Select(q => new Queue(
             q.GroupId,

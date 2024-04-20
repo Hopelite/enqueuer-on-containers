@@ -15,7 +15,7 @@ public class CreateQueueCommandHandler : IOperationHandler<CreateQueueCommand>
 
     public async Task<IActionResult> Handle(CreateQueueCommand request, CancellationToken cancellationToken)
     {
-        var group = await _groupRepository.GetGroupAsync(request.GroupId, cancellationToken);
+        var group = await _groupRepository.GetOrCreateGroupAsync(request.GroupId, cancellationToken);
 
         try
         {

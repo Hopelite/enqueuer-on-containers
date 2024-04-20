@@ -49,6 +49,8 @@ public class Program
 
         app.UseAuthorization();
 
+        // TODO: add get endpoint for chat language and requests it from BFF (it may take a while for changes to apply)
+
         app.MapPut("/chats/{chatId}/language", async (long chatId, [FromBody] ChatNotificationsConfiguration chatConfiguration, [FromServices] IChatConfigurationService configurationService, CancellationToken cancellationToken) =>
         {
             // TODO: add validation whether user has rights to change language via Identity API (requests made on behalf of user)
