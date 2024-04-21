@@ -1,4 +1,5 @@
-﻿using Enqueuer.Queueing.Domain.Models;
+﻿using Enqueuer.Queueing.Domain.Exceptions;
+using Enqueuer.Queueing.Domain.Models;
 
 namespace Enqueuer.Queueing.Domain.Events;
 
@@ -22,6 +23,9 @@ public class QueueDeletedEvent : DomainEvent
 
     public override void ApplyTo(Group group)
     {
-        group._queues.Remove(QueueName);
+        if (!group._queues.Remove(QueueName))
+        {
+            throw new QueueDoesNotExistException(QueueName, $"Queue '{QueueName}' does not exist in the group '{AggregateId}'.");
+        }
     }
 }

@@ -9,24 +9,23 @@ using Telegram.Bot.Types.Enums;
 
 namespace Enqueuer.Telegram.Notifications.Handlers;
 
-public class QueueAlreadyExistsHandler(
+public class QueueDoesNotExistHandler(
     IChatConfigurationService chatConfigurationService,
     ILocalizationProvider localizationProvider,
     ITelegramBotClient telegramClient)
-    : IntegrationEventHandlerBase<QueueAlreadyExistsEvent>
+    : IntegrationEventHandlerBase<QueueDoesNotExistEvent>
 {
     private readonly IChatConfigurationService _chatConfigurationService = chatConfigurationService;
     private readonly ILocalizationProvider _localizationProvider = localizationProvider;
     private readonly ITelegramBotClient _telegramClient = telegramClient;
 
-    public override async Task HandleAsync(QueueAlreadyExistsEvent @event, CancellationToken cancellationToken)
+    public override async Task HandleAsync(QueueDoesNotExistEvent @event, CancellationToken cancellationToken)
     {
-        // TODO: possibly move to base class
         var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken);
         var chatCulture = new CultureInfo(chatConfiguration.NotificationsLanguageCode);
 
         var message = await _localizationProvider.GetMessageAsync(
-            key: NotificationKeys.QueueAlreadyExistsNotification,
+            key: NotificationKeys.QueueDoesNotExistNotification,
             messageParameters: new MessageParameters(chatCulture, @event.QueueName),
             cancellationToken);
 
