@@ -13,8 +13,14 @@ public static class MessageKeys
     public const string CreateQueueErrorPositionMustBePositive = "CreateQueue_Error_PositionMustBePositive";
 
     public const string RemoveQueueErrorMissingQueueName = "RemoveQueue_Error_MissingQueueName";
-
+    
     public const string EnqueueErrorMissingQueueName = "Enqueue_Error_MissingQueueName";
+
+    public const string EnqueueErrorQueueDoesNotExist = "Enqueue_Error_QueueDoesNotExist";
+
+    public const string EnqueueErrorUserAlreadyParticipates = "Enqueue_Error_UserAlreadyParticipates";
+
+    public const string EnqueueErrorPositionIsReserved = "Enqueue_Error_PositionIsReserved";
 
     public const string DequeueErrorMissingQueueName = "Dequeue_Error_MissingQueueName";
 }

@@ -59,7 +59,7 @@ public class Program
             configuration.AddProfile<QueueCreatedEventMapProfile>();
             configuration.AddProfile<QueueDeletedEventMapProfile>();
             configuration.AddProfile<ParticipantEnqueuedEventMapProfile>();
-            configuration.AddProfile<ParticipantEnqueuedOnEventMapProfile>();
+            configuration.AddProfile<ParticipantEnqueuedAtEventMapProfile>();
             configuration.AddProfile<ParticipantDequeuedEventMapProfile>();
         });
 

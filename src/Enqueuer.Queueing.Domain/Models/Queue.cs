@@ -65,7 +65,7 @@ public class Queue : Entity, IQueueEntity
 
     /// <summary>
     /// Adds the participant with the specified <paramref name="participantId"/>
-    /// on the specified <paramref name="position"/> in queue.
+    /// at the specified <paramref name="position"/> in queue.
     /// </summary>
     /// <param name="participantId">The unique identifier of the participant placed in the queue.</param>
     /// <remarks>
@@ -74,13 +74,13 @@ public class Queue : Entity, IQueueEntity
     /// </remarks>
     /// <exception cref="PositionReservedException">Thrown, if participant's position is reserved.</exception>
     /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the participant with the specified <paramref name="participantId"/> already exists in the queue.</exception>
-    internal void EnqueueParticipantOn(long participantId, uint position)
+    internal void EnqueueParticipantAt(long participantId, uint position)
     {
-        (this as IQueueEntity).EnqueueParticipantOn(participantId, position);
-        AddDomainEvent(new ParticipantEnqueuedOnEvent(GroupId, queueName: Name, participantId, position, DateTime.UtcNow));
+        (this as IQueueEntity).EnqueueParticipantAt(participantId, position);
+        AddDomainEvent(new ParticipantEnqueuedAtEvent(GroupId, queueName: Name, participantId, position, DateTime.UtcNow));
     }
 
-    void IQueueEntity.EnqueueParticipantOn(long participantId, uint position)
+    void IQueueEntity.EnqueueParticipantAt(long participantId, uint position)
     {
         // TODO: add position validation
 

@@ -39,9 +39,9 @@ public class GroupsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{groupId}/queues/{queueName}/participants/{position}")]
-    public Task<IActionResult> EnqueueParticipantTo(long groupId, string queueName, uint position, EnqueueParticipantToCommand command, CancellationToken cancellationToken)
+    public Task<IActionResult> EnqueueParticipantTo(long groupId, string queueName, uint position, EnqueueParticipantAtCommand command, CancellationToken cancellationToken)
     {
-        var enqueueCommand = new Application.Commands.EnqueueParticipantToCommand(groupId, queueName, command.ParticipantId, position);
+        var enqueueCommand = new Application.Commands.EnqueueParticipantAtCommand(groupId, queueName, command.ParticipantId, position);
         return _mediator.Send(enqueueCommand, cancellationToken);
     }
 

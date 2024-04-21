@@ -4,21 +4,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Application.Commands.Handlers;
 
-public class EnqueueParticipantToCommandHandler : IOperationHandler<EnqueueParticipantToCommand>
+public class EnqueueParticipantAtCommandHandler : IOperationHandler<EnqueueParticipantAtCommand>
 {
     private readonly IGroupRepository _groupRepository;
 
-    public EnqueueParticipantToCommandHandler(IGroupRepository groupRepository)
+    public EnqueueParticipantAtCommandHandler(IGroupRepository groupRepository)
     {
         _groupRepository = groupRepository;
     }
 
-    public async Task<IActionResult> Handle(EnqueueParticipantToCommand request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Handle(EnqueueParticipantAtCommand request, CancellationToken cancellationToken)
     {
         var group = await _groupRepository.GetOrCreateGroupAsync(request.GroupId, cancellationToken);
         try
         {
-            group.EnqueueParticipantOn(request.QueueName, request.ParticipantId, request.Position);
+            group.EnqueueParticipantAt(request.QueueName, request.ParticipantId, request.Position);
         }
         catch (QueueDoesNotExistException ex)
         {

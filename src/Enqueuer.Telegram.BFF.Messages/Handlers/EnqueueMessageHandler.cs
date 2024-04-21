@@ -1,5 +1,6 @@
 ﻿using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Commands;
+using Enqueuer.Queueing.Contract.V1.Exceptions;
 using Enqueuer.Telegram.BFF.Core.Models.Extensions;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
 using Enqueuer.Telegram.BFF.Messages.Localization;
@@ -50,6 +51,8 @@ public class EnqueueMessageHandler(
         if (queueContext.Position!.Value <= 0)
         {
             var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorPositionMustBePositive, MessageParameters.None, cancellationToken);
+
+            // TODO: consider refactor these calls
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,
@@ -61,7 +64,34 @@ public class EnqueueMessageHandler(
 
         try
         {
-            await _queueingClient.EnqueueParticipantTo(messageContext.Chat.Id, queueContext.QueueName, (uint)queueContext.Position.Value, new EnqueueParticipantToCommand(messageContext.Sender.Id), cancellationToken);
+            await _queueingClient.EnqueueParticipantAt(messageContext.Chat.Id, queueContext.QueueName, (uint)queueContext.Position.Value, new EnqueueParticipantAtCommand(messageContext.Sender.Id), cancellationToken);
+        }
+        catch (ResourceDoesNotExistException)
+        {
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.EnqueueErrorQueueDoesNotExist, new MessageParameters(queueContext.QueueName), cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: errorMessage,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
+        }
+        catch (ParticipantAlreadyExistsException)
+        {
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.EnqueueErrorUserAlreadyParticipates, new MessageParameters(queueContext.QueueName), cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: errorMessage,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
+        }
+        catch (PositionReservedException)
+        {
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.EnqueueErrorPositionIsReserved, new MessageParameters(queueContext.QueueName, queueContext.Position.Value.ToString()), cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: errorMessage,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {
@@ -77,6 +107,24 @@ public class EnqueueMessageHandler(
         try
         {
             await _queueingClient.EnqueueParticipant(messageContext.Chat.Id, queueContext.QueueName, new EnqueueParticipantCommand(messageContext.Sender.Id), cancellationToken);
+        }
+        catch (ResourceDoesNotExistException)
+        {
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.EnqueueErrorQueueDoesNotExist, new MessageParameters(queueContext.QueueName), cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: errorMessage,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
+        }
+        catch (ParticipantAlreadyExistsException)
+        {
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.EnqueueErrorUserAlreadyParticipates, new MessageParameters(queueContext.QueueName), cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: errorMessage,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {

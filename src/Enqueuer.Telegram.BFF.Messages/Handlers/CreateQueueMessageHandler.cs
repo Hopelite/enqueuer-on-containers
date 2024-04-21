@@ -92,7 +92,7 @@ public class CreateQueueMessageHandler(
 
         try
         {
-            await _queueingClient.EnqueueParticipantTo(messageContext.Chat.Id, queueContext.QueueName, (uint)queueContext.Position.Value, new EnqueueParticipantToCommand(messageContext.Sender.Id), cancellationToken);
+            await _queueingClient.EnqueueParticipantAt(messageContext.Chat.Id, queueContext.QueueName, (uint)queueContext.Position.Value, new EnqueueParticipantAtCommand(messageContext.Sender.Id), cancellationToken);
         }
         catch (Exception ex)
         {

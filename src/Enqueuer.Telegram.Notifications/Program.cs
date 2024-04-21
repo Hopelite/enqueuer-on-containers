@@ -30,7 +30,8 @@ public class Program
 
         builder.Services.AddRabbitMQClient()
             .AddSubscription<QueueCreatedEvent, QueueCreatedHandler>()
-            .AddSubscription<QueueDeletedEvent, QueueDeletedHandler>();
+            .AddSubscription<QueueDeletedEvent, QueueDeletedHandler>()
+            .AddSubscription<ParticipantEnqueuedAtEvent, ParticipantEnqueuedHandler>();
 
         builder.Services.MigrateDatabase();
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();

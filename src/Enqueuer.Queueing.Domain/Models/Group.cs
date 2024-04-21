@@ -64,10 +64,10 @@ public class Group : Entity, IGroupAggregate
         queue.EnqueueParticipant(participantId);
     }
 
-    public void EnqueueParticipantOn(string queueName, long participantId, uint position)
+    public void EnqueueParticipantAt(string queueName, long participantId, uint position)
     {
         var queue = GetExistingQueueOrThrow(queueName);
-        queue.EnqueueParticipantOn(participantId, position);
+        queue.EnqueueParticipantAt(participantId, position);
     }
 
     public void DequeueParticipant(string queueName, long participantId)

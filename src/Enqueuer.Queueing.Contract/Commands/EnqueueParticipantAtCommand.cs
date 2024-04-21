@@ -1,8 +1,8 @@
 ﻿namespace Enqueuer.Queueing.Contract.V1.Commands
 {
-    public class EnqueueParticipantToCommand
+    public class EnqueueParticipantAtCommand
     {
-        public EnqueueParticipantToCommand(long participantId)
+        public EnqueueParticipantAtCommand(long participantId)
         {
             ParticipantId = participantId;
         }

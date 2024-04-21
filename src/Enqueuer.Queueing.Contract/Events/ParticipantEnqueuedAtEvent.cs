@@ -1,8 +1,8 @@
 ﻿namespace Enqueuer.Queueing.Contract.V1.Events
 {
-    public class ParticipantEnqueuedOnEvent : EventBase
+    public class ParticipantEnqueuedAtEvent : EventBase
     {
-        public ParticipantEnqueuedOnEvent(long groupId, string queueName, long participantId, uint position)
+        public ParticipantEnqueuedAtEvent(long groupId, string queueName, long participantId, uint position)
         {
             GroupId = groupId;
             QueueName = queueName;

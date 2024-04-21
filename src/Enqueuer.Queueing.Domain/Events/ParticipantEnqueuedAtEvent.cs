@@ -6,9 +6,9 @@ namespace Enqueuer.Queueing.Domain.Events;
 /// <summary>
 /// The domain event produced when participant was enqueued.
 /// </summary>
-public class ParticipantEnqueuedOnEvent : DomainEvent
+public class ParticipantEnqueuedAtEvent : DomainEvent
 {
-    public ParticipantEnqueuedOnEvent(long groupId, string queueName, long participantId, uint position, DateTime timestamp)
+    public ParticipantEnqueuedAtEvent(long groupId, string queueName, long participantId, uint position, DateTime timestamp)
         : base(groupId, timestamp)
     {
         QueueName = queueName;
@@ -40,6 +40,6 @@ public class ParticipantEnqueuedOnEvent : DomainEvent
             throw new QueueDoesNotExistException($"Queue '{QueueName}' does not exist in the group '{Id}'.");
         }
 
-        (queue as IQueueEntity).EnqueueParticipantOn(ParticipantId, Position);
+        (queue as IQueueEntity).EnqueueParticipantAt(ParticipantId, Position);
     }
 }
