@@ -29,7 +29,8 @@ public class Program
         builder.Services.AddTransient<IChatConfigurationService, ChatConfigurationService>();
 
         builder.Services.AddRabbitMQClient()
-            .AddSubscription<QueueCreatedEvent, QueueCreatedHandler>();
+            .AddSubscription<QueueCreatedEvent, QueueCreatedHandler>()
+            .AddSubscription<QueueDeletedEvent, QueueDeletedHandler>();
 
         builder.Services.MigrateDatabase();
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();

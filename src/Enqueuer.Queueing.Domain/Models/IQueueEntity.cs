@@ -7,7 +7,7 @@ internal interface IQueueEntity
 {
     void EnqueueParticipant(long participantId);
 
-    void EnqueueParticipantAt(long participantId, uint position);
+    void EnqueueParticipantOn(long participantId, uint position);
 
     void DequeueParticipant(long participantId);
 }

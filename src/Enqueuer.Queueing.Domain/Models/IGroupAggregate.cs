@@ -40,7 +40,7 @@ public interface IGroupAggregate
     /// in the queue with the specified <paramref name="queueName"/>.
     /// </summary>
     /// <exception cref="Exceptions.QueueDoesNotExistException">Thrown if queue with the specified <paramref name="queueName"/> does not exist in the group.</exception>
-    void EnqueueParticipantAt(string queueName, long participantId, uint position);
+    void EnqueueParticipantOn(string queueName, long participantId, uint position);
 
     /// <summary>
     /// Dequeues a participant with the specified <paramref name="participantId"/> from the queue with the specified <paramref name="queueName"/>.

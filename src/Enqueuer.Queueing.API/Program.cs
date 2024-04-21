@@ -1,5 +1,5 @@
 using Enqueuer.Queueing.API.Application.Messaging;
-using Enqueuer.Queueing.API.Extensions;
+using Enqueuer.Queueing.API.Mapping;
 using Enqueuer.Queueing.Domain.Factories;
 using Enqueuer.Queueing.Domain.Models;
 using Enqueuer.Queueing.Domain.Repositories;
@@ -56,12 +56,11 @@ public class Program
 
         builder.Services.AddAutoMapper(configuration =>
         {
-            configuration.MapDomainEvent<Domain.Events.QueueCreatedEvent, Contract.V1.Events.QueueCreatedEvent>();
-            configuration.MapDomainEvent<Domain.Events.QueueDeletedEvent, Contract.V1.Events.QueueDeletedEvent>();
-
-
-
-            //configuration.MapRejectedDomainEvent<Infrastructure.Messaging.RejectedEvent, Contract.V1.Events.RejectedEvents.QueueAlreadyExistsEvent>();
+            configuration.AddProfile<QueueCreatedEventMapProfile>();
+            configuration.AddProfile<QueueDeletedEventMapProfile>();
+            configuration.AddProfile<ParticipantEnqueuedEventMapProfile>();
+            configuration.AddProfile<ParticipantEnqueuedOnEventMapProfile>();
+            configuration.AddProfile<ParticipantDequeuedEventMapProfile>();
         });
 
         builder.Services.AddRabbitMQClient();

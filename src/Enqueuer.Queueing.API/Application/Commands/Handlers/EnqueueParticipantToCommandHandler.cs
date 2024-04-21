@@ -18,7 +18,7 @@ public class EnqueueParticipantToCommandHandler : IOperationHandler<EnqueueParti
         var group = await _groupRepository.GetOrCreateGroupAsync(request.GroupId, cancellationToken);
         try
         {
-            group.EnqueueParticipantAt(request.QueueName, request.ParticipantId, request.Position);
+            group.EnqueueParticipantOn(request.QueueName, request.ParticipantId, request.Position);
         }
         catch (QueueDoesNotExistException ex)
         {

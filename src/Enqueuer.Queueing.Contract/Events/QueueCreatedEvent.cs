@@ -2,17 +2,17 @@
 {
     public class QueueCreatedEvent : EventBase
     {
-        //public QueueCreatedEvent(long groupId, string queueName, long creatorId)
-        //{
-        //    CreatorId = creatorId;
-        //    QueueName = queueName;
-        //    GroupId = groupId;
-        //}
+        public QueueCreatedEvent(long groupId, string queueName/*, long creatorId*/)
+        {
+            //CreatorId = creatorId;
+            QueueName = queueName;
+            GroupId = groupId;
+        }
 
-        public long GroupId { get; set; }
+        public long GroupId { get; }
 
-        public string QueueName { get; set; }
+        public string QueueName { get; }
 
-        public long CreatorId { get; set; }
+        //public long CreatorId { get; }
     }
 }
