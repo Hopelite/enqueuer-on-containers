@@ -1,5 +1,6 @@
 using Enqueuer.Queueing.API.Application.Messaging;
 using Enqueuer.Queueing.API.Mapping;
+using Enqueuer.Queueing.API.Mapping.RejectedEvents;
 using Enqueuer.Queueing.Domain.Factories;
 using Enqueuer.Queueing.Domain.Models;
 using Enqueuer.Queueing.Domain.Repositories;
@@ -61,6 +62,8 @@ public class Program
             configuration.AddProfile<ParticipantEnqueuedEventMapProfile>();
             configuration.AddProfile<ParticipantEnqueuedAtEventMapProfile>();
             configuration.AddProfile<ParticipantDequeuedEventMapProfile>();
+
+            configuration.AddProfile<RejectedEventMapProfile>();
         });
 
         builder.Services.AddRabbitMQClient();

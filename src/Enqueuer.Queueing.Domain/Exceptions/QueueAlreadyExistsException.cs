@@ -2,17 +2,21 @@
 
 public class QueueAlreadyExistsException : DomainException
 {
-    public QueueAlreadyExistsException()
+    public QueueAlreadyExistsException(string queueName)
+        : this(queueName, null)
     {
     }
 
-    public QueueAlreadyExistsException(string? message)
-        : base(message)
+    public QueueAlreadyExistsException(string queueName, string? message)
+        : this(queueName, message, null)
     {
     }
 
-    public QueueAlreadyExistsException(string? message, Exception? innerException)
+    public QueueAlreadyExistsException(string queueName, string? message, Exception? innerException)
         : base(message, innerException)
     {
+        QueueName = queueName;
     }
+
+    public string QueueName { get; }
 }

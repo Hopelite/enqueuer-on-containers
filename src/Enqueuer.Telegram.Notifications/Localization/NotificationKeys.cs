@@ -9,4 +9,6 @@ public static class NotificationKeys
     public const string QueueDeletedNotification = "QueueDeleted_Notification";
 
     public const string UserEnqueuedAtPositionNotification = "UserEnqueuedAtPosition_Notification";
+
+    public const string QueueAlreadyExistsNotification = "QueueAlreadyExists_Notification";
 }

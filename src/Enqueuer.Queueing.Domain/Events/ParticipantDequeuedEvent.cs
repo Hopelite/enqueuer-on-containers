@@ -31,7 +31,7 @@ public class ParticipantDequeuedEvent : DomainEvent
     {
         if (!group._queues.TryGetValue(QueueName, out var queue))
         {
-            throw new QueueDoesNotExistException($"Queue '{QueueName}' does not exist.");
+            throw new QueueDoesNotExistException(QueueName, $"Queue '{QueueName}' does not exist.");
         }
 
         (queue as IQueueEntity).DequeueParticipant(ParticipantId);

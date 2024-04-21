@@ -1,8 +1,8 @@
 ﻿namespace Enqueuer.Queueing.Contract.V1.Events.RejectedEvents
 {
-    public class QueueAlreadyExistsEvent : EventBase
+    public class QueueDoesNotExistEvent : EventBase
     {
-        public QueueAlreadyExistsEvent(long groupId, string queueName)
+        public QueueDoesNotExistEvent(long groupId, string queueName)
         {
             GroupId = groupId;
             QueueName = queueName;
@@ -11,7 +11,5 @@
         public long GroupId { get; set; }
 
         public string QueueName { get; set; }
-
-        // TODO: possibly add OnBehalfOf
     }
 }

@@ -26,7 +26,7 @@ public class QueueCreatedEvent : DomainEvent
         var createdQueue = new Queue(groupId: AggregateId, QueueName);
         if (!group._queues.TryAdd(createdQueue.Name, createdQueue))
         {
-            throw new QueueAlreadyExistsException($"Queue '{QueueName}' already exists in the group '{AggregateId}'.");
+            throw new QueueAlreadyExistsException(QueueName, $"Queue '{QueueName}' already exists in the group '{AggregateId}'.");
         }
     }
 }

@@ -42,7 +42,7 @@ public class Group : Entity, IGroupAggregate
 
         if (!_queues.TryAdd(queueName, new Queue(Id, queueName)))
         {
-            throw new QueueAlreadyExistsException($"Queue '{queueName}' already exists in the chat '{Id}'.");
+            throw new QueueAlreadyExistsException(queueName, $"Queue '{queueName}' already exists in the chat '{Id}'.");
         }
 
         AddDomainEvent(new QueueCreatedEvent(Id, queueName, DateTime.UtcNow));
@@ -52,7 +52,7 @@ public class Group : Entity, IGroupAggregate
     {
         if (!_queues.Remove(queueName))
         {
-            throw new QueueDoesNotExistException($"Queue '{queueName}' does not exist in the group '{Id}'.");
+            throw new QueueDoesNotExistException(queueName, $"Queue '{queueName}' does not exist in the group '{Id}'.");
         }
 
         AddDomainEvent(new QueueDeletedEvent(Id, queueName, DateTime.UtcNow));
@@ -80,7 +80,7 @@ public class Group : Entity, IGroupAggregate
     {
         if (!_queues.TryGetValue(queueName, out var queue))
         {
-            throw new QueueDoesNotExistException($"Queue '{queueName}' does not exist in the group '{Id}'.");
+            throw new QueueDoesNotExistException(queueName, $"Queue '{queueName}' does not exist in the group '{Id}'.");
         }
 
         return queue;

@@ -63,12 +63,21 @@ internal class EventWriter : BackgroundService, IEventWriter<Group>
             try
             {
                 await _eventStorage.WriteEventAsync(@event, stoppingToken);
-                await _eventPublisher.PublishEventAsync(@event, stoppingToken);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "A non-domain exception was thrown during the '{EventName}' writing for the group '{GroupId}'.", @event.Name, _aggregateId);
                 await TryPublishEventRejectedAsync(@event, ex, stoppingToken);
+                continue;
+            }
+
+            try
+            {
+                await _eventPublisher.PublishEventAsync(@event, stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "A non-domain exception was thrown during the '{EventName}' publishing for the group '{GroupId}'.", @event.Name, _aggregateId);
             }
         }
 
