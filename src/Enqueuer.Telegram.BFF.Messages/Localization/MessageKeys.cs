@@ -23,4 +23,8 @@ public static class MessageKeys
     public const string EnqueueErrorPositionIsReserved = "Enqueue_Error_PositionIsReserved";
 
     public const string DequeueErrorMissingQueueName = "Dequeue_Error_MissingQueueName";
+
+    public const string DequeueErrorQueueDoesNotExist = "Dequeue_Error_QueueDoesNotExist";
+
+    public const string DequeueErrorParticipantIsNotEnqueued = "Dequeue_Error_ParticipantIsNotEnqueued";
 }

@@ -1,5 +1,6 @@
 ﻿using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Commands;
+using Enqueuer.Queueing.Contract.V1.Exceptions;
 using Enqueuer.Telegram.BFF.Core.Models.Extensions;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
 using Enqueuer.Telegram.BFF.Messages.Localization;
@@ -25,7 +26,7 @@ public class DequeueMessageHandler(
 
         if (string.IsNullOrEmpty(queueContext.QueueName))
         {
-            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorMissingQueueName, MessageParameters.None, cancellationToken);
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.DequeueErrorMissingQueueName, MessageParameters.None, cancellationToken);
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,
@@ -38,6 +39,24 @@ public class DequeueMessageHandler(
         try
         {
             await _queueingClient.DequeueParticipant(messageContext.Chat.Id, queueContext.QueueName, new DequeueParticipantCommand(messageContext.Sender.Id), cancellationToken);
+        }
+        catch (QueueDoesNotExistException)
+        {
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.DequeueErrorQueueDoesNotExist, new MessageParameters(queueContext.QueueName), cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: errorMessage,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
+        }
+        catch (ParticipantDoesNotExistException)
+        {
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.DequeueErrorParticipantIsNotEnqueued, new MessageParameters(queueContext.QueueName), cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: errorMessage,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {

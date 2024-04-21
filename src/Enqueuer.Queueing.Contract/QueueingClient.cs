@@ -23,123 +23,121 @@ namespace Enqueuer.Queueing.Contract.V1
 
         public async Task CreateQueueAsync(long groupId, string queueName, CancellationToken cancellationToken)
         {
-            try
+            var response = await _httpClient.PutAsync($"/api/groups/{groupId}/queues/{queueName}", content: null, cancellationToken);
+            if (!response.IsSuccessStatusCode)
             {
-                var response = await _httpClient.PutAsync($"/api/groups/{groupId}/queues/{queueName}", content: null, cancellationToken);
-                if (!response.IsSuccessStatusCode)
+                var reasonMessage = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.Conflict)
                 {
-                    var reasonMessage = await response.Content.ReadAsStringAsync();
-                    if (response.StatusCode == HttpStatusCode.Conflict)
-                    {
-                        throw new ResourceAlreadyExistsException(reasonMessage);
-                    }
-
-                    if (response.StatusCode == HttpStatusCode.BadRequest)
-                    {
-                        throw new InvalidQueueNameException(reasonMessage);
-                    }
-
-                    throw new QueueingClientException($"Response code for queue creation indicates failure. Reason: {response.StatusCode}, {reasonMessage}");
+                    throw new QueueAlreadyExistsException(reasonMessage);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new QueueingClientException("An error occured during Queueing API request.", ex);
+
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    throw new InvalidQueueNameException(reasonMessage);
+                }
+
+                throw new QueueingClientException($"Response code for queue creation indicates failure. Reason: {response.StatusCode}, {reasonMessage}");
             }
         }
 
         public async Task DeleteQueueAsync(long groupId, string queueName, CancellationToken cancellationToken)
         {
-            try
-            {
-                var response = await _httpClient.DeleteAsync($"/api/groups/{groupId}/queues/{queueName}", cancellationToken);
+            var response = await _httpClient.DeleteAsync($"/api/groups/{groupId}/queues/{queueName}", cancellationToken);
 
-                if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
+            {
+                var reasonMessage = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    var reasonMessage = await response.Content.ReadAsStringAsync();
-                    if (response.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        throw new ResourceDoesNotExistException(reasonMessage);
-                    }
-
-                    throw new QueueingClientException("Response code for queue deletion indicates failure. Reason: {reasonMessage}");
+                    throw new QueueDoesNotExistException(reasonMessage);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new QueueingClientException("An error occured during Queueing API request.", ex);
+
+                throw new QueueingClientException("Response code for queue deletion indicates failure. Reason: {reasonMessage}");
             }
         }
 
         public async Task EnqueueParticipant(long groupId, string queueName, EnqueueParticipantCommand command, CancellationToken cancellationToken)
         {
-            try
-            {
-                var content = JsonContent.Create(command);
-                var response = await _httpClient.PostAsync($"/api/groups/{groupId}/queues/{queueName}/participants", content, cancellationToken);
+            var content = JsonContent.Create(command);
+            var response = await _httpClient.PostAsync($"/api/groups/{groupId}/queues/{queueName}/participants", content, cancellationToken);
 
-                if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
+            {
+                var reasonMessage = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    var reasonMessage = await response.Content.ReadAsStringAsync();
-                    if (response.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        throw new ResourceDoesNotExistException(reasonMessage);
-                    }
-
-                    if (response.StatusCode == HttpStatusCode.Conflict)
-                    {
-                        throw new ParticipantAlreadyExistsException(reasonMessage);
-                    }
-
-                    throw new QueueingClientException("Response code for queue deletion indicates failure. Reason: {reasonMessage}");
+                    throw new QueueDoesNotExistException(reasonMessage);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new QueueingClientException("An error occured during Queueing API request.", ex);
+
+                if (response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    throw new ParticipantAlreadyExistsException(reasonMessage);
+                }
+
+                throw new QueueingClientException("Response code for participant enqueueing indicates failure. Reason: {reasonMessage}");
             }
         }
 
         public async Task EnqueueParticipantAt(long groupId, string queueName, uint position, EnqueueParticipantAtCommand command, CancellationToken cancellationToken)
         {
-            try
-            {
-                var content = JsonContent.Create(command);
-                var response = await _httpClient.PutAsync($"/api/groups/{groupId}/queues/{queueName}/participants/{position}", content, cancellationToken);
+            var content = JsonContent.Create(command);
+            var response = await _httpClient.PutAsync($"/api/groups/{groupId}/queues/{queueName}/participants/{position}", content, cancellationToken);
 
-                if (!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
+            {
+                var reasonMessage = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    var reasonMessage = await response.Content.ReadAsStringAsync();
-                    if (response.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        throw new ResourceDoesNotExistException(reasonMessage);
-                    }
-
-                    if (response.StatusCode == HttpStatusCode.Conflict)
-                    {
-                        if (reasonMessage.Contains("already exists"))
-                        {
-                            throw new ParticipantAlreadyExistsException(reasonMessage);
-                        }
-
-                        if (reasonMessage.Contains("reserved position"))
-                        {
-                            throw new PositionReservedException(reasonMessage);
-                        }
-                    }
-
-                    throw new QueueingClientException("Response code for queue deletion indicates failure. Reason: {reasonMessage}");
+                    throw new QueueDoesNotExistException(reasonMessage);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw new QueueingClientException("An error occured during Queueing API request.", ex);
+
+                if (response.StatusCode == HttpStatusCode.Conflict)
+                {
+                    if (reasonMessage.Contains("already exists"))
+                    {
+                        throw new ParticipantAlreadyExistsException(reasonMessage);
+                    }
+
+                    if (reasonMessage.Contains("reserved position"))
+                    {
+                        throw new PositionReservedException(reasonMessage);
+                    }
+                }
+
+                throw new QueueingClientException("Response code for participant enqueueing indicates failure. Reason: {reasonMessage}");
             }
         }
 
-        public Task DequeueParticipant(long groupId, string queueName, DequeueParticipantCommand command, CancellationToken cancellationToken)
+        public async Task DequeueParticipant(long groupId, string queueName, DequeueParticipantCommand command, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var content = JsonContent.Create(command);
+            var message = new HttpRequestMessage()
+            {
+                Content = content,
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"/api/groups/{groupId}/queues/{queueName}/participants", UriKind.Relative)
+            };
+
+            var response = await _httpClient.SendAsync(message, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var reasonMessage = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    if (reasonMessage.Contains("does not exist in the group"))
+                    {
+                        throw new QueueDoesNotExistException(reasonMessage);
+                    }
+
+                    if (reasonMessage.Contains("does not exist in the queue"))
+                    {
+                        throw new ParticipantDoesNotExistException(reasonMessage);
+                    }
+                }
+
+                throw new QueueingClientException("Response code for participant dequeueing indicates failure. Reason: {reasonMessage}");
+            }
         }
 
         public void Dispose()

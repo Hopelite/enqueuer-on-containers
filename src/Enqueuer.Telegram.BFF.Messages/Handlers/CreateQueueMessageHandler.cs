@@ -40,7 +40,7 @@ public class CreateQueueMessageHandler(
         {
             await _queueingClient.CreateQueueAsync(messageContext.Chat.Id, queueContext.QueueName, cancellationToken);
         }
-        catch (ResourceAlreadyExistsException)
+        catch (QueueAlreadyExistsException)
         {
             var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorQueueAlreadyExists, new MessageParameters(queueContext.QueueName), cancellationToken);
             await telegramClient.SendTextMessageAsync(

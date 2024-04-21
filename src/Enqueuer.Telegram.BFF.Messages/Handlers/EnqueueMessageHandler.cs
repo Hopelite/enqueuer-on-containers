@@ -66,7 +66,7 @@ public class EnqueueMessageHandler(
         {
             await _queueingClient.EnqueueParticipantAt(messageContext.Chat.Id, queueContext.QueueName, (uint)queueContext.Position.Value, new EnqueueParticipantAtCommand(messageContext.Sender.Id), cancellationToken);
         }
-        catch (ResourceDoesNotExistException)
+        catch (QueueDoesNotExistException)
         {
             var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.EnqueueErrorQueueDoesNotExist, new MessageParameters(queueContext.QueueName), cancellationToken);
             await telegramClient.SendTextMessageAsync(
@@ -108,7 +108,7 @@ public class EnqueueMessageHandler(
         {
             await _queueingClient.EnqueueParticipant(messageContext.Chat.Id, queueContext.QueueName, new EnqueueParticipantCommand(messageContext.Sender.Id), cancellationToken);
         }
-        catch (ResourceDoesNotExistException)
+        catch (QueueDoesNotExistException)
         {
             var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.EnqueueErrorQueueDoesNotExist, new MessageParameters(queueContext.QueueName), cancellationToken);
             await telegramClient.SendTextMessageAsync(
