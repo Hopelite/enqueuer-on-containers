@@ -28,7 +28,7 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=pass
     volumes:
       - type: bind
-        source: ./data
+        source: C:/Users/vkurd/EnqueuerData/Queueing/DB
         target: /data/db
 
   enqueuer.telegram.notifications:
@@ -44,7 +44,7 @@ services:
       - enqueuer.queueing.api
       - eventbus
     volumes:
-      - C:/Users/vkurd/DATA:/data
+      - C:/Users/vkurd/EnqueuerData/Notifications/DB:/data
 
   enqueuer.telegram.bff:
     image: ${DOCKER_REGISTRY-}enqueuertelegrambff

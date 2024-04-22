@@ -14,5 +14,7 @@
         public string QueueName { get; }
 
         public long ParticipantId { get; }
+
+        public uint Position { get; }
     }
 }

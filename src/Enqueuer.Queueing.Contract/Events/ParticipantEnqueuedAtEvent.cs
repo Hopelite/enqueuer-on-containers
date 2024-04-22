@@ -1,5 +1,6 @@
 ﻿namespace Enqueuer.Queueing.Contract.V1.Events
 {
+    // TODO: replace ParticipantEnqueuedEvent
     public class ParticipantEnqueuedAtEvent : EventBase
     {
         public ParticipantEnqueuedAtEvent(long groupId, string queueName, long participantId, uint position)
