@@ -28,11 +28,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enqueuer.Telegram.Notificat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enqueuer.Telegram.Shared", "src\Enqueuer.Telegram.Shared\Enqueuer.Telegram.Shared.csproj", "{8D543DE0-A235-4268-852B-0A204488171D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.BFF", "src\Enqueuer.Telegram.BFF\Enqueuer.Telegram.BFF.csproj", "{C0AC38AA-8FDE-46C1-82DE-766BF74EECDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enqueuer.Telegram.BFF", "src\Enqueuer.Telegram.BFF\Enqueuer.Telegram.BFF.csproj", "{C0AC38AA-8FDE-46C1-82DE-766BF74EECDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.BFF.Messages", "src\Enqueuer.Telegram.BFF.Messages\Enqueuer.Telegram.BFF.Messages.csproj", "{2A2D7688-87CC-440C-AD77-7FEB3B7D31FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enqueuer.Telegram.BFF.Messages", "src\Enqueuer.Telegram.BFF.Messages\Enqueuer.Telegram.BFF.Messages.csproj", "{2A2D7688-87CC-440C-AD77-7FEB3B7D31FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.BFF.Core", "src\Enqueuer.Telegram.BFF.Core\Enqueuer.Telegram.BFF.Core.csproj", "{879A4087-F6B1-415D-9095-6A90046E5C12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Enqueuer.Telegram.BFF.Core", "src\Enqueuer.Telegram.BFF.Core\Enqueuer.Telegram.BFF.Core.csproj", "{879A4087-F6B1-415D-9095-6A90046E5C12}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E357E821-9FBE-4764-8850-BB67406FB621}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Queueing.Domain.Tests", "test\Enqueuer.Queueing.Domain.Tests\Enqueuer.Queueing.Domain.Tests.csproj", "{B14FC0CF-7488-4A69-B1F8-70B8DE82868D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,6 +92,10 @@ Global
 		{879A4087-F6B1-415D-9095-6A90046E5C12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{879A4087-F6B1-415D-9095-6A90046E5C12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{879A4087-F6B1-415D-9095-6A90046E5C12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B14FC0CF-7488-4A69-B1F8-70B8DE82868D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B14FC0CF-7488-4A69-B1F8-70B8DE82868D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B14FC0CF-7488-4A69-B1F8-70B8DE82868D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B14FC0CF-7488-4A69-B1F8-70B8DE82868D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +112,7 @@ Global
 		{C0AC38AA-8FDE-46C1-82DE-766BF74EECDE} = {D8C58154-9EE9-46A3-9BAA-F19FDA7BFE2E}
 		{2A2D7688-87CC-440C-AD77-7FEB3B7D31FF} = {D8C58154-9EE9-46A3-9BAA-F19FDA7BFE2E}
 		{879A4087-F6B1-415D-9095-6A90046E5C12} = {D8C58154-9EE9-46A3-9BAA-F19FDA7BFE2E}
+		{B14FC0CF-7488-4A69-B1F8-70B8DE82868D} = {E357E821-9FBE-4764-8850-BB67406FB621}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6930BB8-DC56-41D8-A93D-D2BB3B2EC1C6}

@@ -46,8 +46,7 @@ public class Queue : Entity, IQueueEntity
 
     void IQueueEntity.EnqueueParticipant(long participantId)
     {
-        var firstAvailablePosition = (uint)Enumerable.Range(1, _participants.Count + 1)
-            .FirstOrDefault(p => !_participants.ContainsKey((uint)p));
+        var firstAvailablePosition = Position.GetFirstAvailablePosition(_participants.Keys);
 
         var participant = new Participant(participantId, firstAvailablePosition);
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
@@ -56,7 +55,7 @@ public class Queue : Entity, IQueueEntity
                 $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
         }
 
-        if (!_participants.TryAdd(firstAvailablePosition, participant))
+        if (!_participants.TryAdd(firstAvailablePosition.Number, participant))
         {
             throw new PositionReservedException(
                 $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
