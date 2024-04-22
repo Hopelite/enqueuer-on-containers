@@ -11,8 +11,9 @@ namespace Enqueuer.Queueing.Domain.Models;
 /// Not thread safe. Intended to be used in a single thread.
 /// The concurrency must be handled by external code.
 /// </remarks>
-public class Group : Entity, IGroupAggregate
+public class Group : IEntity, IGroupAggregate
 {
+    private readonly List<DomainEvent> _domainEvents = new();
     internal readonly Dictionary<string, Queue> _queues = new();
 
     /// <summary>
@@ -25,6 +26,8 @@ public class Group : Entity, IGroupAggregate
     }
 
     public long Id { get; }
+
+    public IEnumerable<DomainEvent> DomainEvents => _domainEvents.Concat(Queues.SelectMany(q => q.DomainEvents)).OrderBy(e => e.Timestamp);
 
     public IReadOnlyCollection<Queue> Queues => _queues.Values;
 
@@ -76,6 +79,15 @@ public class Group : Entity, IGroupAggregate
         queue.DequeueParticipant(participantId);
     }
 
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
+        foreach (var queue in _queues.Values)
+        {
+            queue._domainEvents.Clear();
+        }
+    }
+
     private Queue GetExistingQueueOrThrow(string queueName)
     {
         if (!_queues.TryGetValue(queueName, out var queue))
@@ -84,5 +96,10 @@ public class Group : Entity, IGroupAggregate
         }
 
         return queue;
+    }
+
+    private void AddDomainEvent(DomainEvent @event)
+    {
+        _domainEvents.Add(@event);
     }
 }

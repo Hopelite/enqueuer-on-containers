@@ -2,11 +2,12 @@
 {
     public class ParticipantEnqueuedEvent : EventBase
     {
-        public ParticipantEnqueuedEvent(long groupId, string queueName, long participantId)
+        public ParticipantEnqueuedEvent(long groupId, string queueName, long participantId, uint position)
         {
             GroupId = groupId;
             QueueName = queueName;
             ParticipantId = participantId;
+            Position = position;
         }
 
         public long GroupId { get; }
