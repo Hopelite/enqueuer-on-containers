@@ -13,13 +13,13 @@ public class ParticipantEnqueuedHandler(
     IChatConfigurationService chatConfigurationService,
     ILocalizationProvider localizationProvider,
     ITelegramBotClient telegramClient)
-    : IntegrationEventHandlerBase<ParticipantEnqueuedAtEvent>
+    : IntegrationEventHandlerBase<ParticipantEnqueuedEvent>
 {
     private readonly IChatConfigurationService _chatConfigurationService = chatConfigurationService;
     private readonly ILocalizationProvider _localizationProvider = localizationProvider;
     private readonly ITelegramBotClient _telegramClient = telegramClient;
 
-    public override async Task HandleAsync(ParticipantEnqueuedAtEvent @event, CancellationToken cancellationToken)
+    public override async Task HandleAsync(ParticipantEnqueuedEvent @event, CancellationToken cancellationToken)
     {
         var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken);
         var chatCulture = new CultureInfo(chatConfiguration.NotificationsLanguageCode);

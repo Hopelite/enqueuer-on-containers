@@ -2,7 +2,7 @@
 
 namespace Enqueuer.Queueing.Infrastructure.Commands.Handling;
 
-public interface ICommandHandler : IHostedService
+public interface ICommandHandler<TAggregate> : IHostedService
 {
     /// <summary>
     /// Handles the incoming <paramref name="command"/>.

@@ -36,7 +36,8 @@ public class DocumentEventStorage : IEventStorage
         {
             c.MapMember(e => e.QueueName);
             c.MapMember(e => e.ParticipantId);
-            c.MapCreator(e => new ParticipantEnqueuedEvent(e.AggregateId, e.QueueName, e.ParticipantId, e.Timestamp));
+            c.MapMember(e => e.Position);
+            c.MapCreator(e => new ParticipantEnqueuedEvent(e.AggregateId, e.QueueName, e.ParticipantId, e.Position, e.Timestamp));
         });
 
         BsonClassMap.RegisterClassMap<ParticipantEnqueuedAtEvent>(c =>

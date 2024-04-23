@@ -32,7 +32,7 @@ public class Program
         builder.Services.AddRabbitMQClient()
             .AddSubscription<QueueCreatedEvent, QueueCreatedHandler>()
             .AddSubscription<QueueDeletedEvent, QueueDeletedHandler>()
-            .AddSubscription<ParticipantEnqueuedAtEvent, ParticipantEnqueuedHandler>()
+            .AddSubscription<ParticipantEnqueuedEvent, ParticipantEnqueuedHandler>()
             .AddSubscription<QueueAlreadyExistsEvent, QueueAlreadyExistsHandler>()
             .AddSubscription<QueueDoesNotExistEvent, QueueDoesNotExistHandler>();
 

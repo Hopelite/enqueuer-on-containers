@@ -4,6 +4,7 @@ using Enqueuer.Queueing.API.Mapping.RejectedEvents;
 using Enqueuer.Queueing.Domain.Factories;
 using Enqueuer.Queueing.Domain.Models;
 using Enqueuer.Queueing.Domain.Repositories;
+using Enqueuer.Queueing.Infrastructure.Commands.Handling;
 using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage;
@@ -76,5 +77,9 @@ public class Program
         builder.Services.AddTransient<IAggregateRootBuilder<Group>, GroupAggregateBuilder>();
         builder.Services.AddSingleton<IEventStorage, DocumentEventStorage>();
         builder.Services.Configure<EventsDatabaseSettings>(builder.Configuration.GetSection("EventsDatabase"));
+
+
+        builder.Services.AddSingleton<ICommandHandlerManager<Group>, CommandHandlerManager>();
+        builder.Services.AddTransient<ICommandHandlerFactory<Group>, GroupCommandHandlerFactory>();
     }
 }

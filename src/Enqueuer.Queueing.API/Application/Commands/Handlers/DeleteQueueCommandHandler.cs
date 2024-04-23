@@ -1,31 +1,26 @@
-﻿using Enqueuer.Queueing.Domain.Exceptions;
-using Enqueuer.Queueing.Domain.Repositories;
+﻿using Enqueuer.Queueing.Domain.Models;
+using Enqueuer.Queueing.Infrastructure.Commands.Handling;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Application.Commands.Handlers;
 
 public class DeleteQueueCommandHandler : IOperationHandler<DeleteQueueCommand>
 {
-    private readonly IGroupRepository _groupRepository;
+    private readonly ICommandHandlerManager<Group> _commandHandlerManager;
 
-    public DeleteQueueCommandHandler(IGroupRepository groupRepository)
+    public DeleteQueueCommandHandler(ICommandHandlerManager<Group> commandHandlerManager)
     {
-        _groupRepository = groupRepository;
+        _commandHandlerManager = commandHandlerManager;
     }
 
     public async Task<IActionResult> Handle(DeleteQueueCommand request, CancellationToken cancellationToken)
     {
-        var group = await _groupRepository.GetOrCreateGroupAsync(request.GroupId, cancellationToken);
-        try
-        {
-            group.DeleteQueue(request.QueueName);
-        }
-        catch (QueueDoesNotExistException ex)
-        {
-            return new NotFoundObjectResult(ex.Message);
-        }
+        var actualCommand = new Infrastructure.Commands.DeleteQueueCommand(request.GroupId, request.QueueName);
 
-        await _groupRepository.SaveChangesAsync(group, cancellationToken);
-        return new OkResult();
+        var handler = await _commandHandlerManager.GetActiveCommandHandlerForAsync(actualCommand.GroupId);
+
+        await handler.HandleAsync(actualCommand, cancellationToken);
+
+        return new AcceptedResult();
     }
 }

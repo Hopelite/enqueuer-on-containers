@@ -9,7 +9,7 @@ using System.Threading.Channels;
 
 namespace Enqueuer.Queueing.Infrastructure.Commands.Handling;
 
-public class CommandHandler : BackgroundService, ICommandHandler
+public class CommandHandler : BackgroundService, ICommandHandler<Group>
 {
     private readonly IAggregateRootBuilder<Group> _aggregateBuilder;
     private readonly Channel<ICommand> _commandsToProcess;
