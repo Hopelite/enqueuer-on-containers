@@ -1,4 +1,5 @@
-﻿using Enqueuer.Queueing.Domain.Exceptions;
+﻿using Enqueuer.Queueing.Domain.Events;
+using Enqueuer.Queueing.Domain.Exceptions;
 using Enqueuer.Queueing.Domain.Models;
 using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage;
@@ -53,8 +54,7 @@ public class CommandHandler : BackgroundService, ICommandHandler<Group>
             }
             catch (DomainException ex)
             {
-                // TODO: reject command
-                // TODO: add mapping for commands 
+                await TryPublishRejectedEventAsync(new RejectedCommand(command, ex), stoppingToken);
                 _logger.LogInformation(ex, "Rejected command '{CommandName}' for the group '{GroupId}'.", command.Name, _aggregateId);
                 continue;
             }
@@ -67,7 +67,7 @@ public class CommandHandler : BackgroundService, ICommandHandler<Group>
                 }
                 catch (Exception ex)
                 {
-                    // TODO: Reject event
+                    await TryPublishRejectedEventAsync(new RejectedEvent(@event, ex), stoppingToken);
                     _logger.LogError(ex, "A non-domain exception was thrown during the '{EventName}' writing for the group '{GroupId}'.", @event.Name, _aggregateId);
                     continue;
                 }
@@ -84,6 +84,19 @@ public class CommandHandler : BackgroundService, ICommandHandler<Group>
 
             // TODO: refactor
             group.ClearDomainEvents();
+        }
+    }
+
+    private Task TryPublishRejectedEventAsync(DomainEvent rejectedEvent, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return _eventPublisher.PublishEventAsync(rejectedEvent, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to notify about rejected '{EventName}' for the group '{GroupId}'.", rejectedEvent.Name, _aggregateId);
+            return Task.CompletedTask;
         }
     }
 }

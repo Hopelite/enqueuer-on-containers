@@ -5,9 +5,9 @@ using Enqueuer.Queueing.Domain.Exceptions;
 
 namespace Enqueuer.Queueing.API.Mapping.RejectedEvents;
 
-public class RejectedEventsTypeResolver : ITypeConverter<Infrastructure.Messaging.RejectedEvent, IIntegrationEvent>
+public class RejectedCommandTypeResolver : ITypeConverter<Infrastructure.Messaging.RejectedCommand, IIntegrationEvent>
 {
-    public IIntegrationEvent Convert(Infrastructure.Messaging.RejectedEvent source, IIntegrationEvent destination, ResolutionContext context)
+    public IIntegrationEvent Convert(Infrastructure.Messaging.RejectedCommand source, IIntegrationEvent destination, ResolutionContext context)
     {
         return source.Exception switch
         {

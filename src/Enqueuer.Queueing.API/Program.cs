@@ -9,7 +9,6 @@ using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
-using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Writing;
 
 namespace Enqueuer.Queueing.API;
 
@@ -64,21 +63,17 @@ public class Program
             configuration.AddProfile<ParticipantEnqueuedAtEventMapProfile>();
             configuration.AddProfile<ParticipantDequeuedEventMapProfile>();
 
-            configuration.AddProfile<RejectedEventMapProfile>();
+            configuration.AddProfile<RejectedCommandMapProfile>();
         });
 
         builder.Services.AddRabbitMQClient();
 
         // Event sourcing
         builder.Services.AddTransient<IGroupRepository, GroupRepository>();
-        builder.Services.AddSingleton<IEventWriterManager<Group>, EventWriterManager>();
-        builder.Services.AddTransient<IEventWriterFactory<Group>, GroupEventWriterFactory>();
         builder.Services.AddTransient<IGroupFactory, GroupFactory>();
         builder.Services.AddTransient<IAggregateRootBuilder<Group>, GroupAggregateBuilder>();
         builder.Services.AddSingleton<IEventStorage, DocumentEventStorage>();
         builder.Services.Configure<EventsDatabaseSettings>(builder.Configuration.GetSection("EventsDatabase"));
-
-
         builder.Services.AddSingleton<ICommandHandlerManager<Group>, CommandHandlerManager>();
         builder.Services.AddTransient<ICommandHandlerFactory<Group>, GroupCommandHandlerFactory>();
     }
