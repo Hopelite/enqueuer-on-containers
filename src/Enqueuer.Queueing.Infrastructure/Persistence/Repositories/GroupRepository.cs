@@ -8,17 +8,12 @@ namespace Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 
 public class GroupRepository : IGroupRepository
 {
-    private readonly IEventWriterManager<Group> _eventWriterManager;
     private readonly IAggregateRootBuilder<Group> _groupBuilder;
     private readonly IEventStorage _eventStorage;
 
-    public GroupRepository(
-        IEventStorage eventStorage,
-        IEventWriterManager<Group> eventWriterManager,
-        IAggregateRootBuilder<Group> groupBuilder)
+    public GroupRepository(IEventStorage eventStorage, IAggregateRootBuilder<Group> groupBuilder)
     {
         _eventStorage = eventStorage;
-        _eventWriterManager = eventWriterManager;
         _groupBuilder = groupBuilder;
     }
 
@@ -28,17 +23,5 @@ public class GroupRepository : IGroupRepository
         var group = _groupBuilder.Build(groupId, groupEvents);
 
         return group;
-    }
-
-    public async Task SaveChangesAsync(IGroupAggregate group, CancellationToken cancellationToken)
-    {
-        var aggregateRoot = (Group)group;
-
-        var domainEvents = aggregateRoot.DomainEvents.Concat(
-            aggregateRoot.Queues.SelectMany(q => q.DomainEvents))
-                .OrderBy(e => e.Timestamp);
-
-        var writer = await _eventWriterManager.GetActiveEventWriterForAsync(aggregateRoot.Id);
-        await writer.WriteEventsAsync(domainEvents, cancellationToken);
     }
 }
