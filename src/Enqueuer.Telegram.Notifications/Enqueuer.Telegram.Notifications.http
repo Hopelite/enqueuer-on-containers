@@ -1,6 +1,0 @@
-@Enqueuer.Telegram.Notifications_HostAddress = http://localhost:5078
-
-GET {{Enqueuer.Telegram.Notifications_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

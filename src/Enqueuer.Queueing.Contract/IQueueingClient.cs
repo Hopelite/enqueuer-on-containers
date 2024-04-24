@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using Enqueuer.Queueing.Contract.V1.Commands;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enqueuer.Queueing.Contract.V1
@@ -16,6 +17,21 @@ namespace Enqueuer.Queueing.Contract.V1
         /// <summary>
         /// Deletes a queue with the specified name.
         /// </summary>
-        Task DeleteGroupQueue(long groupId, string queueName, CancellationToken cancellationToken);
+        Task DeleteQueueAsync(long groupId, string queueName, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Enqueues participant to the queue with the specified name at the first available position.
+        /// </summary>
+        Task EnqueueParticipant(long groupId, string queueName, EnqueueParticipantCommand command, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Enqueues participant to the queue with the specified name at the specified position.
+        /// </summary>
+        Task EnqueueParticipantAt(long groupId, string queueName, uint position, EnqueueParticipantAtCommand command, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Dequeues user from the queue with the specified name.
+        /// </summary>
+        Task DequeueParticipant(long groupId, string queueName, DequeueParticipantCommand command, CancellationToken cancellationToken);
     }
 }

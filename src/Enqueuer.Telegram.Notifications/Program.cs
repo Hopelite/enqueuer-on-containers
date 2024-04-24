@@ -1,4 +1,5 @@
 using Enqueuer.Queueing.Contract.V1.Events;
+using Enqueuer.Queueing.Contract.V1.Events.RejectedEvents;
 using Enqueuer.Telegram.Notifications.Contract.V1.Models;
 using Enqueuer.Telegram.Notifications.Handlers;
 using Enqueuer.Telegram.Notifications.Localization;
@@ -29,7 +30,14 @@ public class Program
         builder.Services.AddTransient<IChatConfigurationService, ChatConfigurationService>();
 
         builder.Services.AddRabbitMQClient()
-            .AddSubscription<QueueCreatedEvent, QueueCreatedHandler>();
+            .AddSubscription<QueueCreatedEvent, QueueCreatedHandler>()
+            .AddSubscription<QueueDeletedEvent, QueueDeletedHandler>()
+            .AddSubscription<ParticipantEnqueuedEvent, ParticipantEnqueuedHandler>()
+            .AddSubscription<QueueAlreadyExistsEvent, QueueAlreadyExistsHandler>()
+            .AddSubscription<QueueDoesNotExistEvent, QueueDoesNotExistHandler>()
+            .AddSubscription<ParticipantDequeuedEvent, ParticipantDequeuedHandler>()
+            .AddSubscription<ParticipantAlreadyExistsEvent, ParticipantAlreadyExistsHandler>()
+            .AddSubscription<PositionIsReservedEvent, PositionIsReservedHandler>();
 
         builder.Services.MigrateDatabase();
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
@@ -48,6 +56,8 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
+
+        // TODO: add get endpoint for chat language and requests it from BFF (it may take a while for changes to apply)
 
         app.MapPut("/chats/{chatId}/language", async (long chatId, [FromBody] ChatNotificationsConfiguration chatConfiguration, [FromServices] IChatConfigurationService configurationService, CancellationToken cancellationToken) =>
         {

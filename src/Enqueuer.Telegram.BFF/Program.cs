@@ -1,9 +1,10 @@
 using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Telegram.BFF.Core.Models.Callbacks;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
+using Enqueuer.Telegram.BFF.Localization;
 using Enqueuer.Telegram.BFF.Messages;
 using Enqueuer.Telegram.BFF.Messages.Factories;
-using Enqueuer.Telegram.BFF.Messages.Handlers;
+using Enqueuer.Telegram.Shared.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -23,8 +24,8 @@ public class Program
         builder.Services.AddTransient<IMessageHandlersFactory, MessageHandlersFactory>();
         builder.Services.AddScoped<IMessageDistributor, MessageDistributor>();
         builder.Services.AddSingleton<IQueueingClient, QueueingClient>(c => new QueueingClient(new Uri(builder.Configuration.GetConnectionString("QueueingAPI"))));
-        builder.Services.AddScoped<CreateQueueMessageHandler>();
-        //builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
+        builder.Services.AddMessageHandlers();
+        builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
         builder.AddTelegramClient();
 
         var app = builder.Build();
@@ -51,7 +52,7 @@ public class Program
             }
             else if (telegramUpdate.Type == UpdateType.CallbackQuery && CallbackContext.TryCreate(telegramUpdate.CallbackQuery!, out var callbackContext))
             {
-
+                throw new NotImplementedException();
             }
 
             return Results.Ok();

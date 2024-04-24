@@ -1,8 +1,8 @@
 ﻿namespace Enqueuer.Queueing.API.Application.Commands;
 
-public class RemoveQueueCommand : IOperation
+public class DeleteQueueCommand : IOperation
 {
-    public RemoveQueueCommand(long groupId, string queueName)
+    public DeleteQueueCommand(long groupId, string queueName)
     {
         GroupId = groupId;
         QueueName = queueName;

@@ -5,6 +5,7 @@ namespace Enqueuer.Queueing.Contract.V1.Events
 {
     public abstract class EventBase : IIntegrationEvent
     {
+        // TODO: consider to pass arguments to this ctor to not loose during serialization
         protected EventBase()
         {
             Id = Guid.NewGuid();

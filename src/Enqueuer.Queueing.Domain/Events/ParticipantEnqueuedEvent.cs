@@ -8,11 +8,12 @@ namespace Enqueuer.Queueing.Domain.Events;
 /// </summary>
 public class ParticipantEnqueuedEvent : DomainEvent
 {
-    public ParticipantEnqueuedEvent(long groupId, string queueName, long participantId, DateTime timestamp)
+    public ParticipantEnqueuedEvent(long groupId, string queueName, long participantId, uint position, DateTime timestamp)
         : base(groupId, timestamp)
     {
         QueueName = queueName;
         ParticipantId = participantId;
+        Position = position;
     }
 
     public override string Name => "ParticipantEnqueued";
@@ -27,13 +28,18 @@ public class ParticipantEnqueuedEvent : DomainEvent
     /// </summary>
     public long ParticipantId { get; }
 
+    /// <summary>
+    /// The position participant was enqueued at.
+    /// </summary>
+    public uint Position { get; }
+
     public override void ApplyTo(Group group)
     {
         if (!group._queues.TryGetValue(QueueName, out var queue))
         {
-            throw new QueueDoesNotExistException($"Queue '{QueueName}' does not exist in the group '{Id}'.");
+            throw new QueueDoesNotExistException(QueueName, $"Queue '{QueueName}' does not exist in the group '{Id}'.");
         }
 
-        (queue as IQueueEntity).EnqueueParticipant(ParticipantId);
+        (queue as IQueueEntity).EnqueueParticipantAt(ParticipantId, Position);
     }
 }

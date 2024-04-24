@@ -1,22 +1,22 @@
 ﻿using Enqueuer.Queueing.Domain.Models;
 using System.Collections.Concurrent;
 
-namespace Enqueuer.Queueing.Infrastructure.Persistence.Storage.Writing;
+namespace Enqueuer.Queueing.Infrastructure.Commands.Handling;
 
-public sealed class EventWriterManager : IEventWriterManager<Group>, IDisposable
+public sealed class CommandHandlerManager : ICommandHandlerManager<Group>, IDisposable
 {
-    private readonly ConcurrentDictionary<long, IEventWriter<Group>> _activeWriters;
+    private readonly ConcurrentDictionary<long, ICommandHandler<Group>> _activeWriters;
     private readonly CancellationTokenSource _cancellationTokenSource;
-    private readonly IEventWriterFactory<Group> _writerFactory;
+    private readonly ICommandHandlerFactory<Group> _writerFactory;
 
-    public EventWriterManager(IEventWriterFactory<Group> writerFactory)
+    public CommandHandlerManager(ICommandHandlerFactory<Group> writerFactory)
     {
-        _activeWriters = new ConcurrentDictionary<long, IEventWriter<Group>>();
+        _activeWriters = new ConcurrentDictionary<long, ICommandHandler<Group>>();
         _cancellationTokenSource = new CancellationTokenSource();
         _writerFactory = writerFactory;
     }
 
-    public async ValueTask<IEventWriter<Group>> GetActiveEventWriterForAsync(long aggregateId)
+    public async ValueTask<ICommandHandler<Group>> GetActiveCommandHandlerForAsync(long aggregateId)
     {
         if (_activeWriters.TryGetValue(aggregateId, out var writer))
         {
@@ -24,7 +24,7 @@ public sealed class EventWriterManager : IEventWriterManager<Group>, IDisposable
         }
 
         // TODO: consider adding Timeouts for writers
-        writer = _writerFactory.CreateEventWriterFor(aggregateId);
+        writer = _writerFactory.CreateCommandHandlerFor(aggregateId);
         await writer.StartAsync(_cancellationTokenSource.Token);
         if (!_activeWriters.TryAdd(aggregateId, writer))
         {

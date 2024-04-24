@@ -157,6 +157,7 @@ public class RabbitMQBusClient : BackgroundService, IEventBusClient
             await handler.HandleAsync(integrationEvent, CancellationToken.None);
         }
 
+        // Fix: doesn't acknowledge
         _eventListeningChannel!.BasicAck(eventArgs.DeliveryTag, multiple: false);
     }
 

@@ -7,14 +7,12 @@ services:
       context: .
       dockerfile: src/Enqueuer.Queueing.API/Dockerfile
     environment:
-      # - ConnectionStrings__QueueingDB=Server=sqlserver;Database=myDatabase;User Id=sa;Password=${ENQUEUER_QUEUEING_DATABASE_PASSWORD};TrustServerCertificate=true;
       - ConnectionStrings__EventBus=amqp://guest:guest@eventbus:5672
       - EventsDatabase__ConnectionString=mongodb://user:pass@mongodb
     depends_on:
-      # - sqlserver
       - eventbus
       - mongodb
-  
+
   eventbus:
     image: rabbitmq:management-alpine
     ports:
@@ -30,17 +28,8 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=pass
     volumes:
       - type: bind
-        source: ./data
+        source: C:/Users/vkurd/EnqueuerData/Queueing/DB
         target: /data/db
-
-  # TODO: replace with non-containerized database    
-  # sqlserver:
-  #   image: mcr.microsoft.com/mssql/server:2019-latest
-  #   environment:
-  #     ACCEPT_EULA: "Y"
-  #     SA_PASSWORD: ${ENQUEUER_QUEUEING_DATABASE_PASSWORD}
-  #   ports:
-  #     - "1433:1433"
 
   enqueuer.telegram.notifications:
     image: ${DOCKER_REGISTRY-}enqueuertelegramnotifications
@@ -55,7 +44,7 @@ services:
       - enqueuer.queueing.api
       - eventbus
     volumes:
-      - C:/Users/vkurd/DATA:/data
+      - C:/Users/vkurd/EnqueuerData/Notifications/DB:/data
 
   enqueuer.telegram.bff:
     image: ${DOCKER_REGISTRY-}enqueuertelegrambff

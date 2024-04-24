@@ -7,21 +7,25 @@ namespace Enqueuer.Queueing.Domain.Models;
 /// <summary>
 /// The domain model representing an ordered sequence of participants.
 /// </summary>
-public class Queue : Entity, IQueueEntity
+public class Queue : IQueueEntity
 {
     private static readonly IdentityComparer ParticipantIdentityComparer = new();
     internal readonly Dictionary<uint, Participant> _participants = new();
+    internal readonly List<DomainEvent> _domainEvents;
 
     internal Queue(long groupId, string name)
     {
         GroupId = groupId;
         Name = name;
+        _domainEvents = new List<DomainEvent>();
     }
 
     /// <summary>
     /// The unique identifier of the group this queue is related.
     /// </summary>
     public long GroupId { get; }
+
+    public IEnumerable<DomainEvent> DomainEvents => _domainEvents;
 
     /// <summary>
     /// The name of the queue. Must be unique within the group scope.
@@ -40,27 +44,26 @@ public class Queue : Entity, IQueueEntity
     /// <exception cref="ParticipantAlreadyExistsException">Thrown, if the participant with the specified <paramref name="participantId"/> already exists in the queue.</exception>
     internal void EnqueueParticipant(long participantId)
     {
-        (this as IQueueEntity).EnqueueParticipant(participantId);
-        AddDomainEvent(new ParticipantEnqueuedEvent(GroupId, queueName: Name, participantId, DateTime.UtcNow));
+        var position = EnqueueParticipantAtFirstAvailablePosition(participantId);
+        AddDomainEvent(new ParticipantEnqueuedEvent(GroupId, queueName: Name, participantId, position, DateTime.UtcNow));
     }
 
-    void IQueueEntity.EnqueueParticipant(long participantId)
+    private uint EnqueueParticipantAtFirstAvailablePosition(long participantId)
     {
-        var firstAvailablePosition = (uint)Enumerable.Range(1, _participants.Count + 1)
-            .FirstOrDefault(p => !_participants.ContainsKey((uint)p));
+        var firstAvailablePosition = Position.GetFirstAvailablePosition(_participants.Keys);
 
         var participant = new Participant(participantId, firstAvailablePosition);
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
         {
-            throw new ParticipantAlreadyExistsException(
-                $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
+            throw new ParticipantAlreadyExistsException(queueName: Name, participantId, $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
         }
 
-        if (!_participants.TryAdd(firstAvailablePosition, participant))
+        if (!_participants.TryAdd(firstAvailablePosition.Number, participant))
         {
-            throw new PositionReservedException(
-                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
+            throw new PositionReservedException(queueName: Name, firstAvailablePosition.Number, $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
         }
+
+        return firstAvailablePosition.Number;
     }
 
     /// <summary>
@@ -82,17 +85,17 @@ public class Queue : Entity, IQueueEntity
 
     void IQueueEntity.EnqueueParticipantAt(long participantId, uint position)
     {
+        // TODO: add position validation
+
         var participant = new Participant(participantId, position);
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
         {
-            throw new ParticipantAlreadyExistsException(
-                $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
+            throw new ParticipantAlreadyExistsException(queueName: Name, participantId, $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
         }
 
         if (!_participants.TryAdd(position, participant))
         {
-            throw new PositionReservedException(
-                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
+            throw new PositionReservedException(queueName: Name, position, $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
         }
     }
 
@@ -115,6 +118,11 @@ public class Queue : Entity, IQueueEntity
             throw new ParticipantDoesNotExistException(
                 $"Participant '{participantId}' does not exist in the queue '{Name}'.");
         }
+    }
+
+    private void AddDomainEvent(DomainEvent @event)
+    {
+        _domainEvents.Add(@event);
     }
 
     private class IdentityComparer : IEqualityComparer<Participant>

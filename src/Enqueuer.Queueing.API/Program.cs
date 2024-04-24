@@ -1,13 +1,14 @@
 using Enqueuer.Queueing.API.Application.Messaging;
-using Enqueuer.Queueing.API.Extensions;
+using Enqueuer.Queueing.API.Mapping;
+using Enqueuer.Queueing.API.Mapping.RejectedEvents;
 using Enqueuer.Queueing.Domain.Factories;
 using Enqueuer.Queueing.Domain.Models;
 using Enqueuer.Queueing.Domain.Repositories;
+using Enqueuer.Queueing.Infrastructure.Commands.Handling;
 using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
-using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Writing;
 
 namespace Enqueuer.Queueing.API;
 
@@ -56,19 +57,24 @@ public class Program
 
         builder.Services.AddAutoMapper(configuration =>
         {
-            configuration.MapDomainEvent<Domain.Events.QueueCreatedEvent, Contract.V1.Events.QueueCreatedEvent>();
-            configuration.MapDomainEvent<Domain.Events.QueueDeletedEvent, Contract.V1.Events.QueueDeletedEvent>();
+            configuration.AddProfile<QueueCreatedEventMapProfile>();
+            configuration.AddProfile<QueueDeletedEventMapProfile>();
+            configuration.AddProfile<ParticipantEnqueuedEventMapProfile>();
+            configuration.AddProfile<ParticipantEnqueuedAtEventMapProfile>();
+            configuration.AddProfile<ParticipantDequeuedEventMapProfile>();
+
+            configuration.AddProfile<RejectedCommandMapProfile>();
         });
 
-        //builder.Services.AddRabbitMQClient();
+        builder.Services.AddRabbitMQClient();
 
         // Event sourcing
         builder.Services.AddTransient<IGroupRepository, GroupRepository>();
-        builder.Services.AddSingleton<IEventWriterManager<Group>, EventWriterManager>();
-        builder.Services.AddTransient<IEventWriterFactory<Group>, GroupEventWriterFactory>();
         builder.Services.AddTransient<IGroupFactory, GroupFactory>();
         builder.Services.AddTransient<IAggregateRootBuilder<Group>, GroupAggregateBuilder>();
         builder.Services.AddSingleton<IEventStorage, DocumentEventStorage>();
         builder.Services.Configure<EventsDatabaseSettings>(builder.Configuration.GetSection("EventsDatabase"));
+        builder.Services.AddSingleton<ICommandHandlerManager<Group>, CommandHandlerManager>();
+        builder.Services.AddTransient<ICommandHandlerFactory<Group>, GroupCommandHandlerFactory>();
     }
 }

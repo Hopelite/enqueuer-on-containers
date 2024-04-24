@@ -6,14 +6,9 @@ namespace Enqueuer.Queueing.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GroupsController : ControllerBase
+public class GroupsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public GroupsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    private readonly IMediator _mediator = mediator;
 
     [HttpGet("{groupId}/queues")]
     public Task<IActionResult> GetGroupQueues(long groupId, CancellationToken cancellationToken)
@@ -32,7 +27,7 @@ public class GroupsController : ControllerBase
     [HttpDelete("{groupId}/queues/{queueName}")]
     public Task<IActionResult> DeleteQueue(long groupId, string queueName, CancellationToken cancellationToken)
     {
-        var removeQueueCommand = new Application.Commands.RemoveQueueCommand(groupId, queueName);
+        var removeQueueCommand = new Application.Commands.DeleteQueueCommand(groupId, queueName);
         return _mediator.Send(removeQueueCommand, cancellationToken);
     }
 
@@ -44,7 +39,7 @@ public class GroupsController : ControllerBase
     }
 
     [HttpPut("{groupId}/queues/{queueName}/participants/{position}")]
-    public Task<IActionResult> EnqueueParticipantAt(long groupId, string queueName, uint position, EnqueueParticipantAtCommand command, CancellationToken cancellationToken)
+    public Task<IActionResult> EnqueueParticipantTo(long groupId, string queueName, uint position, EnqueueParticipantAtCommand command, CancellationToken cancellationToken)
     {
         var enqueueCommand = new Application.Commands.EnqueueParticipantAtCommand(groupId, queueName, command.ParticipantId, position);
         return _mediator.Send(enqueueCommand, cancellationToken);

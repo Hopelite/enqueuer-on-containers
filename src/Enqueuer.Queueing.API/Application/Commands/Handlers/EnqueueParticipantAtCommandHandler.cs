@@ -1,35 +1,26 @@
-﻿using Enqueuer.Queueing.Domain.Exceptions;
-using Enqueuer.Queueing.Domain.Repositories;
+﻿using Enqueuer.Queueing.Domain.Models;
+using Enqueuer.Queueing.Infrastructure.Commands.Handling;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Application.Commands.Handlers;
 
 public class EnqueueParticipantAtCommandHandler : IOperationHandler<EnqueueParticipantAtCommand>
 {
-    private readonly IGroupRepository _groupRepository;
+    private readonly ICommandHandlerManager<Group> _commandHandlerManager;
 
-    public EnqueueParticipantAtCommandHandler(IGroupRepository groupRepository)
+    public EnqueueParticipantAtCommandHandler(ICommandHandlerManager<Group> commandHandlerManager)
     {
-        _groupRepository = groupRepository;
+        _commandHandlerManager = commandHandlerManager;
     }
 
     public async Task<IActionResult> Handle(EnqueueParticipantAtCommand request, CancellationToken cancellationToken)
     {
-        var group = await _groupRepository.GetGroupAsync(request.GroupId, cancellationToken);
-        try
-        {
-            group.EnqueueParticipantAt(request.QueueName, request.ParticipantId, request.Position);
-        }
-        catch (QueueDoesNotExistException ex)
-        {
-            return new NotFoundObjectResult(ex.Message);
-        }
-        catch (Exception ex) when (ex is ParticipantAlreadyExistsException or PositionReservedException)
-        {
-            return new ConflictObjectResult(ex.Message);
-        }
+        var actualCommand = new Infrastructure.Commands.EnqueueParticipantAtCommand(request.GroupId, request.QueueName, request.ParticipantId, request.Position);
 
-        await _groupRepository.SaveChangesAsync(group, cancellationToken);
-        return new OkResult();
+        var handler = await _commandHandlerManager.GetActiveCommandHandlerForAsync(actualCommand.GroupId);
+
+        await handler.HandleAsync(actualCommand, cancellationToken);
+
+        return new AcceptedResult();
     }
 }

@@ -11,8 +11,9 @@ namespace Enqueuer.Queueing.Domain.Models;
 /// Not thread safe. Intended to be used in a single thread.
 /// The concurrency must be handled by external code.
 /// </remarks>
-public class Group : Entity, IGroupAggregate
+public class Group : IEntity, IGroupAggregate
 {
+    private readonly List<DomainEvent> _domainEvents = new();
     internal readonly Dictionary<string, Queue> _queues = new();
 
     /// <summary>
@@ -25,6 +26,8 @@ public class Group : Entity, IGroupAggregate
     }
 
     public long Id { get; }
+
+    public IEnumerable<DomainEvent> DomainEvents => _domainEvents.Concat(Queues.SelectMany(q => q.DomainEvents)).OrderBy(e => e.Timestamp);
 
     public IReadOnlyCollection<Queue> Queues => _queues.Values;
 
@@ -42,7 +45,7 @@ public class Group : Entity, IGroupAggregate
 
         if (!_queues.TryAdd(queueName, new Queue(Id, queueName)))
         {
-            throw new QueueAlreadyExistsException($"Queue '{queueName}' already exists in the chat '{Id}'.");
+            throw new QueueAlreadyExistsException(queueName, $"Queue '{queueName}' already exists in the chat '{Id}'.");
         }
 
         AddDomainEvent(new QueueCreatedEvent(Id, queueName, DateTime.UtcNow));
@@ -52,7 +55,7 @@ public class Group : Entity, IGroupAggregate
     {
         if (!_queues.Remove(queueName))
         {
-            throw new QueueDoesNotExistException($"Queue '{queueName}' does not exist in the group '{Id}'.");
+            throw new QueueDoesNotExistException(queueName, $"Queue '{queueName}' does not exist in the group '{Id}'.");
         }
 
         AddDomainEvent(new QueueDeletedEvent(Id, queueName, DateTime.UtcNow));
@@ -76,21 +79,27 @@ public class Group : Entity, IGroupAggregate
         queue.DequeueParticipant(participantId);
     }
 
-    /// <summary>
-    /// Applies <paramref name="domainEvent"/> to this group.
-    /// </summary>
-    public void Apply(DomainEvent domainEvent)
+    public void ClearDomainEvents()
     {
-        domainEvent.ApplyTo(this);
+        _domainEvents.Clear();
+        foreach (var queue in _queues.Values)
+        {
+            queue._domainEvents.Clear();
+        }
     }
 
     private Queue GetExistingQueueOrThrow(string queueName)
     {
         if (!_queues.TryGetValue(queueName, out var queue))
         {
-            throw new QueueDoesNotExistException($"Queue '{queueName}' does not exist in the group '{Id}'.");
+            throw new QueueDoesNotExistException(queueName, $"Queue '{queueName}' does not exist in the group '{Id}'.");
         }
 
         return queue;
+    }
+
+    private void AddDomainEvent(DomainEvent @event)
+    {
+        _domainEvents.Add(@event);
     }
 }

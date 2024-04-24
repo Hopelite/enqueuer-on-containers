@@ -36,7 +36,7 @@ public interface IGroupAggregate
     void EnqueueParticipant(string queueName, long participantId);
 
     /// <summary>
-    /// Enqueues a participant with the specified <paramref name="participantId"/> at at the specified <paramref name="position"/>
+    /// Enqueues a participant with the specified <paramref name="participantId"/> at the specified <paramref name="position"/>
     /// in the queue with the specified <paramref name="queueName"/>.
     /// </summary>
     /// <exception cref="Exceptions.QueueDoesNotExistException">Thrown if queue with the specified <paramref name="queueName"/> does not exist in the group.</exception>
