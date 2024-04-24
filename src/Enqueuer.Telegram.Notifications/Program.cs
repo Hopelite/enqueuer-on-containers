@@ -36,7 +36,8 @@ public class Program
             .AddSubscription<QueueAlreadyExistsEvent, QueueAlreadyExistsHandler>()
             .AddSubscription<QueueDoesNotExistEvent, QueueDoesNotExistHandler>()
             .AddSubscription<ParticipantDequeuedEvent, ParticipantDequeuedHandler>()
-            .AddSubscription<ParticipantAlreadyExistsEvent, ParticipantAlreadyExistsHandler>();
+            .AddSubscription<ParticipantAlreadyExistsEvent, ParticipantAlreadyExistsHandler>()
+            .AddSubscription<PositionIsReservedEvent, PositionIsReservedHandler>();
 
         builder.Services.MigrateDatabase();
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();

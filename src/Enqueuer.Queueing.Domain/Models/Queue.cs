@@ -60,8 +60,7 @@ public class Queue : IQueueEntity
 
         if (!_participants.TryAdd(firstAvailablePosition.Number, participant))
         {
-            throw new PositionReservedException(
-                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
+            throw new PositionReservedException(queueName: Name, firstAvailablePosition.Number, $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
         }
 
         return firstAvailablePosition.Number;
@@ -96,8 +95,7 @@ public class Queue : IQueueEntity
 
         if (!_participants.TryAdd(position, participant))
         {
-            throw new PositionReservedException(
-                $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
+            throw new PositionReservedException(queueName: Name, position, $"Cannot enqueue participant '{participant.Id}' to the reserved position '{participant.Position}' in the queue '{Name}'.");
         }
     }
 
