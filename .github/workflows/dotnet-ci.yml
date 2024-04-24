@@ -16,13 +16,13 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: '6.0'  # specify your .NET version here
+        dotnet-version: '8.0'  # specify your .NET version here
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore EnqueuerOnContainers.sln
 
     - name: Build
-      run: dotnet build --no-restore -c Release
+      run: dotnet build EnqueuerOnContainers.sln --no-restore -c Release
 
     - name: Test
-      run: dotnet test --no-build -c Release
+      run: dotnet test EnqueuerOnContainers.sln --no-build -c Release
