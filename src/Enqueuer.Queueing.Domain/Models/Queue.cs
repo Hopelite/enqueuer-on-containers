@@ -55,8 +55,7 @@ public class Queue : IQueueEntity
         var participant = new Participant(participantId, firstAvailablePosition);
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
         {
-            throw new ParticipantAlreadyExistsException(
-                $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
+            throw new ParticipantAlreadyExistsException(queueName: Name, participantId, $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
         }
 
         if (!_participants.TryAdd(firstAvailablePosition.Number, participant))
@@ -92,8 +91,7 @@ public class Queue : IQueueEntity
         var participant = new Participant(participantId, position);
         if (_participants.Values.Contains(participant, ParticipantIdentityComparer))
         {
-            throw new ParticipantAlreadyExistsException(
-                $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
+            throw new ParticipantAlreadyExistsException(queueName: Name, participantId, $"Participant '{participant.Id}' already exists in the queue '{Name}'.");
         }
 
         if (!_participants.TryAdd(position, participant))

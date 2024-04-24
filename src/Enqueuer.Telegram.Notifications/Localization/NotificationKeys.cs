@@ -15,4 +15,6 @@ public static class NotificationKeys
     public const string QueueAlreadyExistsNotification = "QueueAlreadyExists_Notification";
 
     public const string QueueDoesNotExistNotification = "QueueDoesNotExist_Notification";
+
+    public const string UserAlreadyParticipatesInQueueNotification = "UserAlreadyParticipatesInQueue_Notification";
 }
