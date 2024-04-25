@@ -1,7 +1,4 @@
-using Enqueuer.Queueing.Contract.V1.Events;
-using Enqueuer.Queueing.Contract.V1.Events.RejectedEvents;
 using Enqueuer.Telegram.Notifications.Contract.V1.Models;
-using Enqueuer.Telegram.Notifications.Handlers;
 using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Persistence;
 using Enqueuer.Telegram.Notifications.Services;
@@ -30,14 +27,7 @@ public class Program
         builder.Services.AddTransient<IChatConfigurationService, ChatConfigurationService>();
 
         builder.Services.AddRabbitMQClient()
-            .AddSubscription<QueueCreatedEvent, QueueCreatedHandler>()
-            .AddSubscription<QueueDeletedEvent, QueueDeletedHandler>()
-            .AddSubscription<ParticipantEnqueuedEvent, ParticipantEnqueuedHandler>()
-            .AddSubscription<QueueAlreadyExistsEvent, QueueAlreadyExistsHandler>()
-            .AddSubscription<QueueDoesNotExistEvent, QueueDoesNotExistHandler>()
-            .AddSubscription<ParticipantDequeuedEvent, ParticipantDequeuedHandler>()
-            .AddSubscription<ParticipantAlreadyExistsEvent, ParticipantAlreadyExistsHandler>()
-            .AddSubscription<PositionIsReservedEvent, PositionIsReservedHandler>();
+            .SubscribeAllHandlers();
 
         builder.Services.MigrateDatabase();
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
