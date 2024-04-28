@@ -1,4 +1,14 @@
 
+using Enqueuer.Identity.API.Services;
+using Enqueuer.Identity.Persistence;
+using Enqueuer.Identity.Persistence.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Text.Json;
+
 namespace Enqueuer.Identity.API;
 
 public class Program
@@ -9,10 +19,46 @@ public class Program
 
         // Add services to the container.
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+            });
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.EnableAnnotations();
+        });
+
+        //builder.Services.AddSingleton<IAuthorizationService, AuthorizationService>();
+
+        builder.Services.AddDbContext<IdentityContext>(options =>
+            options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=IdentityDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+
+        //builder.Services.AddIdentity<User, Role>()
+        //    .AddEntityFrameworkStores<IdentityContext>()
+        //    .AddDefaultTokenProviders();
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.SaveToken = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MYBIGGESTKEYPOSSIBLEJUSTLOOKATTHISDUDE")),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero,  // Remove delay of token when expire
+            };
+        });
 
         var app = builder.Build();
 
