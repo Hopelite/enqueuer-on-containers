@@ -1,13 +1,31 @@
 ﻿namespace Enqueuer.Identity.API.Services.Grants;
 
+/// <summary>
+/// The authorization grant used when an application exchanges an authorization code for an access token.
+/// </summary>
 public class AuthorizationCodeGrant : IAuthorizationGrant
 {
-    public AuthorizationCodeGrant(string code)
+    public AuthorizationCodeGrant(string code, Uri? redirectUri, string? clientId)
     {
         Code = code;
+        RedirectUri = redirectUri;
+        ClientId = clientId;
     }
 
     public string Type => AuthorizationGrantType.AuthorizationCode;
 
+    /// <summary>
+    /// The authorization code received from the authorization server.
+    /// </summary>
     public string Code { get; }
+
+    /// <summary>
+    /// Required, if the redirect URI was included in the initial authorization request.
+    /// </summary>
+    public Uri? RedirectUri { get; }
+
+    /// <summary>
+    /// Required, if the client is not authenticating with the authorization server.
+    /// </summary>
+    public string? ClientId { get; }
 }

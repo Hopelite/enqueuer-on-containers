@@ -6,14 +6,20 @@ using Microsoft.AspNetCore.Mvc;
 namespace Enqueuer.Identity.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class IdentityController : ControllerBase
+[Route("api/oauth2")]
+public class OAuthController : ControllerBase
 {
     private readonly IAuthorizationService _authorizationService;
 
-    public IdentityController(IAuthorizationService authorizationService)
+    public OAuthController(IAuthorizationService authorizationService)
     {
         _authorizationService = authorizationService;
+    }
+
+    [HttpGet("authorize")]
+    public Task<IActionResult> Authorize([FromQuery] AuthorizeQueryParameters query, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 
     [HttpPost("token")]
@@ -23,7 +29,7 @@ public class IdentityController : ControllerBase
 
         // TODO: add token to cache
 
-        var token = _authorizationService.GetAccessToken(query.Grant, query.Scopes);
+        var token = _authorizationService.GetAccessTokenAsync(query.Grant, query.Scopes);
 
         var response = new GetAccessTokenResponse(token.Token, token.Type, token.ExpiresIn);
         return Ok(response);

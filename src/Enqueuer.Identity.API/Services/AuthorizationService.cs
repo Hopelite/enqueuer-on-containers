@@ -22,7 +22,7 @@ public class AuthorizationService : IAuthorizationService
         _scopeValidator = scopeValidator;
     }
 
-    public AccessToken GetAccessToken(IAuthorizationGrant grant, ScopeCollection scopes)
+    public AccessToken GetAccessTokenAsync(IAuthorizationGrant grant, ScopeCollection scopes)
     {
         _grantValidator.Validate(grant);
 
