@@ -69,16 +69,6 @@ public class Program
             };
         });
 
-        builder.Services.AddAuthorization(options =>
-        {
-            options.AddPolicy("QueueDeletionPolicy", policy =>
-            {
-                policy.Requirements.Clear();
-                policy.Requirements.Add(new QueueDeleteRequirement());
-            });
-        });
-
-        builder.Services.AddSingleton<IAuthorizationHandler, QueueDeleteHandler>();
         builder.Services.AddHttpContextAccessor();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
