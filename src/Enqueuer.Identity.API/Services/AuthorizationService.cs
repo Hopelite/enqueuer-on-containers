@@ -38,7 +38,10 @@ public class AuthorizationService : IAuthorizationService
         // If some scopes where omitted
         var shouldProvideScopes = acceptedScopes.Count != scopes.Count;
 
-        return new AccessToken(GenerateJwtToken(scopes), BearerTokenType, TimeSpan.FromSeconds(TokenExpirationInSeconds));
+        var token = GenerateJwtToken(acceptedScopes);
+        return shouldProvideScopes
+            ? new AccessToken(token, BearerTokenType, TimeSpan.FromSeconds(TokenExpirationInSeconds), acceptedScopes.ToArray())
+            : new AccessToken(token, BearerTokenType, TimeSpan.FromSeconds(TokenExpirationInSeconds));
     }
 
     private string GenerateJwtToken(IEnumerable<string> scopes)

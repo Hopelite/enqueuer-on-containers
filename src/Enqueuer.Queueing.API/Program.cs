@@ -1,4 +1,5 @@
 using Enqueuer.Queueing.API.Application.Messaging;
+using Enqueuer.Queueing.API.Authorization.Requirements;
 using Enqueuer.Queueing.API.Mapping;
 using Enqueuer.Queueing.API.Mapping.RejectedEvents;
 using Enqueuer.Queueing.Domain.Factories;
@@ -9,6 +10,10 @@ using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Enqueuer.Queueing.API;
 
@@ -43,6 +48,38 @@ public class Program
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
         builder.Services.AddControllers();
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.Authority = "https://localhost:7279";
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MYBIGGESTKEYPOSSIBLEJUSTLOOKATTHISDUDE")),
+                ValidAudience = "apis",
+                ValidIssuer = "EnqueuerIdentity",
+                ValidateIssuer = false,
+                ValidateAudience = false,
+            };
+        });
+
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("QueueDeletionPolicy", policy =>
+            {
+                policy.Requirements.Clear();
+                policy.Requirements.Add(new QueueDeleteRequirement());
+            });
+        });
+
+        builder.Services.AddSingleton<IAuthorizationHandler, QueueDeleteHandler>();
+        builder.Services.AddHttpContextAccessor();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

@@ -1,9 +1,8 @@
-
 using Enqueuer.Identity.API.Services;
+using Enqueuer.Identity.API.Services.Grants;
+using Enqueuer.Identity.API.Services.Scopes;
 using Enqueuer.Identity.Persistence;
-using Enqueuer.Identity.Persistence.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -32,14 +31,12 @@ public class Program
             c.EnableAnnotations();
         });
 
-        //builder.Services.AddSingleton<IAuthorizationService, AuthorizationService>();
+        builder.Services.AddSingleton<IAuthorizationService, AuthorizationService>();
+        builder.Services.AddSingleton<IScopeValidator, ScopeValidator>();
+        builder.Services.AddSingleton<IAuthorizationGrantValidator, AuthorizationGrantValidator>();
 
         builder.Services.AddDbContext<IdentityContext>(options =>
-            options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=IdentityDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
-
-        //builder.Services.AddIdentity<User, Role>()
-        //    .AddEntityFrameworkStores<IdentityContext>()
-        //    .AddDefaultTokenProviders();
+            options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityDB")));
 
         builder.Services.AddAuthentication(options =>
         {

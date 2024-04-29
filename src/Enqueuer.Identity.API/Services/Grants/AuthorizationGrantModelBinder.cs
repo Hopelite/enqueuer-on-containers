@@ -16,11 +16,9 @@ public class AuthorizationGrantModelBinder : IModelBinder
             {
                 AuthorizationGrantType.ClientCredentials => new ClientCredentialsGrant(
                     bindingContext.ValueProvider.GetValue("client_id").FirstValue,
-                    bindingContext.ValueProvider.GetValue("client_secret").FirstValue
-                ),
+                    bindingContext.ValueProvider.GetValue("client_secret").FirstValue),
                 AuthorizationGrantType.AuthorizationCode => new AuthorizationCodeGrant(
-                    bindingContext.ValueProvider.GetValue("code").FirstValue
-                ),
+                    bindingContext.ValueProvider.GetValue("code").FirstValue),
                 _ => null
             };
         }
@@ -29,7 +27,7 @@ public class AuthorizationGrantModelBinder : IModelBinder
             bindingContext.Result = ModelBindingResult.Failed();
             return Task.CompletedTask;
         }
-        #pragma warning restore
+        #pragma warning restore CS8604
 
         bindingContext.Result = grant == null
             ? ModelBindingResult.Failed()

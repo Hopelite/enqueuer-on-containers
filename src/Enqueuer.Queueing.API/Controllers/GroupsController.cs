@@ -1,5 +1,6 @@
 ﻿using Enqueuer.Queueing.Contract.V1.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Controllers;
@@ -24,6 +25,8 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(createQueueCommand, cancellationToken);
     }
 
+    // Allowed scopes: queue:delete, group:manage
+    [Authorize(Policy = "QueueDeletionPolicy")]
     [HttpDelete("{groupId}/queues/{queueName}")]
     public Task<IActionResult> DeleteQueue(long groupId, string queueName, CancellationToken cancellationToken)
     {
