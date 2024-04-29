@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Enqueuer.Identity.API.Services;
 
-public class AuthorizationService : IAuthorizationService
+public class OAuthService : IOAuthService
 {
     private const string BearerTokenType = "bearer";
     private const int TokenExpirationInSeconds = 3600;
@@ -16,7 +16,7 @@ public class AuthorizationService : IAuthorizationService
     private readonly IAuthorizationGrantValidator _grantValidator;
     private readonly IScopeValidator _scopeValidator;
 
-    public AuthorizationService(IAuthorizationGrantValidator grantValidator, IScopeValidator scopeValidator)
+    public OAuthService(IAuthorizationGrantValidator grantValidator, IScopeValidator scopeValidator)
     {
         _grantValidator = grantValidator;
         _scopeValidator = scopeValidator;

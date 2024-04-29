@@ -1,5 +1,4 @@
 using Enqueuer.Queueing.API.Application.Messaging;
-using Enqueuer.Queueing.API.Authorization.Requirements;
 using Enqueuer.Queueing.API.Mapping;
 using Enqueuer.Queueing.API.Mapping.RejectedEvents;
 using Enqueuer.Queueing.Domain.Factories;
@@ -11,7 +10,6 @@ using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 

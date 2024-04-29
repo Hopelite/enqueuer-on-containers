@@ -8,7 +8,7 @@ internal class UserResourceRolesEntityConfiguration : IEntityTypeConfiguration<U
 {
     public void Configure(EntityTypeBuilder<UserResourceRoles> builder)
     {
-        builder.HasKey(r => new { r.UserId, r.RoleId, r.ResourceId });
+        builder.HasKey(r => new { r.UserId, r.ResourceId });
 
         builder.HasOne(r => r.User)
                .WithMany(u => u.ResourceRoles)

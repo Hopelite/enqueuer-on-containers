@@ -1,4 +1,4 @@
-﻿namespace Enqueuer.Identity.API.Extensions;
+﻿namespace Enqueuer.Identity.Authorization.Extensions;
 
 public static class StringExtensions
 {

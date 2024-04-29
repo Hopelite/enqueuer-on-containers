@@ -5,6 +5,13 @@
 /// </summary>
 public class AuthorizationCodeGrant : IAuthorizationGrant
 {
+    public AuthorizationCodeGrant(string code, string? redirectUri, string? clientId)
+    {
+        Code = code;
+        RedirectUri = redirectUri == null ? null : new Uri(redirectUri);
+        ClientId = clientId;
+    }
+
     public AuthorizationCodeGrant(string code, Uri? redirectUri, string? clientId)
     {
         Code = code;

@@ -31,7 +31,7 @@ public class Program
             c.EnableAnnotations();
         });
 
-        builder.Services.AddSingleton<IAuthorizationService, AuthorizationService>();
+        builder.Services.AddSingleton<IOAuthService, OAuthService>();
         builder.Services.AddSingleton<IScopeValidator, ScopeValidator>();
         builder.Services.AddSingleton<IAuthorizationGrantValidator, AuthorizationGrantValidator>();
 

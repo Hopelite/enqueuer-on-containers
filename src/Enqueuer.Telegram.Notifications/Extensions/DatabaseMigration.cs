@@ -27,10 +27,8 @@ public static class DatabaseMigration
             try
             {
                 using var scope = _scopeFactory.CreateScope();
-
                 var queueingContext = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
 
-                //await queueingContext.Database.EnsureCreatedAsync(cancellationToken);
                 await queueingContext.Database.MigrateAsync(cancellationToken);
             }
             catch (Exception ex)

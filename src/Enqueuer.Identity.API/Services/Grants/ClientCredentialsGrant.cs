@@ -1,4 +1,4 @@
-﻿using Enqueuer.Identity.API.Extensions;
+﻿using Enqueuer.Identity.Authorization.Extensions;
 
 namespace Enqueuer.Identity.API.Services.Grants;
 

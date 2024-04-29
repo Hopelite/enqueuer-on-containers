@@ -9,9 +9,9 @@ namespace Enqueuer.Identity.API.Controllers;
 [Route("api/oauth2")]
 public class OAuthController : ControllerBase
 {
-    private readonly IAuthorizationService _authorizationService;
+    private readonly IOAuthService _authorizationService;
 
-    public OAuthController(IAuthorizationService authorizationService)
+    public OAuthController(IOAuthService authorizationService)
     {
         _authorizationService = authorizationService;
     }

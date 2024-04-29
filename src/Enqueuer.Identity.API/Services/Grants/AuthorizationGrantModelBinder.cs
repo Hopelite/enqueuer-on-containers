@@ -18,7 +18,9 @@ public class AuthorizationGrantModelBinder : IModelBinder
                     bindingContext.ValueProvider.GetValue("client_id").FirstValue,
                     bindingContext.ValueProvider.GetValue("client_secret").FirstValue),
                 AuthorizationGrantType.AuthorizationCode => new AuthorizationCodeGrant(
-                    bindingContext.ValueProvider.GetValue("code").FirstValue),
+                    bindingContext.ValueProvider.GetValue("code").FirstValue,
+                    bindingContext.ValueProvider.GetValue("redirect_uri").FirstValue,
+                    bindingContext.ValueProvider.GetValue("client_id").FirstValue),
                 _ => null
             };
         }
