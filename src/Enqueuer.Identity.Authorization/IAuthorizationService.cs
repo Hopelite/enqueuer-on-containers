@@ -5,6 +5,12 @@ namespace Enqueuer.Identity.Authorization;
 public interface IAuthorizationService
 {
     /// <summary>
+    /// Checks whether user with the specified <paramref name="userId"/> has to access the resource with the <paramref name="resourceUri"/> 
+    /// granted by the <paramref name="scope"/>.
+    /// </summary>
+    Task<bool> CheckAccessAsync(Uri resourceUri, long userId, Scope scope, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Grants access defined by the <paramref name="role"/> scopes to resource with the specified <paramref name="resourceUri"/>
     /// for user with the specified <paramref name="granteeId"/>.
     /// </summary>
