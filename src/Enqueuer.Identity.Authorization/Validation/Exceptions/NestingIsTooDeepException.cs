@@ -1,6 +1,6 @@
-﻿namespace Enqueuer.Identity.Authorization.Scopes;
+﻿namespace Enqueuer.Identity.Authorization.Validation.Exceptions;
 
-public class NestingIsTooDeepException : Exception
+public class NestingIsTooDeepException : ValidationException
 {
     public NestingIsTooDeepException()
     {

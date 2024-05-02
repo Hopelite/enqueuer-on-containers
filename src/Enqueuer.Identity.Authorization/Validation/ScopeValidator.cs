@@ -1,11 +1,20 @@
 ﻿using Enqueuer.Identity.Authorization.Models;
+using Enqueuer.Identity.Authorization.Validation.Exceptions;
 using Enqueuer.Identity.Persistence.Constraints;
+using System.Text.RegularExpressions;
 
-namespace Enqueuer.Identity.Authorization.Scopes;
+namespace Enqueuer.Identity.Authorization.Validation;
 
 public class ScopeValidator : IScopeValidator
 {
+    private static readonly Regex ScopeNameRegex = new Regex(@"^[a-z0-9:]+$", RegexOptions.Compiled);
+
     public void Validate(Scope scope)
+    {
+        ValidateScope(scope);
+    }
+
+    private static void ValidateScope(Scope scope, int currentDepth = 1)
     {
         if (scope == null)
         {
@@ -17,35 +26,27 @@ public class ScopeValidator : IScopeValidator
             throw new InvalidScopeNameException($"The legnth of the scope name must be from {ScopeConstraints.MinScopeNameLength} to {ScopeConstraints.MaxScopeNameLength} characters.");
         }
 
-        if (!CheckNestingDepth(scope))
+        if (!ScopeNameRegex.IsMatch(scope.Name))
         {
-            throw new NestingIsTooDeepException($"The maximum depth of the scope nesting allowed, including the parent scope, is {ScopeConstraints.MaxNestingDepth}.");
+            throw new InvalidScopeNameException("The scope name may contain only lower-case letters, digits and colon.");
         }
+
+        CheckNestingDepth(scope, currentDepth);
     }
 
-    private static bool CheckNestingDepth(Scope scope)
-    {
-        return CheckNestingDepthCore(scope, currentDepth: 1);
-    }
-
-    private static bool CheckNestingDepthCore(Scope scope, int currentDepth)
+    private static void CheckNestingDepth(Scope scope, int currentDepth)
     {
         if (currentDepth >= ScopeConstraints.MaxNestingDepth)
         {
-            return false;
+            throw new NestingIsTooDeepException($"The maximum depth of the scope nesting allowed, including the parent scope, is {ScopeConstraints.MaxNestingDepth}.");
         }
 
         if (scope.ChildScopes != null && scope.ChildScopes.Any())
         {
             foreach (var childScope in scope.ChildScopes)
             {
-                if (!CheckNestingDepthCore(childScope, currentDepth + 1))
-                {
-                    return false;
-                }
+                ValidateScope(childScope, currentDepth + 1);
             }
         }
-
-        return true;
     }
 }

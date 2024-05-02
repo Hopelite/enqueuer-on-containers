@@ -1,7 +1,7 @@
 ﻿using Enqueuer.Identity.Authorization.Grants;
 using Enqueuer.Identity.Authorization.Grants.Validation;
 using Enqueuer.Identity.Authorization.Models;
-using Enqueuer.Identity.Authorization.Scopes;
+using Enqueuer.Identity.Authorization.Validation;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

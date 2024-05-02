@@ -1,6 +1,6 @@
 using Enqueuer.Identity.Authorization;
 using Enqueuer.Identity.Authorization.Grants.Validation;
-using Enqueuer.Identity.Authorization.Scopes;
+using Enqueuer.Identity.Authorization.Validation;
 using Enqueuer.Identity.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
