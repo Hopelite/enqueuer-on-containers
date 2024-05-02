@@ -1,6 +1,6 @@
 ﻿using Enqueuer.Identity.Authorization.Extensions;
 
-namespace Enqueuer.Identity.API.Services.Grants;
+namespace Enqueuer.Identity.Authorization.Grants;
 
 /// <summary>
 /// The authorization grant used when applications request an access token to access their own resources, not on behalf of a user.

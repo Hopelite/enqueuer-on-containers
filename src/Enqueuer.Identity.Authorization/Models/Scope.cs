@@ -4,10 +4,13 @@ namespace Enqueuer.Identity.Authorization.Models;
 
 public class Scope
 {
-    public Scope(string name)
+    public Scope(string name, IEnumerable<Scope>? childScopes)
     {
         Name = name.ThrowIfNullOrWhitespace(nameof(name));
+        ChildScopes = childScopes;
     }
 
     public string Name { get; }
+
+    public IEnumerable<Scope>? ChildScopes { get; }
 }

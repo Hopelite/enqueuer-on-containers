@@ -1,4 +1,4 @@
-﻿namespace Enqueuer.Identity.API.Services.Grants;
+﻿namespace Enqueuer.Identity.Authorization.Grants.Validation;
 
 public interface IAuthorizationGrantValidator
 {

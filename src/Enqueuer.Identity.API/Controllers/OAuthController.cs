@@ -1,12 +1,12 @@
 ﻿using Enqueuer.Identity.API.Parameters;
-using Enqueuer.Identity.API.Services;
+using Enqueuer.Identity.Authorization;
 using Enqueuer.Identity.Contract.V1;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Identity.API.Controllers;
 
 [ApiController]
-[Route("api/oauth2")]
+[Route("oauth2")]
 public class OAuthController : ControllerBase
 {
     private readonly IOAuthService _authorizationService;
@@ -29,7 +29,7 @@ public class OAuthController : ControllerBase
 
         // TODO: add token to cache
 
-        var token = _authorizationService.GetAccessTokenAsync(query.Grant, query.Scopes);
+        var token = _authorizationService.GetAccessTokenAsync(query.Grant, query.Scopes.Select(s => new Authorization.Models.Scope(s, null)).ToArray());
 
         var response = new GetAccessTokenResponse(token.Token, token.Type, token.ExpiresIn);
         return Ok(response);

@@ -1,4 +1,4 @@
-﻿namespace Enqueuer.Identity.API.Services.Grants;
+﻿namespace Enqueuer.Identity.Authorization.Grants;
 
 /// <summary>
 /// The authorization grant used when an application exchanges an authorization code for an access token.

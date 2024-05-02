@@ -1,12 +1,13 @@
-﻿using Enqueuer.Identity.API.Parameters;
-using Enqueuer.Identity.API.Services.Grants;
-using Enqueuer.Identity.API.Services.Scopes;
+﻿using Enqueuer.Identity.Authorization.Grants;
+using Enqueuer.Identity.Authorization.Grants.Validation;
+using Enqueuer.Identity.Authorization.Models;
+using Enqueuer.Identity.Authorization.Scopes;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Enqueuer.Identity.API.Services;
+namespace Enqueuer.Identity.Authorization;
 
 public class OAuthService : IOAuthService
 {
@@ -22,16 +23,21 @@ public class OAuthService : IOAuthService
         _scopeValidator = scopeValidator;
     }
 
-    public AccessToken GetAccessTokenAsync(IAuthorizationGrant grant, ScopeCollection scopes)
+    public AccessToken GetAccessTokenAsync(IAuthorizationGrant grant, IReadOnlyCollection<Scope> scopes)
     {
         _grantValidator.Validate(grant);
 
         var acceptedScopes = new List<string>(scopes.Count);
         foreach (var scope in scopes)
         {
-            if (_scopeValidator.Validate(scope))
+            try
             {
-                acceptedScopes.Add(scope);
+                _scopeValidator.Validate(scope);
+                acceptedScopes.Add(scope.Name);
+            }
+            catch (Exception)
+            {
+                // Skip invalid scopes
             }
         }
 

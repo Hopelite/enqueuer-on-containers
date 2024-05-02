@@ -1,4 +1,5 @@
-﻿using Enqueuer.Identity.Persistence.Models;
+﻿using Enqueuer.Identity.Persistence.Constraints;
+using Enqueuer.Identity.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -6,8 +7,6 @@ namespace Enqueuer.Identity.Persistence.EntityConfigurations;
 
 internal class ScopeEntityConfiguration : IEntityTypeConfiguration<Scope>
 {
-    private const int MaxScopeNameLength = 64;
-
     public void Configure(EntityTypeBuilder<Scope> builder)
     {
         builder.HasKey(s => s.Id);
@@ -16,7 +15,7 @@ internal class ScopeEntityConfiguration : IEntityTypeConfiguration<Scope>
                .IsUnique();
 
         builder.Property(s => s.Name)
-               .HasMaxLength(MaxScopeNameLength);
+               .HasMaxLength(ScopeConstraints.MaxScopeNameLength);
 
         builder.HasOne(s => s.Parent)
                .WithMany(s => s.Children)

@@ -1,6 +1,6 @@
-using Enqueuer.Identity.API.Services;
-using Enqueuer.Identity.API.Services.Grants;
-using Enqueuer.Identity.API.Services.Scopes;
+using Enqueuer.Identity.Authorization;
+using Enqueuer.Identity.Authorization.Grants.Validation;
+using Enqueuer.Identity.Authorization.Scopes;
 using Enqueuer.Identity.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +34,8 @@ public class Program
         builder.Services.AddSingleton<IOAuthService, OAuthService>();
         builder.Services.AddSingleton<IScopeValidator, ScopeValidator>();
         builder.Services.AddSingleton<IAuthorizationGrantValidator, AuthorizationGrantValidator>();
+
+        builder.Services.AddSingleton<IAuthorizationService, AuthorizationService>();
 
         builder.Services.AddDbContext<IdentityContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityDB")));

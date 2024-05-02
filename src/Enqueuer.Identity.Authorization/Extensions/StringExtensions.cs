@@ -6,6 +6,6 @@ public static class StringExtensions
     {
         return string.IsNullOrWhiteSpace(value)
             ? throw new ArgumentNullException(parameterName, $"{parameterName} can't be null, empty or a whitespace.")
-            : parameterName;
+            : value;
     }
 }

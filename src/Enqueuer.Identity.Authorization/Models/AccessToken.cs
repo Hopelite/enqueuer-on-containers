@@ -1,4 +1,4 @@
-﻿namespace Enqueuer.Identity.API.Services;
+﻿namespace Enqueuer.Identity.Authorization.Models;
 
 public class AccessToken
 {
