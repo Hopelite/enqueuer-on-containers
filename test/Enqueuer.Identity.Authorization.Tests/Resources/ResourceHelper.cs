@@ -23,7 +23,7 @@ public static class ResourceHelper
         return File.ReadAllText(Path.Combine(ResourceFolderPath, fileName));
     }
 
-    public static T ReadResource<T>(string fileName)
+    public static T GetResource<T>(string fileName)
     {
         var json = ReadResource(fileName);
         return JsonConvert.DeserializeObject<T>(json, SerializerSettings)

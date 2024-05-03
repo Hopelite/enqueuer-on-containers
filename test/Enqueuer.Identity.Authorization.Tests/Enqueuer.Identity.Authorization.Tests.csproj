@@ -27,6 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Resources\Scope_Valid_DeepNesting.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Scope_Invalid_DeepNesting.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

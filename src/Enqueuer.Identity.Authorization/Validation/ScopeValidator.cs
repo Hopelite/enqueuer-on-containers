@@ -36,7 +36,7 @@ public class ScopeValidator : IScopeValidator
 
     private static void CheckNestingDepth(Scope scope, int currentDepth)
     {
-        if (currentDepth >= ScopeConstraints.MaxNestingDepth)
+        if (currentDepth > ScopeConstraints.MaxNestingDepth)
         {
             throw new NestingIsTooDeepException($"The maximum depth of the scope nesting allowed, including the parent scope, is {ScopeConstraints.MaxNestingDepth}.");
         }

@@ -43,7 +43,7 @@ public class ScopeValidatorTests
     }
 
     [Theory]
-    [InlineData("que")]
+    [InlineData("me")]
     [InlineData("queue")]
     [InlineData("group:12")]
     [InlineData("queue:create")]
@@ -57,8 +57,16 @@ public class ScopeValidatorTests
     [Fact]
     public void Validate_ChildScopeNestingIsTooDeep_ThrowsException()
     {
-        var scope = ResourceHelper.ReadResource<Scope>("Scope_Invalid_DeepNesting.json");
+        var scope = ResourceHelper.GetResource<Scope>("Scope_Invalid_DeepNesting.json");
 
         Assert.Throws<NestingIsTooDeepException>(() => _scopeValidator.Validate(scope));
+    }
+
+    [Fact]
+    public void Validate_ValidNesting_PassesValidation()
+    {
+        var scope = ResourceHelper.GetResource<Scope>("Scope_Valid_DeepNesting.json");
+
+        _scopeValidator.Validate(scope);
     }
 }

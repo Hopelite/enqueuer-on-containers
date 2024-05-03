@@ -1,0 +1,13 @@
+{
+  "name": "queue",
+  "child_scopes": [
+    {
+      "name": "queue:edit",
+      "child_scopes": [
+        {
+          "name": "queue:rename"
+        }
+      ]
+    }
+  ]
+}
