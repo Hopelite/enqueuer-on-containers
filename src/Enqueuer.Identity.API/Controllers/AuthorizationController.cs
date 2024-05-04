@@ -17,11 +17,19 @@ public class AuthorizationController : ControllerBase
         _authorizationService = authorizationService;
     }
 
-    //[Authorize(Roles = "Administrator")] // Or scopes: role:create, role:update, scope:create
+    //[Authorize(Roles = "System Administrator")] // Or scopes: role:create, role:update, scope:create
     [HttpPut("roles/{role_name}")]
     public async Task<IActionResult> CreateOrUpdateRoleAsync(CreateOrUpdateRoleRequest request, CancellationToken cancellationToken)
     {
         await _authorizationService.CreateOrUpdateRoleAsync(MapToRole(request), cancellationToken);
+        return Created();
+    }
+
+    //[Authorize(Roles = "Administrator, User Contributor?")] // Or scopes: user:create, user:update
+    [HttpPut("users/{user_id}")]
+    public async Task<IActionResult> CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken)
+    {
+        await _authorizationService.CreateOrUpdateUserAsync(new User(request.UserId, request.FirstName, request.LastName), cancellationToken);
         return Created();
     }
 
@@ -31,7 +39,7 @@ public class AuthorizationController : ControllerBase
         throw new NotImplementedException();
     }
 
-    [HttpPut("resources/{resource_id}")]
+    [HttpPut("{resource_id}")]
     public async Task<IActionResult> GrantAccessAsync(GrantAccessQueryParameters query, CancellationToken cancellationToken)
     {
         try
@@ -44,7 +52,7 @@ public class AuthorizationController : ControllerBase
             throw;
         }
 
-        throw new NotImplementedException();
+        return Ok();
     }
 
     [HttpDelete]

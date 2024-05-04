@@ -10,6 +10,11 @@ public interface IAuthorizationService
     Task CreateOrUpdateRoleAsync(Role role, CancellationToken cancellationToken);
 
     /// <summary>
+    /// Creates new or updates the existing <paramref name="user"/>.
+    /// </summary>
+    Task CreateOrUpdateUserAsync(User user, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Checks whether user with the specified <paramref name="userId"/> has to access the resource with the <paramref name="resourceUri"/> 
     /// granted by the <paramref name="scope"/>.
     /// </summary>

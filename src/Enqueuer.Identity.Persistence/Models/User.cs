@@ -23,7 +23,7 @@ public class User
     public string FirstName { get; set; }
 
     /// <summary>
-    /// Options. The last name of the user.
+    /// Optional. The last name of the user.
     /// </summary>
     public string? LastName { get; set; }
 

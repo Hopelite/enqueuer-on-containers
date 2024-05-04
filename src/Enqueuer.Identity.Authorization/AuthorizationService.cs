@@ -64,7 +64,36 @@ public class AuthorizationService : IAuthorizationService
             }
 
             await dbContext.SaveChangesAsync(cancellationToken);
+            await dbContext.Database.CommitTransactionAsync(cancellationToken);
         }
+    }
+
+    public async Task CreateOrUpdateUserAsync(Models.User user, CancellationToken cancellationToken)
+    {
+        using var serviceScope = _serviceScopeFactory.CreateScope();
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<IdentityContext>();
+
+        var existingUser = await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == user.UserId, cancellationToken);
+        if (existingUser != null)
+        {
+            existingUser.FirstName = user.FirstName;
+            existingUser.LastName = user.LastName;
+
+            dbContext.Users.Update(existingUser);
+        }
+        else
+        {
+            var newUser = new User
+            {
+                UserId = user.UserId,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+            };
+
+            dbContext.Users.Add(newUser);
+        }
+
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<bool> CheckAccessAsync(Uri resourceUri, long userId, Models.Scope scope, CancellationToken cancellationToken)
