@@ -1,4 +1,7 @@
-﻿using Enqueuer.Identity.Authorization.Extensions;
+﻿using Enqueuer.Identity.Authorization.Exceptions;
+using Enqueuer.Identity.Authorization.Extensions;
+using Enqueuer.Identity.Authorization.Grants.Credentials;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Enqueuer.Identity.Authorization.Grants;
 
@@ -24,4 +27,19 @@ public class ClientCredentialsGrant : IAuthorizationGrant
     /// The client secret used to authenticate the client to the authorization server.
     /// </summary>
     public string ClientSecret { get; }
+
+    public async ValueTask AuthorizeAsync(IAuthorizationContext authorizationContext, CancellationToken cancellationToken)
+    {
+        var credentialStorage = authorizationContext.Services.GetRequiredService<IClientCredentialsStorage>();
+        var actualClientSecret = await credentialStorage.GetClientSecretAsync(ClientId, cancellationToken);
+        if (string.IsNullOrWhiteSpace(actualClientSecret))
+        {
+            throw new AuthorizationException("Specified client secret do not exist.");
+        }
+
+        if (!actualClientSecret.Equals(ClientSecret))
+        {
+            throw new AuthorizationException("Client secret is invalid.");
+        }
+    }
 }

@@ -13,4 +13,9 @@ public class Scope
     public string Name { get; }
 
     public IEnumerable<Scope>? ChildScopes { get; }
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }

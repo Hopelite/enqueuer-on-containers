@@ -1,5 +1,13 @@
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Enqueuer.Identity.API.Services;
 using Enqueuer.Identity.Authorization;
+using Enqueuer.Identity.Authorization.Configuration;
+using Enqueuer.Identity.Authorization.Grants;
+using Enqueuer.Identity.Authorization.Grants.Credentials;
 using Enqueuer.Identity.Authorization.Grants.Validation;
+using Enqueuer.Identity.Authorization.OAuth;
+using Enqueuer.Identity.Authorization.OAuth.Signature;
 using Enqueuer.Identity.Authorization.Validation;
 using Enqueuer.Identity.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,9 +39,23 @@ public class Program
             c.EnableAnnotations();
         });
 
-        builder.Services.AddSingleton<IOAuthService, OAuthService>();
-        builder.Services.AddSingleton<IScopeValidator, ScopeValidator>();
-        builder.Services.AddSingleton<IAuthorizationGrantValidator, AuthorizationGrantValidator>();
+        builder.Services.AddSingleton<IOAuthService, OAuthService>()
+                        .AddTransient<IAuthorizationGrantValidator, AuthorizationGrantValidator>()
+                        .AddTransient<IScopeValidator, ScopeValidator>()
+                        .AddSingleton<IClientCredentialsStorage, AzureKeyVaultStorage>()
+                        .AddTransient<ISignatureProviderFactory, SignatureProviderFactory>()
+                        .Configure<OAuthConfiguration>(builder.Configuration.GetRequiredSection("OAuth"))
+                        .AddTransient<IAuthorizationContext, AuthorizationContext>();
+
+        builder.Services.AddSingleton<SecretClient>(provider =>
+        {
+            // Build configuration
+            var config = provider.GetRequiredService<IConfiguration>();
+            var keyVaultUrl = config["KeyVault:Url"];
+
+            // Create a new SecretClient instance with DefaultAzureCredential
+            return new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
+        });
 
         builder.Services.AddSingleton<IAuthorizationService, AuthorizationService>();
 

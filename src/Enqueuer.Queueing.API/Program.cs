@@ -55,7 +55,7 @@ public class Program
         })
         .AddJwtBearer(options =>
         {
-            options.Authority = "https://localhost:7279";
+            //options.Authority = "https://localhost:7279";
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,

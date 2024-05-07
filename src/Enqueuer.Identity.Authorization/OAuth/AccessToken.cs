@@ -1,13 +1,8 @@
-﻿namespace Enqueuer.Identity.Authorization.Models;
+﻿namespace Enqueuer.Identity.Authorization.OAuth;
 
 public class AccessToken
 {
-    public AccessToken(string token, string type, TimeSpan expiresIn)
-        : this(token, type, expiresIn, null)
-    {
-    }
-
-    public AccessToken(string token, string type, TimeSpan expiresIn, string[]? scopes)
+    internal AccessToken(string token, string type, TimeSpan expiresIn, string[]? scopes)
     {
         Token = token;
         Type = type;

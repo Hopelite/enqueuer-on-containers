@@ -1,4 +1,5 @@
-﻿namespace Enqueuer.Identity.Authorization.Grants;
+﻿
+namespace Enqueuer.Identity.Authorization.Grants;
 
 /// <summary>
 /// The authorization grant used when an application exchanges an authorization code for an access token.
@@ -35,4 +36,9 @@ public class AuthorizationCodeGrant : IAuthorizationGrant
     /// Required, if the client is not authenticating with the authorization server.
     /// </summary>
     public string? ClientId { get; }
+
+    public ValueTask AuthorizeAsync(IAuthorizationContext authorizationContext, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 }

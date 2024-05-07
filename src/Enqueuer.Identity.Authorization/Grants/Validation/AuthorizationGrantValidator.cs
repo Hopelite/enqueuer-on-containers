@@ -13,7 +13,5 @@ public class AuthorizationGrantValidator : IAuthorizationGrantValidator
         {
             throw new UsupportedGrantTypeException(grant.Type, $"The grant type \"{grant.Type}\" is unsupported.");
         }
-
-        // TODO: authenticate grant by type
     }
 }
