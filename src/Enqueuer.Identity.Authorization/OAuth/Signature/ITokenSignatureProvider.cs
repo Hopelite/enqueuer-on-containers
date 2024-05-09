@@ -1,8 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using System.IdentityModel.Tokens.Jwt;
 
 namespace Enqueuer.Identity.Authorization.OAuth.Signature;
 
 public interface ITokenSignatureProvider
 {
-    SigningCredentials GenerateSignature();
+    Task<string> SignAsync(JwtSecurityToken token, CancellationToken cancellationToken);
 }

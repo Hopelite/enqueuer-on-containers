@@ -1,20 +1,4 @@
-using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
-using Enqueuer.Identity.API.Services;
-using Enqueuer.Identity.Authorization;
-using Enqueuer.Identity.Authorization.Configuration;
-using Enqueuer.Identity.Authorization.Grants;
-using Enqueuer.Identity.Authorization.Grants.Credentials;
-using Enqueuer.Identity.Authorization.Grants.Validation;
-using Enqueuer.Identity.Authorization.OAuth;
-using Enqueuer.Identity.Authorization.OAuth.Signature;
-using Enqueuer.Identity.Authorization.Validation;
-using Enqueuer.Identity.Persistence;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Text.Json;
+using Enqueuer.Identity.API.Extensions;
 
 namespace Enqueuer.Identity.API;
 
@@ -22,66 +6,9 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
-
-        builder.Services.AddControllers()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
-            });
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
-        {
-            c.EnableAnnotations();
-        });
-
-        builder.Services.AddSingleton<IOAuthService, OAuthService>()
-                        .AddTransient<IAuthorizationGrantValidator, AuthorizationGrantValidator>()
-                        .AddTransient<IScopeValidator, ScopeValidator>()
-                        .AddSingleton<IClientCredentialsStorage, AzureKeyVaultStorage>()
-                        .AddTransient<ISignatureProviderFactory, SignatureProviderFactory>()
-                        .Configure<OAuthConfiguration>(builder.Configuration.GetRequiredSection("OAuth"))
-                        .AddTransient<IAuthorizationContext, AuthorizationContext>();
-
-        builder.Services.AddSingleton<SecretClient>(provider =>
-        {
-            // Build configuration
-            var config = provider.GetRequiredService<IConfiguration>();
-            var keyVaultUrl = config["KeyVault:Url"];
-
-            // Create a new SecretClient instance with DefaultAzureCredential
-            return new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
-        });
-
-        builder.Services.AddSingleton<IAuthorizationService, AuthorizationService>();
-
-        builder.Services.AddDbContext<IdentityContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityDB")));
-
-        builder.Services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.SaveToken = true;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MYBIGGESTKEYPOSSIBLEJUSTLOOKATTHISDUDE")),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero,  // Remove delay of token when expire
-            };
-        });
-
-        var app = builder.Build();
+        var app = WebApplication.CreateBuilder(args)
+            .ConfigureServices()
+            .Build();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -93,7 +20,6 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
 
         app.MapControllers();
 

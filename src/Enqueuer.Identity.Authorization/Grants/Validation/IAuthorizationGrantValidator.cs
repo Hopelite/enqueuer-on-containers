@@ -2,5 +2,8 @@
 
 public interface IAuthorizationGrantValidator
 {
+    /// <summary>
+    /// Validates the <paramref name="grant"/>.
+    /// </summary>
     void Validate(IAuthorizationGrant grant);
 }

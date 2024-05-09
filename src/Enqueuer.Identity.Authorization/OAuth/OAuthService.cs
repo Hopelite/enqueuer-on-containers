@@ -33,6 +33,6 @@ public class OAuthService(
             .AddScopes(scopes)
             .SignToken(signatureProvider);
 
-        return tokenBuilder.Build();
+        return await tokenBuilder.BuildAsync(cancellationToken);
     }
 }

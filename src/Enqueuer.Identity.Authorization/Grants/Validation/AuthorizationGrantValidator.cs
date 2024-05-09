@@ -7,6 +7,8 @@ public class AuthorizationGrantValidator : IAuthorizationGrantValidator
         AuthorizationGrantType.ClientCredentials,
     ];
 
+    /// <inheritdoc/>
+    /// <exception cref="UsupportedGrantTypeException"/>
     public void Validate(IAuthorizationGrant grant)
     {
         if (!SupportedGrantTypes.Contains(grant.Type))

@@ -1,4 +1,5 @@
 ﻿using Enqueuer.Identity.Authorization.OAuth.Signature;
+using Microsoft.Extensions.Options;
 
 namespace Enqueuer.Identity.API.Services;
 
@@ -8,8 +9,7 @@ public class SignatureProviderFactory(IServiceProvider serviceProvider) : ISigna
 
     public ValueTask<ITokenSignatureProvider> CreateAsync(CancellationToken cancellationToken)
     {
-        const string Key = "MYBIGGESTKEYPOSSIBLEJUSTLOOKATTHISDUDE";
-
-        return ValueTask.FromResult(new TokenSignatureProvider(new TokenSignatureProviderConfiguration(Key)) as ITokenSignatureProvider);
+        var signatureConfiguration = _serviceProvider.GetRequiredService<IOptions<TokenSignatureProviderConfiguration>>();
+        return ValueTask.FromResult(new InMemorySignatureProvider(signatureConfiguration.Value) as ITokenSignatureProvider);
     }
 }

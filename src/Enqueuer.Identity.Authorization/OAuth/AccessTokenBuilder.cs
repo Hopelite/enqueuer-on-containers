@@ -3,8 +3,6 @@ using Enqueuer.Identity.Authorization.Models;
 using Enqueuer.Identity.Authorization.OAuth.Signature;
 using Enqueuer.Identity.Authorization.Validation;
 using Enqueuer.Identity.Authorization.Validation.Exceptions;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -16,9 +14,9 @@ public class AccessTokenBuilder
 
     private readonly OAuthConfiguration _configuration;
     private readonly IScopeValidator _scopeValidator;
-    private readonly List<Scope> _scopes = new();
+    private readonly List<Scope> _scopes = new(); // TODO: change to unique set
     private bool _wereScopesOmitted = false;
-    private SigningCredentials? _signature;
+    private ITokenSignatureProvider? _signatureProvider;
 
     private AccessTokenBuilder(OAuthConfiguration configuration, IScopeValidator scopeValidator)
     {
@@ -26,11 +24,18 @@ public class AccessTokenBuilder
         _scopeValidator = scopeValidator;
     }
 
+    /// <summary>
+    /// Creates a new instance of the <see cref="AccessTokenBuilder"/> class.
+    /// </summary>
     public static AccessTokenBuilder CreateBuilder(OAuthConfiguration configuration, IScopeValidator scopeValidator)
     {
         return new AccessTokenBuilder(configuration, scopeValidator);
     }
-
+    
+    /// <summary>
+    /// Validates and adds <paramref name="scopes"/> to the token.
+    /// </summary>
+    /// <remarks>Invalid <paramref name="scopes"/> are ommited and the accepted ones are added to token.</remarks>
     public AccessTokenBuilder AddScopes(IEnumerable<Scope> scopes)
     {
         foreach (var scope in scopes)
@@ -52,20 +57,20 @@ public class AccessTokenBuilder
 
     public AccessTokenBuilder SignToken(ITokenSignatureProvider signatureProvider)
     {
-        _signature = signatureProvider.GenerateSignature();
+        _signatureProvider = signatureProvider;
         return this;
     }
 
-    public AccessToken Build()
+    public async ValueTask<AccessToken> BuildAsync(CancellationToken cancellationToken)
     {
         var scopes = _wereScopesOmitted ? _scopes.Select(s => s.ToString()).ToArray() : null;
 
-        var token = GenerateJwtToken();
+        var token = await GenerateJwtTokenAsync(cancellationToken);
 
         return new AccessToken(token, BearerTokenType, TimeSpan.FromSeconds(_configuration.TokenLifetime), scopes);
     }
 
-    private string GenerateJwtToken()
+    private async Task<string> GenerateJwtTokenAsync(CancellationToken cancellationToken)
     {
         var claims = new List<Claim>()
         {
@@ -81,9 +86,12 @@ public class AccessTokenBuilder
         var token = new JwtSecurityToken(
             issuer: _configuration.Issuer,
             claims: claims,
-            expires: DateTime.UtcNow.AddSeconds(_configuration.TokenLifetime),
-            signingCredentials: _signature
-        );
+            expires: DateTime.UtcNow.AddSeconds(_configuration.TokenLifetime));
+
+        if (_signatureProvider != null)
+        {
+            return await _signatureProvider.SignAsync(token, cancellationToken);
+        }
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
