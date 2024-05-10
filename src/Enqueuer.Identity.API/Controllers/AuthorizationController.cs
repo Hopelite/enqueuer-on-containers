@@ -1,6 +1,7 @@
 ﻿using Enqueuer.Identity.API.Parameters;
 using Enqueuer.Identity.Authorization.Extensions;
 using Enqueuer.Identity.Authorization.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using IAuthorizationService = Enqueuer.Identity.Authorization.IAuthorizationService;
 
@@ -18,7 +19,7 @@ public class AuthorizationController : ControllerBase
     }
 
     //[Authorize(Roles = "System Administrator")]
-    //[AllowedScope("role:create", "role:update", "scope:create")]
+    [AllowedScope("role:create", "role:update", "scope:create")]
     [HttpPut("roles/{role_name}")]
     public async Task<IActionResult> CreateOrUpdateRoleAsync(CreateOrUpdateRoleRequest request, CancellationToken cancellationToken)
     {

@@ -9,7 +9,7 @@ public class SignatureProviderFactory(IServiceProvider serviceProvider) : ISigna
 
     public ValueTask<ITokenSignatureProvider> CreateAsync(CancellationToken cancellationToken)
     {
-        var signatureConfiguration = _serviceProvider.GetRequiredService<IOptions<TokenSignatureProviderConfiguration>>();
-        return ValueTask.FromResult(new InMemorySignatureProvider(signatureConfiguration.Value) as ITokenSignatureProvider);
+        var signatureConfiguration = _serviceProvider.GetRequiredService<IOptions<OAuthConfiguration>>();
+        return ValueTask.FromResult(new InMemorySignatureProvider(signatureConfiguration.Value.GetSigningKey()) as ITokenSignatureProvider);
     }
 }

@@ -1,17 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Configuration;
 
-namespace Enqueuer.Queueing.API.Authorization.Attributes;
+namespace Microsoft.AspNetCore.Authorization;
 
 /// <summary>
 /// Specifies that the class or method that this attribute is applied to requires the authorization by scope.
 /// </summary>
 public class AllowedScopeAttribute : AuthorizeAttribute, IAuthorizationFilter
 {
-    private const string ScopeClaimType = "scope";
-    private const char ScopeDelimiter = ' ';
-
     public AllowedScopeAttribute()
         : this(Array.Empty<string>())
     {
@@ -31,10 +28,10 @@ public class AllowedScopeAttribute : AuthorizeAttribute, IAuthorizationFilter
         var user = context.HttpContext.User;
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
-            var scopeClaim = user.Claims.FirstOrDefault(c => c.Type.Equals(ScopeClaimType));
+            var scopeClaim = user.Claims.FirstOrDefault(c => c.Type.Equals(OAuthConstants.ScopeClaimName));
             if (scopeClaim != null)
             {
-                var providedScope = scopeClaim.Value.Split(ScopeDelimiter, StringSplitOptions.RemoveEmptyEntries & StringSplitOptions.TrimEntries);
+                var providedScope = scopeClaim.Value.Split(OAuthConstants.ScopeDelimiter, StringSplitOptions.RemoveEmptyEntries & StringSplitOptions.TrimEntries);
                 hasAllowedScope = AllowedScope.Any(s => providedScope.Contains(s));
             }
         }

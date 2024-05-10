@@ -4,16 +4,15 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace Enqueuer.Identity.API.Services;
 
-public class InMemorySignatureProvider(TokenSignatureProviderConfiguration configuration) : ITokenSignatureProvider
+public class InMemorySignatureProvider(SecurityKey signatureKey) : ITokenSignatureProvider
 {
-    private readonly TokenSignatureProviderConfiguration _configuration = configuration;
+    private readonly SecurityKey _signatureKey = signatureKey;
 
     public Task<string> SignAsync(JwtSecurityToken token, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(token, nameof(token));
 
-        var signatureKey = new SymmetricSecurityKey(_configuration.EncodedKey);
-        var signature = new SigningCredentials(signatureKey, SecurityAlgorithms.HmacSha256);
+        var signature = new SigningCredentials(_signatureKey, SecurityAlgorithms.HmacSha256);
 
         var signedToken = new JwtSecurityToken(
             issuer: token.Issuer,

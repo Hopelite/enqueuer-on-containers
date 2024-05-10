@@ -1,8 +1,8 @@
-﻿using Enqueuer.Identity.Authorization.Configuration;
-using Enqueuer.Identity.Authorization.Models;
+﻿using Enqueuer.Identity.Authorization.Models;
 using Enqueuer.Identity.Authorization.OAuth.Signature;
 using Enqueuer.Identity.Authorization.Validation;
 using Enqueuer.Identity.Authorization.Validation.Exceptions;
+using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -10,8 +10,6 @@ namespace Enqueuer.Identity.Authorization.OAuth;
 
 public class AccessTokenBuilder
 {
-    private const string BearerTokenType = "bearer";
-
     private readonly OAuthConfiguration _configuration;
     private readonly IScopeValidator _scopeValidator;
     private readonly List<Scope> _scopes = new(); // TODO: change to unique set
@@ -67,26 +65,26 @@ public class AccessTokenBuilder
 
         var token = await GenerateJwtTokenAsync(cancellationToken);
 
-        return new AccessToken(token, BearerTokenType, TimeSpan.FromSeconds(_configuration.TokenLifetime), scopes);
+        return new AccessToken(token, OAuthConstants.BearerTokenType, TimeSpan.FromSeconds(3600), scopes);
     }
 
     private async Task<string> GenerateJwtTokenAsync(CancellationToken cancellationToken)
     {
         var claims = new List<Claim>()
         {
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString(), ClaimValueTypes.String, _configuration.Issuer),
         };
 
         if (_scopes.Count != 0)
         {
-            var scopeClaim = string.Join(Constants.ScopeDelimiter, _scopes);
-            claims.Add(new Claim(Constants.ScopeClaimName, scopeClaim));
+            var scopeClaim = string.Join(OAuthConstants.ScopeDelimiter, _scopes);
+            claims.Add(new Claim(OAuthConstants.ScopeClaimName, scopeClaim, ClaimValueTypes.String, _configuration.Issuer));
         }
 
         var token = new JwtSecurityToken(
             issuer: _configuration.Issuer,
             claims: claims,
-            expires: DateTime.UtcNow.AddSeconds(_configuration.TokenLifetime));
+            expires: DateTime.UtcNow.AddSeconds(3600));
 
         if (_signatureProvider != null)
         {

@@ -1,6 +1,6 @@
-﻿using Enqueuer.Queueing.API.Authorization.Attributes;
-using Enqueuer.Queueing.Contract.V1.Commands;
+﻿using Enqueuer.Queueing.Contract.V1.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Controllers;

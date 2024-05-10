@@ -1,10 +1,10 @@
-﻿using Enqueuer.Identity.Authorization.Configuration;
-using Enqueuer.Identity.Authorization.Grants;
+﻿using Enqueuer.Identity.Authorization.Grants;
 using Enqueuer.Identity.Authorization.Grants.Validation;
 using Enqueuer.Identity.Authorization.Models;
 using Enqueuer.Identity.Authorization.OAuth;
 using Enqueuer.Identity.Authorization.OAuth.Signature;
 using Enqueuer.Identity.Authorization.Validation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace Enqueuer.Identity.Authorization;

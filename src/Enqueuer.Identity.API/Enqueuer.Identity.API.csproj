@@ -31,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Enqueuer.Identity.Authorization\Enqueuer.Identity.Authorization.csproj" />
     <ProjectReference Include="..\Enqueuer.Identity.Contract.V1\Enqueuer.Identity.Contract.V1.csproj" />
+    <ProjectReference Include="..\Enqueuer.OAuth\Enqueuer.OAuth.csproj" />
   </ItemGroup>
 
 </Project>

@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Enqueuer.EventBus.RabbitMQ\Enqueuer.EventBus.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Enqueuer.OAuth\Enqueuer.OAuth.csproj" />
     <ProjectReference Include="..\Enqueuer.Queueing.Contract\Enqueuer.Queueing.Contract.V1.csproj" />
     <ProjectReference Include="..\Enqueuer.Queueing.Infrastructure\Enqueuer.Queueing.Infrastructure.csproj" />
   </ItemGroup>

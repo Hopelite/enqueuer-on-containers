@@ -10,8 +10,6 @@ using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace Enqueuer.Queueing.API;
 
@@ -47,25 +45,14 @@ public class Program
     {
         builder.Services.AddControllers();
 
+        builder.Services.Configure<OAuthConfiguration>(builder.Configuration.GetRequiredSection("OAuth"));
         builder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-        .AddJwtBearer(options =>
-        {
-            //options.Authority = "https://localhost:7279";
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MYBIGGESTKEYPOSSIBLEJUSTLOOKATTHISDUDE")),
-                ValidAudience = "apis",
-                ValidIssuer = "EnqueuerIdentity",
-                ValidateIssuer = false,
-                ValidateAudience = false,
-            };
-        });
+        .AddJwtTokenAuthentication();
 
         builder.Services.AddHttpContextAccessor();
 

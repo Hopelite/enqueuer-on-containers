@@ -1,7 +1,6 @@
 ﻿using Azure.Identity;
 using Enqueuer.Identity.API.Services;
 using Enqueuer.Identity.Authorization;
-using Enqueuer.Identity.Authorization.Configuration;
 using Enqueuer.Identity.Authorization.Grants;
 using Enqueuer.Identity.Authorization.Grants.Credentials;
 using Enqueuer.Identity.Authorization.Grants.Validation;
@@ -12,13 +11,11 @@ using Enqueuer.Identity.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System.Text.Json;
 
 namespace Enqueuer.Identity.API.Extensions;
 
-public static class HostApplicationBuilderExtensions
+public static class WebApplicationBuilderExtensions
 {
     public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
     {
@@ -60,11 +57,7 @@ public static class HostApplicationBuilderExtensions
                         .AddTransient<IScopeValidator, ScopeValidator>()
                         .AddSingleton<IClientCredentialsStorage, AzureKeyVaultStorage>()
                         .AddTransient<ISignatureProviderFactory, SignatureProviderFactory>()
-                        .Configure<OAuthConfiguration>(builder.Configuration.GetRequiredSection("OAuth"))
-                        .Configure<TokenSignatureProviderConfiguration>(builder.Configuration.GetRequiredSection("TokenSign"));
-
-        var signatureConfiguration = builder.Services.BuildServiceProvider()
-            .GetRequiredService<IOptions<TokenSignatureProviderConfiguration>>();
+                        .Configure<OAuthConfiguration>(builder.Configuration.GetRequiredSection("OAuth"));
 
         builder.Services.AddAuthentication(options =>
         {
@@ -72,18 +65,7 @@ public static class HostApplicationBuilderExtensions
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         })
-        .AddJwtBearer(options =>
-        {
-            options.SaveToken = true;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(signatureConfiguration.Value.EncodedKey),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                ClockSkew = TimeSpan.Zero,  // Remove delay of token when expire
-            };
-        });
+        .AddJwtTokenAuthentication();
 
         return builder;
     }
