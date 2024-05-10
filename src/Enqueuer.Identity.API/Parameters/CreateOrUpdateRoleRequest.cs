@@ -14,8 +14,7 @@ public class CreateOrUpdateRoleRequest
     public string RoleName { get; set; } = null!;
 
     /// <summary>
-    /// The scopes assigned to this role. Can be empty for new roles
-    /// or to remove all assigned to the existing one.
+    /// The scopes assigned to this role. Can be empty for new roles or to remove all assigned to the existing one.
     /// </summary>
     [FromBody]
     public IReadOnlyCollection<Scope> Scopes { get; set; } = Array.Empty<Scope>();

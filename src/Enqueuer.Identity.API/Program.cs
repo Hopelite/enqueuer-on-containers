@@ -23,6 +23,7 @@ public class Program
 
         app.MapControllers();
 
-        app.Run();
+        app.MigrateDatabase()
+            .Run();
     }
 }

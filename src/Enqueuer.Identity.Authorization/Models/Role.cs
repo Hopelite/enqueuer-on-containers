@@ -1,4 +1,5 @@
 ﻿using Enqueuer.Identity.Authorization.Extensions;
+using System.Text.Json.Serialization;
 
 namespace Enqueuer.Identity.Authorization.Models;
 
@@ -9,6 +10,7 @@ public class Role
     {
     }
 
+    [JsonConstructor]
     public Role(string name, IEnumerable<Scope> scopes)
     {
         Name = name.ThrowIfNullOrWhitespace(nameof(name));

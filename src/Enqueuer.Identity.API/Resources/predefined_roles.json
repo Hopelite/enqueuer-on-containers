@@ -1,0 +1,43 @@
+﻿[
+    {
+        "name": "System Administrator",
+        "scopes": [
+            {
+                "name": "role"
+            },
+            {
+                "name": "scope"
+            }
+        ]
+    },
+    {
+        "name": "Group Administrator",
+        "scopes": [
+            {
+                "name": "group"
+            },
+            {
+                "name": "queue"
+            }
+        ]
+    },
+    {
+        "name": "Queue Creator",
+        "scopes": [
+            {
+                "name": "queue"
+            }
+        ]
+    },
+    {
+        "name": "Group Member",
+        "scopes": [
+            {
+                "name": "queue:participate"
+            },
+            {
+                "name": "queue:create"
+            }
+        ]
+    }
+]

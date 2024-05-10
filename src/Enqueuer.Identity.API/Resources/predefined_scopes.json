@@ -1,0 +1,61 @@
+﻿[
+  {
+    "name": "role",
+    "child_scopes": [
+      {
+        "name": "role:create"
+      },
+      {
+        "name": "role:edit"
+      }
+    ]
+  },
+  {
+    "name": "scope",
+    "child_scopes": [
+      {
+        "name": "scope:create"
+      },
+      {
+        "name": "scope:delete"
+      }
+    ]
+  },
+  {
+    "name": "user",
+    "child_scopes": [
+      {
+        "name": "user:create"
+      },
+      {
+        "name": "user:update"
+      }
+    ]
+  },
+  {
+    "name": "queue",
+    "child_scopes": [
+      {
+        "name": "queue:create"
+      },
+      {
+        "name": "queue:edit"
+      },
+      {
+        "name": "queue:participate"
+      },
+      {
+        "name": "queue:delete"
+      }
+    ]
+  },
+  {
+    "name": "group",
+    "child_scopes": [
+      {
+        "name": "group:configure"
+      }
+    ]
+  }
+]
+

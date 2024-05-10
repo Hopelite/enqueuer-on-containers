@@ -34,4 +34,13 @@
     <ProjectReference Include="..\Enqueuer.OAuth\Enqueuer.OAuth.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Resources\predefined_roles.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Resources\predefined_scopes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

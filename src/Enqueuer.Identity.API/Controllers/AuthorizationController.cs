@@ -18,16 +18,7 @@ public class AuthorizationController : ControllerBase
         _authorizationService = authorizationService;
     }
 
-    //[Authorize(Roles = "System Administrator")]
-    [AllowedScope("role:create", "role:update", "scope:create")]
-    [HttpPut("roles/{role_name}")]
-    public async Task<IActionResult> CreateOrUpdateRoleAsync(CreateOrUpdateRoleRequest request, CancellationToken cancellationToken)
-    {
-        await _authorizationService.CreateOrUpdateRoleAsync(MapToRole(request), cancellationToken);
-        return Created();
-    }
-
-    //[Authorize(Roles = "Administrator, User Contributor?")] // Or scopes: user:create, user:update
+    [AllowedScope("user:create", "user:update")]
     [HttpPut("users/{user_id}")]
     public async Task<IActionResult> CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken)
     {
