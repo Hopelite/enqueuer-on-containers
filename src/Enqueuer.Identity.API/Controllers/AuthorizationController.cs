@@ -14,7 +14,7 @@ public class AuthorizationController(IAuthorizationService authorizationService)
 {
     private readonly IAuthorizationService _authorizationService = authorizationService;
 
-    [AllowedScope("user:create", "user:update")]
+    [AllowedScope("user:create", "user:update", "user")]
     [HttpPut("users/{user_id}")]
     public async Task<IActionResult> CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken)
     {
@@ -42,6 +42,7 @@ public class AuthorizationController(IAuthorizationService authorizationService)
         return hasAccess ? Ok() : NotFound();
     }
 
+    [AllowedScope("access:grant", "access")]
     [HttpPut("{resource_id}")]
     public async Task<IActionResult> GrantAccessAsync(GrantAccessRequest request, CancellationToken cancellationToken)
     {
@@ -65,6 +66,7 @@ public class AuthorizationController(IAuthorizationService authorizationService)
         return Created();
     }
 
+    [AllowedScope("access:revoke", "access")]
     [HttpDelete("{resource_id}")]
     public async Task<IActionResult> RevokeAccessAsync(RevokeAccessRequest request, CancellationToken cancellationToken)
     {

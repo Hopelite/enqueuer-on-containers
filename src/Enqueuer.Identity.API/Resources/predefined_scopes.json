@@ -56,6 +56,17 @@
         "name": "group:configure"
       }
     ]
+  },
+  {
+    "name": "access",
+    "child_scopes": [
+      {
+        "name": "access:grant"
+      },
+      {
+        "name": "access:revoke"
+      }
+    ]
   }
 ]
 
