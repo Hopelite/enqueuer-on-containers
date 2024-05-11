@@ -2,8 +2,10 @@
 using Enqueuer.Identity.Authorization.Extensions;
 using Enqueuer.Identity.Persistence;
 using Enqueuer.Identity.Persistence.Models;
+using Enqueuer.Identity.Persistence.Procedures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace Enqueuer.Identity.Authorization;
 
@@ -98,40 +100,17 @@ public class AuthorizationService : IAuthorizationService
 
     public async Task<bool> CheckAccessAsync(Uri resourceUri, long userId, Models.Scope scope, CancellationToken cancellationToken)
     {
-        // TODO: consider to use query/stored procedure here
         using var serviceScope = _serviceScopeFactory.CreateScope();
         var dbContext = serviceScope.ServiceProvider.GetRequiredService<IdentityContext>();
 
-        var userToCheckAccess = await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == userId, cancellationToken);
-        if (userToCheckAccess == null)
-        {
-            throw new UserDoesNotExistException($"User '{userId}' does not exist in database.");
-        }
+        var connection = (NpgsqlConnection)dbContext.Database.GetDbConnection();
+        await connection.OpenAsync(cancellationToken);
 
-        var resourceToGrantAccess = await dbContext.Resources.FirstOrDefaultAsync(r => r.Uri == resourceUri, cancellationToken);
-        if (resourceToGrantAccess == null)
-        {
-            throw new ResourceDoesNotExistException($"Resource '{resourceUri}' does not exist in database.");
-        }
+        var command = CheckUserAccessProcedure.GetCommand(resourceUri, userId, scope.Name);
+        command.Connection = connection;
 
-        var grantedAccess = await dbContext.UserResourceRoles
-            .Where(r => r.UserId == userToCheckAccess.Id && r.ResourceId == resourceToGrantAccess.Id)
-            .Include(r => r.Role)
-            .ThenInclude(r => r.Scopes)
-            .ThenInclude(s => s.Children) // Temporary workaround - there could be more than one row of child scopes
-            .FirstOrDefaultAsync(cancellationToken);
-
-        if (grantedAccess == null)
-        {
-            return false;
-        }
-
-        // TODO: possibly cache role scopes list to reduce JOINs
-        var scopes = grantedAccess.Role.Scopes.SelectMany(s => s.Children)
-            .Concat(grantedAccess.Role.Scopes)
-            .Distinct();
-
-        return scopes.Any(s => s.Name.Equals(scope.Name));
+        var hasAccess = await command.ExecuteScalarAsync(cancellationToken);
+        return (bool)hasAccess!;
     }
 
     public async Task GrantAccessAsync(Uri resourceUri, long granteeId, Models.Role role, CancellationToken cancellationToken)
@@ -155,10 +134,18 @@ public class AuthorizationService : IAuthorizationService
         var resourceToGrantAccess = await dbContext.Resources.FirstOrDefaultAsync(r => r.Uri == resourceUri, cancellationToken);
         if (resourceToGrantAccess == null)
         {
+            // TODO: add all parent resources (like groups/ for groups/12 and groups/12/queues/ for groups/12/queues/Test
             resourceToGrantAccess = new Resource
             {
                 Uri = resourceUri,
             };
+        }
+
+        var existingAccess = await dbContext.UserResourceRoles.FindAsync(new object[] { userToGrantAccess.Id, resourceToGrantAccess.Id }, cancellationToken);
+        if (existingAccess != null)
+        {
+            throw new AccessAlreadyGrantedException(
+                $"User with ID '{granteeId}' already has access to the resource '{resourceUri}'. In order to assign different role, you must revoke existing access first.");
         }
 
         var newAccess = new UserResourceRoles

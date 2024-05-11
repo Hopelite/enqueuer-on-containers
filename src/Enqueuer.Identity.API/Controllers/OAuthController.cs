@@ -10,14 +10,9 @@ namespace Enqueuer.Identity.API.Controllers;
 
 [ApiController]
 [Route("oauth2")]
-public class OAuthController : ControllerBase
+public class OAuthController(IOAuthService authorizationService) : ControllerBase
 {
-    private readonly IOAuthService _authorizationService;
-
-    public OAuthController(IOAuthService authorizationService)
-    {
-        _authorizationService = authorizationService;
-    }
+    private readonly IOAuthService _authorizationService = authorizationService;
 
     [HttpGet("authorize")]
     public Task<IActionResult> Authorize([FromQuery] AuthorizeQueryParameters query, CancellationToken cancellationToken)

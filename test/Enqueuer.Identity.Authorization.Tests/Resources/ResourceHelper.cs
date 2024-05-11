@@ -1,6 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
+using System.Text.Json;
 
 namespace Enqueuer.Identity.Authorization.Tests.Resources;
 
@@ -10,12 +9,9 @@ public static class ResourceHelper
         Directory.GetCurrentDirectory(),
         "Resources");
 
-    private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
+    private static readonly JsonSerializerOptions SerializerSettings = new JsonSerializerOptions
     {
-        ContractResolver = new DefaultContractResolver()
-        {
-            NamingStrategy = new SnakeCaseNamingStrategy()
-        }
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
     };
 
     public static string ReadResource(string fileName)
@@ -26,7 +22,7 @@ public static class ResourceHelper
     public static T GetResource<T>(string fileName)
     {
         var json = ReadResource(fileName);
-        return JsonConvert.DeserializeObject<T>(json, SerializerSettings)
+        return JsonSerializer.Deserialize<T>(json, SerializerSettings)
             ?? throw new SerializationException($"Unable to deserialize '{fileName}' to {typeof(T)}.");
     }
 }

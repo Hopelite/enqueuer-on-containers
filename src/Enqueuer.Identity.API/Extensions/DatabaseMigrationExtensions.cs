@@ -16,6 +16,7 @@ public static class DatabaseMigrationExtensions
             var dbContext = scope.ServiceProvider.GetRequiredService<IdentityContext>();
             dbContext.Database.Migrate();
 
+            // TODO: envelop in transaction
             CreatePredefinedScopes(dbContext);
             CreatePredefinedRoles(dbContext);
         }

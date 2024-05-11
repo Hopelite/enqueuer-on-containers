@@ -2,7 +2,7 @@
 
 namespace Enqueuer.Identity.API.Parameters;
 
-public class GrantAccessQueryParameters
+public abstract class ResourceAuthorizationRequest
 {
     private Uri _recourceId = null!;
 
@@ -19,7 +19,4 @@ public class GrantAccessQueryParameters
 
     [FromQuery(Name = "user_id")]
     public long UserId { get; set; }
-
-    [FromQuery(Name = "role")]
-    public string Role { get; set; } = null!;
 }
