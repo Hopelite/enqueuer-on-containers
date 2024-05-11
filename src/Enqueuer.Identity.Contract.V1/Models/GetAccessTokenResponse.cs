@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
-namespace Enqueuer.Identity.Contract.V1
+namespace Enqueuer.Identity.Contract.V1.Models
 {
     public class GetAccessTokenResponse
     {
@@ -9,6 +10,7 @@ namespace Enqueuer.Identity.Contract.V1
         {
         }
 
+        [JsonConstructor]
         public GetAccessTokenResponse(string accessToken, string tokenType, int expiresIn)
         {
             AccessToken = accessToken;

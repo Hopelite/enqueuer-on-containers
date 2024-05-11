@@ -1,12 +1,13 @@
-﻿using System.Threading;
+﻿using Enqueuer.Identity.Contract.V1.Models;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Enqueuer.Identity.Contract.V1
 {
     public interface IIdentityClient
     {
-        Task AuthorizeAsync(CancellationToken cancellationToken);
+        Task<AccessToken> GetAccessTokenAsync(CancellationToken cancellationToken);
 
-        Task AssignRoleAsync(CancellationToken cancellationToken);
+        Task CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken);
     }
 }
