@@ -9,6 +9,7 @@ using Enqueuer.Queueing.Infrastructure.Messaging;
 using Enqueuer.Queueing.Infrastructure.Persistence.Repositories;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage;
 using Enqueuer.Queueing.Infrastructure.Persistence.Storage.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Enqueuer.Queueing.API;
 
@@ -43,6 +44,17 @@ public class Program
     private static void ConfigureServices(WebApplicationBuilder builder)
     {
         builder.Services.AddControllers();
+
+        builder.Services.Configure<OAuthConfiguration>(builder.Configuration.GetRequiredSection("OAuth"));
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtTokenAuthentication();
+
+        builder.Services.AddHttpContextAccessor();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();

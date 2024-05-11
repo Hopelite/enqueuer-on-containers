@@ -1,0 +1,28 @@
+{
+  "name": "queue",
+  "child_scopes": [
+    {
+      "name": "queue:1",
+      "child_scopes": [
+        {
+          "name": "queue:2",
+          "child_scopes": [
+            {
+              "name": "queue:3",
+              "child_scopes": [
+                {
+                  "name": "queue:4",
+                  "child_scopes": [
+                    {
+                      "name": "queue:5"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
