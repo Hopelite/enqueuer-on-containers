@@ -1,6 +1,7 @@
 ﻿using Enqueuer.Identity.Authorization.Exceptions;
 using Enqueuer.Identity.Authorization.Extensions;
 using Enqueuer.Identity.Authorization.Grants.Credentials;
+using Enqueuer.OAuth.Core.Tokens;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Enqueuer.Identity.Authorization.Grants;
@@ -16,7 +17,7 @@ public class ClientCredentialsGrant : IAuthorizationGrant
         ClientSecret = clientSecret.ThrowIfNullOrWhitespace(nameof(clientSecret));
     }
 
-    public string Type => AuthorizationGrantType.ClientCredentials;
+    public string Type => AuthorizationGrantType.ClientCredentials.Type;
 
     /// <summary>
     /// The client identifier used to authenticate the client to the authorization server.

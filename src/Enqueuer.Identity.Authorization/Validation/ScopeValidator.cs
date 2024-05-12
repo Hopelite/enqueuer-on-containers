@@ -23,7 +23,7 @@ public class ScopeValidator : IScopeValidator
 
         if (scope.Name.Length > ScopeConstraints.MaxScopeNameLength || scope.Name.Length < ScopeConstraints.MinScopeNameLength)
         {
-            throw new InvalidScopeNameException($"The legnth of the scope name must be from {ScopeConstraints.MinScopeNameLength} to {ScopeConstraints.MaxScopeNameLength} characters.");
+            throw new InvalidScopeNameException($"The length of the scope name must be from {ScopeConstraints.MinScopeNameLength} to {ScopeConstraints.MaxScopeNameLength} characters.");
         }
 
         if (!ScopeNameRegex.IsMatch(scope.Name))

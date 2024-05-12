@@ -108,9 +108,9 @@ namespace Enqueuer.Identity.Contract.V1
             var requiredScope = OAuth.Core.Models.Scope.Create(RequiredScopes);
             var queryParameters = new Dictionary<string, string>()
             {
-                { GrantTypes.GrantTypeParameter,                            GrantTypes.ClientCredentialsGrant.Type },
-                { GrantTypes.ClientCredentialsGrant.ClientIdParameter,      _options.ClientId },
-                { GrantTypes.ClientCredentialsGrant.ClientSecretParameter,  _options.ClientSecret },
+                { AuthorizationGrantType.GrantTypeParameter,                            AuthorizationGrantType.ClientCredentials.Type },
+                { AuthorizationGrantType.ClientCredentials.ClientIdParameter,      _options.ClientId },
+                { AuthorizationGrantType.ClientCredentials.ClientSecretParameter,  _options.ClientSecret },
                 { ClaimTypes.Scope,                                         requiredScope.Value }
             };
 
