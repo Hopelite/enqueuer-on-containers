@@ -22,7 +22,7 @@ public class AuthorizationController(IAuthorizationService authorizationService)
         return Created();
     }
 
-    [HttpGet("{resource_id}")]
+    [HttpGet("{*resource_id}")]
     public async Task<IActionResult> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken)
     {
         bool hasAccess;

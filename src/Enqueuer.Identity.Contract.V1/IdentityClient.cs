@@ -2,6 +2,7 @@
 using Enqueuer.Identity.Contract.V1.Models;
 using Microsoft.Extensions.Options;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -25,10 +26,10 @@ namespace Enqueuer.Identity.Contract.V1
 
         public async Task<AccessToken> GetAccessTokenAsync(CancellationToken cancellationToken)
         {
-            var uri = Uri.UnescapeDataString($"oauth2/token" +
+            var uri = new Uri($"oauth2/token" +
                 $"?client_id=TelegramBFF&client_secret=11dc4555-edfa-4c44-b87f-53f9907f5ded" +
                 $"&grant_type=client_credentials" +
-                $"&scope=queue group user");
+                $"&scope=queue group user", UriKind.Relative);
 
             var response = await _httpClient.PostAsync(uri, null, cancellationToken);
 
@@ -47,10 +48,27 @@ namespace Enqueuer.Identity.Contract.V1
             return new AccessToken(tokenResponse.AccessToken, tokenResponse.TokenType, TimeSpan.FromSeconds(tokenResponse.ExpiresIn));
         }
 
-        public async Task CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken)
+        public async Task<bool> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken)
         {
             await RefreshAccessTokenIfNeededAsync(cancellationToken);
             var result = await _httpClient.GetAsync($"api/authorization/{request.ResourceId}?user_id={request.UserId}&scope={request.Scope}", cancellationToken);
+
+            if (result == null)
+            {
+                throw new Exception();
+            }
+
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                return true;
+            }
+
+            if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                return false;
+            }
+
+            throw new Exception();
         }
 
         private ValueTask RefreshAccessTokenIfNeededAsync(CancellationToken cancellationToken)

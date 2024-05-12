@@ -8,6 +8,6 @@ namespace Enqueuer.Identity.Contract.V1
     {
         Task<AccessToken> GetAccessTokenAsync(CancellationToken cancellationToken);
 
-        Task CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken);
+        Task<bool> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken);
     }
 }
