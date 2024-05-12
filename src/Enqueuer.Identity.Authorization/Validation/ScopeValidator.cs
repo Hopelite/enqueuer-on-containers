@@ -18,7 +18,7 @@ public class ScopeValidator : IScopeValidator
     {
         if (scope == null)
         {
-            throw new ArgumentNullException(nameof(scope));
+            throw new ValidationException("An exception was thrown during scope validation.", new ArgumentNullException(nameof(scope)));
         }
 
         if (scope.Name.Length > ScopeConstraints.MaxScopeNameLength || scope.Name.Length < ScopeConstraints.MinScopeNameLength)

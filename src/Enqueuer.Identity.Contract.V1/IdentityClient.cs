@@ -1,7 +1,11 @@
 ﻿using Enqueuer.Identity.Contract.V1.Caching;
 using Enqueuer.Identity.Contract.V1.Models;
+using Enqueuer.OAuth.Core.Claims;
+using Enqueuer.OAuth.Core.Tokens;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -16,22 +20,22 @@ namespace Enqueuer.Identity.Contract.V1
         private readonly HttpClient _httpClient;
         private readonly IAccessTokenCache _tokenCache;
         private readonly IdentityClientOptions _options;
+        private readonly Uri _accessTokenUrl;
+
+        // TODO: reduce token scope for required by each client only
+        private static readonly string[] RequiredScopes = new string[] { "queue", "group", "user" };
 
         public IdentityClient(HttpClient httpClient, IAccessTokenCache tokenCache, IOptions<IdentityClientOptions> options)
         {
             _httpClient = httpClient;
             _tokenCache = tokenCache;
             _options = options.Value;
+            _accessTokenUrl = GetAccessTokenUrl();
         }
 
         public async Task<AccessToken> GetAccessTokenAsync(CancellationToken cancellationToken)
         {
-            var uri = new Uri($"oauth2/token" +
-                $"?client_id=TelegramBFF&client_secret=11dc4555-edfa-4c44-b87f-53f9907f5ded" +
-                $"&grant_type=client_credentials" +
-                $"&scope=queue group user", UriKind.Relative);
-
-            var response = await _httpClient.PostAsync(uri, null, cancellationToken);
+            var response = await _httpClient.PostAsync(_accessTokenUrl, content: null, cancellationToken);
 
             var json = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
@@ -75,7 +79,6 @@ namespace Enqueuer.Identity.Contract.V1
         {
             if (!_options.CacheToken)
             {
-                // Request token here
                 return RefreshTokenAsync(cancellationToken);
             }
 
@@ -98,6 +101,26 @@ namespace Enqueuer.Identity.Contract.V1
             }
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.Type, token.Value);
+        }
+
+        private Uri GetAccessTokenUrl()
+        {
+            var requiredScope = OAuth.Core.Models.Scope.Create(RequiredScopes);
+            var queryParameters = new Dictionary<string, string>()
+            {
+                { GrantTypes.GrantTypeParameter,                            GrantTypes.ClientCredentialsGrant.Type },
+                { GrantTypes.ClientCredentialsGrant.ClientIdParameter,      _options.ClientId },
+                { GrantTypes.ClientCredentialsGrant.ClientSecretParameter,  _options.ClientSecret },
+                { ClaimTypes.Scope,                                         requiredScope.Value }
+            };
+
+            var builder = new UriBuilder()
+            {
+                Path = "oauth2/token",
+                Query = new QueryBuilder(queryParameters).ToQueryString().ToString(),
+            };
+
+            return new Uri(builder.Uri.PathAndQuery);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Enqueuer.Identity.Authorization.Models;
 
-public class Scope
+public class Scope : IEquatable<Scope>
 {
     public Scope(string name)
         : this(name, Array.Empty<Scope>())
@@ -24,5 +24,20 @@ public class Scope
     public override string ToString()
     {
         return Name;
+    }
+
+    public bool Equals(Scope? other)
+    {
+        return other != null && Name.Equals(other.Name);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as Scope);
+    }
+
+    public override int GetHashCode()
+    {
+        return Name.GetHashCode();
     }
 }
