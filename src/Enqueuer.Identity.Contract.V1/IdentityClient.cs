@@ -1,4 +1,5 @@
 ﻿using Enqueuer.Identity.Contract.V1.Caching;
+using Enqueuer.Identity.Contract.V1.Exceptions;
 using Enqueuer.Identity.Contract.V1.Models;
 using Enqueuer.OAuth.Core.Claims;
 using Enqueuer.OAuth.Core.Tokens;
@@ -23,7 +24,7 @@ namespace Enqueuer.Identity.Contract.V1
         private readonly Uri _accessTokenUrl;
 
         // TODO: reduce token scope for required by each client only
-        private static readonly string[] RequiredScopes = new string[] { "queue", "group", "user" };
+        private static readonly string[] RequiredScopes = new string[] { "queue", "group", "user", "access" };
 
         public IdentityClient(HttpClient httpClient, IAccessTokenCache tokenCache, IOptions<IdentityClientOptions> options)
         {
@@ -37,16 +38,21 @@ namespace Enqueuer.Identity.Contract.V1
         {
             var response = await _httpClient.PostAsync(_accessTokenUrl, content: null, cancellationToken);
 
-            var json = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
+            var responseBody = await response.Content.ReadAsStringAsync();
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                throw new Exception();
+                throw new InvalidCredentialsException($"The provided credentials are invalid. Reason: {responseBody}");
             }
 
-            var tokenResponse = JsonSerializer.Deserialize<GetAccessTokenResponse>(json, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower });
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new IdentityClientException($"The request to get access token was not successful. Reason: {response.StatusCode}, {responseBody}");
+            }
+
+            var tokenResponse = JsonSerializer.Deserialize<GetAccessTokenResponse>(responseBody, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower });
             if (tokenResponse == null)
             {
-                throw new Exception();
+                throw new IdentityClientException("Unable to deserialize the GetAccessToken response.");
             }
 
             return new AccessToken(tokenResponse.AccessToken, tokenResponse.TokenType, TimeSpan.FromSeconds(tokenResponse.ExpiresIn));
@@ -55,24 +61,26 @@ namespace Enqueuer.Identity.Contract.V1
         public async Task<bool> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken)
         {
             await RefreshAccessTokenIfNeededAsync(cancellationToken);
-            var result = await _httpClient.GetAsync($"api/authorization/{request.ResourceId}?user_id={request.UserId}&scope={request.Scope}", cancellationToken);
-
-            if (result == null)
+            
+            var uri = new UriBuilder()
             {
-                throw new Exception();
-            }
+                Path = $"api/authorization/{request.ResourceId}",
+                Query = new QueryBuilder(request.GetQueryParameters()).ToQueryString().ToString()
+            }.Uri.PathAndQuery;
 
-            if (result.StatusCode == HttpStatusCode.OK)
+            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            if (response.StatusCode == HttpStatusCode.OK)
             {
                 return true;
             }
 
-            if (result.StatusCode == HttpStatusCode.NotFound)
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 return false;
             }
 
-            throw new Exception();
+            var responseBody = await response.Content.ReadAsStringAsync();
+            throw new IdentityClientException($"The request to check access was not successful. Reason: {response.StatusCode}, {responseBody}");
         }
 
         private ValueTask RefreshAccessTokenIfNeededAsync(CancellationToken cancellationToken)
@@ -108,10 +116,10 @@ namespace Enqueuer.Identity.Contract.V1
             var requiredScope = OAuth.Core.Models.Scope.Create(RequiredScopes);
             var queryParameters = new Dictionary<string, string>()
             {
-                { AuthorizationGrantType.GrantTypeParameter,                            AuthorizationGrantType.ClientCredentials.Type },
-                { AuthorizationGrantType.ClientCredentials.ClientIdParameter,      _options.ClientId },
-                { AuthorizationGrantType.ClientCredentials.ClientSecretParameter,  _options.ClientSecret },
-                { ClaimTypes.Scope,                                         requiredScope.Value }
+                { AuthorizationGrantType.GrantTypeParameter,                        AuthorizationGrantType.ClientCredentials.Type },
+                { AuthorizationGrantType.ClientCredentials.ClientIdParameter,       _options.ClientId },
+                { AuthorizationGrantType.ClientCredentials.ClientSecretParameter,   _options.ClientSecret },
+                { ClaimTypes.Scope,                                                 requiredScope.Value }
             };
 
             var builder = new UriBuilder()
@@ -120,7 +128,7 @@ namespace Enqueuer.Identity.Contract.V1
                 Query = new QueryBuilder(queryParameters).ToQueryString().ToString(),
             };
 
-            return new Uri(builder.Uri.PathAndQuery);
+            return new Uri(builder.Uri.PathAndQuery, UriKind.Relative);
         }
     }
 }

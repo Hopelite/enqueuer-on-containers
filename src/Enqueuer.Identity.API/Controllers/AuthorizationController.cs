@@ -43,7 +43,7 @@ public class AuthorizationController(IAuthorizationService authorizationService)
     }
 
     [AllowedScope("access:grant", "access")]
-    [HttpPut("{resource_id}")]
+    [HttpPut("{*resource_id}")]
     public async Task<IActionResult> GrantAccessAsync(GrantAccessRequest request, CancellationToken cancellationToken)
     {
         try
@@ -67,7 +67,7 @@ public class AuthorizationController(IAuthorizationService authorizationService)
     }
 
     [AllowedScope("access:revoke", "access")]
-    [HttpDelete("{resource_id}")]
+    [HttpDelete("{*resource_id}")]
     public async Task<IActionResult> RevokeAccessAsync(RevokeAccessRequest request, CancellationToken cancellationToken)
     {
         try

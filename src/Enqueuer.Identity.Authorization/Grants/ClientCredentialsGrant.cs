@@ -33,12 +33,8 @@ public class ClientCredentialsGrant : IAuthorizationGrant
     {
         var credentialStorage = authorizationContext.Services.GetRequiredService<IClientCredentialsStorage>();
         var actualClientSecret = await credentialStorage.GetClientSecretAsync(ClientId, cancellationToken);
-        if (string.IsNullOrWhiteSpace(actualClientSecret))
-        {
-            throw new AuthorizationException("Specified client secret do not exist.");
-        }
 
-        if (!actualClientSecret.Equals(ClientSecret))
+        if (string.IsNullOrWhiteSpace(actualClientSecret) || !actualClientSecret.Equals(ClientSecret))
         {
             throw new AuthorizationException("Client secret is invalid.");
         }

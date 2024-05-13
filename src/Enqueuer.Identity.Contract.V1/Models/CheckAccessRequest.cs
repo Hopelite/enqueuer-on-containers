@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Enqueuer.Identity.Contract.V1.Models
 {
@@ -16,6 +17,15 @@ namespace Enqueuer.Identity.Contract.V1.Models
         public long UserId { get; }
 
         public string Scope { get; }
+
+        internal IReadOnlyDictionary<string, string> GetQueryParameters()
+        {
+            return new Dictionary<string, string>()
+            {
+                { "user_id", UserId.ToString() },
+                {   "scope", Scope }
+            };
+        }
 
         private static Uri ValidateAndEncodeUri(Uri resourceId)
         {
