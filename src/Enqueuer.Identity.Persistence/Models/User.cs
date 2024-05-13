@@ -17,7 +17,7 @@ public class User
     /// </summary>
     public long UserId { get; set; }
 
-    // TODO: consider to extract FirstName and LastName to separate
+    // TODO: consider to extract FirstName and LastName to separate table
 
     /// <summary>
     /// The first name of the user.

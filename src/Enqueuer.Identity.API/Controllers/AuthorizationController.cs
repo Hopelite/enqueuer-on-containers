@@ -15,11 +15,11 @@ public class AuthorizationController(IAuthorizationService authorizationService)
     private readonly IAuthorizationService _authorizationService = authorizationService;
 
     [AllowedScope("user:create", "user:update", "user")]
-    [HttpPut("users/{user_id}")]
+    [HttpPut($"users/{{{CreateOrUpdateUserRequest.UserIdRouteParameter}}}")]
     public async Task<IActionResult> CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken)
     {
         await _authorizationService.CreateOrUpdateUserAsync(new User(request.UserId, request.FirstName, request.LastName), cancellationToken);
-        return Created();
+        return Created(); // TODO: change to Ok in case of update
     }
 
     [HttpGet("{*resource_id}")]

@@ -2,7 +2,7 @@
 using Enqueuer.OAuth.Core.Tokens;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Enqueuer.Identity.API.Parameters;
+namespace Enqueuer.Identity.API.Parameters.Binders;
 
 public class AuthorizationGrantModelBinder : IModelBinder
 {

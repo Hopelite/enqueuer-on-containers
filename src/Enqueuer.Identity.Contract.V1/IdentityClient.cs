@@ -61,13 +61,8 @@ namespace Enqueuer.Identity.Contract.V1
         public async Task<bool> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken)
         {
             await RefreshAccessTokenIfNeededAsync(cancellationToken);
-            
-            var uri = new UriBuilder()
-            {
-                Path = $"api/authorization/{request.ResourceId}",
-                Query = new QueryBuilder(request.GetQueryParameters()).ToQueryString().ToString()
-            }.Uri.PathAndQuery;
 
+            var uri = GetUrlWithQuery($"api/authorization/{request.ResourceId}", request.GetQueryParameters());
             var response = await _httpClient.GetAsync(uri, cancellationToken);
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -81,6 +76,25 @@ namespace Enqueuer.Identity.Contract.V1
 
             var responseBody = await response.Content.ReadAsStringAsync();
             throw new IdentityClientException($"The request to check access was not successful. Reason: {response.StatusCode}, {responseBody}");
+        }
+
+        public async Task CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken)
+        {
+            await RefreshAccessTokenIfNeededAsync(cancellationToken);
+
+            var uri = new Uri($"api/authorization/users/{request.UserId}", UriKind.Relative);
+
+            var response = await _httpClient.PutAsync(uri, request.GetBody(), cancellationToken);
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new InvalidCredentialsException($"Authorization error. Reason: {GetUnauthorizedErrorDescription(response.Headers)}");
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                throw new IdentityClientException($"The request to create or update user was not successful. Reason: {response.StatusCode}, {responseBody}");
+            }
         }
 
         private ValueTask RefreshAccessTokenIfNeededAsync(CancellationToken cancellationToken)
@@ -122,13 +136,27 @@ namespace Enqueuer.Identity.Contract.V1
                 { ClaimTypes.Scope,                                                 requiredScope.Value }
             };
 
-            var builder = new UriBuilder()
-            {
-                Path = "oauth2/token",
-                Query = new QueryBuilder(queryParameters).ToQueryString().ToString(),
-            };
+            return GetUrlWithQuery("oauth2/token", queryParameters);
+        }
 
-            return new Uri(builder.Uri.PathAndQuery, UriKind.Relative);
+        private static Uri GetUrlWithQuery(string path, IDictionary<string, string> queryParameters)
+        {
+            return new Uri(new UriBuilder()
+            {
+                Path = path,
+                Query = new QueryBuilder(queryParameters).ToQueryString().ToString()
+            }.Uri.PathAndQuery, UriKind.Relative);
+        }
+
+        private static string GetUnauthorizedErrorDescription(HttpResponseHeaders headers)
+        {
+            const string MissingParametersHeader = "WWW-Authenticate";
+            if (headers.TryGetValues(MissingParametersHeader, out var errorDescription))
+            {
+                return string.Join(',', errorDescription);
+            }
+
+            return "Unknown";
         }
     }
 }
