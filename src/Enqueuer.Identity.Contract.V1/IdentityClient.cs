@@ -97,6 +97,31 @@ namespace Enqueuer.Identity.Contract.V1
             }
         }
 
+        public async Task RevokeAccessAsync(RevokeAccessRequest request, CancellationToken cancellationToken)
+        {
+            await RefreshAccessTokenIfNeededAsync(cancellationToken);
+
+            var uri = GetUrlWithQuery($"api/authorization/{request.ResourceId}", request.GetQueryParameters());
+            var response = await _httpClient.DeleteAsync(uri, cancellationToken);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new InvalidCredentialsException($"Authorization error. Reason: {GetUnauthorizedErrorDescription(response.Headers)}");
+            }
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // If access already does not exist - it's OK, do not throw exception
+                return;
+            }
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                throw new IdentityClientException($"The request to revoke access was not successful. Reason: {response.StatusCode}, {responseBody}");
+            }
+        }
+
         private ValueTask RefreshAccessTokenIfNeededAsync(CancellationToken cancellationToken)
         {
             if (!_options.CacheToken)

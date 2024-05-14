@@ -74,10 +74,9 @@ public class AuthorizationController(IAuthorizationService authorizationService)
         {
             await _authorizationService.RevokeAccessAsync(request.RecourceId, request.UserId, cancellationToken);
         }
-        catch (Exception)
+        catch (ApiResourceDoesNotExistException ex)
         {
-
-            throw;
+            return NotFound(ex.Message);
         }
 
         return Ok();

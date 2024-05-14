@@ -1,6 +1,6 @@
 ﻿namespace Enqueuer.Identity.Authorization.Exceptions;
 
-public class UserDoesNotExistException : Exception
+public class UserDoesNotExistException : ApiResourceDoesNotExistException
 {
     public UserDoesNotExistException()
     {
