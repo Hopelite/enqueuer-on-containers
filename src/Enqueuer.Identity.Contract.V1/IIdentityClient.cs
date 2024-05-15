@@ -12,6 +12,8 @@ namespace Enqueuer.Identity.Contract.V1
 
         Task CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken);
 
+        Task GrantAccessAsync(GrantAccessRequest request, CancellationToken cancellationToken);
+
         Task RevokeAccessAsync(RevokeAccessRequest request, CancellationToken cancellationToken);
     }
 }

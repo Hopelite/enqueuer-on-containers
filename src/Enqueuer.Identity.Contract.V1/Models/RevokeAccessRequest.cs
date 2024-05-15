@@ -6,12 +6,9 @@ namespace Enqueuer.Identity.Contract.V1.Models
     public class RevokeAccessRequest : ResourceAuthorizationRequest
     {
         public RevokeAccessRequest(Uri resourceId, long userId)
-            : base(resourceId)
+            : base(resourceId, userId)
         {
-            UserId = userId;
         }
-
-        public long UserId { get; }
 
         internal IDictionary<string, string> GetQueryParameters()
         {

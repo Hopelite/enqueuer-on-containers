@@ -6,13 +6,10 @@ namespace Enqueuer.Identity.Contract.V1.Models
     public class CheckAccessRequest : ResourceAuthorizationRequest
     {
         public CheckAccessRequest(Uri resourceId, long userId, string scope)
-            : base(resourceId)
+            : base(resourceId, userId)
         {
-            UserId = userId;
             Scope = ValidateScope(scope);
         }
-
-        public long UserId { get; }
 
         public string Scope { get; }
 

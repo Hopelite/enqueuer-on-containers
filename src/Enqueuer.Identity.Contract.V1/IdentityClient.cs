@@ -90,11 +90,24 @@ namespace Enqueuer.Identity.Contract.V1
                 throw new InvalidCredentialsException($"Authorization error. Reason: {GetUnauthorizedErrorDescription(response.Headers)}");
             }
 
-            if (!response.IsSuccessStatusCode)
+            var responseBody = await response.Content.ReadAsStringAsync();
+            throw new IdentityClientException($"The request to create or update user was not successful. Reason: {response.StatusCode}, {responseBody}");
+        }
+
+        public async Task GrantAccessAsync(GrantAccessRequest request, CancellationToken cancellationToken)
+        {
+            await RefreshAccessTokenIfNeededAsync(cancellationToken);
+
+            var uri = GetUrlWithQuery($"api/authorization/{request.ResourceId}", request.GetQueryParameters());
+            var response = await _httpClient.PutAsync(uri, content: null, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
             {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                throw new IdentityClientException($"The request to create or update user was not successful. Reason: {response.StatusCode}, {responseBody}");
+                return;
             }
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            throw new IdentityClientException($"The request to grant access was not successful. Reason: {response.StatusCode}, {responseBody}");
         }
 
         public async Task RevokeAccessAsync(RevokeAccessRequest request, CancellationToken cancellationToken)
@@ -104,6 +117,11 @@ namespace Enqueuer.Identity.Contract.V1
             var uri = GetUrlWithQuery($"api/authorization/{request.ResourceId}", request.GetQueryParameters());
             var response = await _httpClient.DeleteAsync(uri, cancellationToken);
 
+            if (response.IsSuccessStatusCode)
+            {
+                return;
+            }
+
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 throw new InvalidCredentialsException($"Authorization error. Reason: {GetUnauthorizedErrorDescription(response.Headers)}");
@@ -111,15 +129,12 @@ namespace Enqueuer.Identity.Contract.V1
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                // If access already does not exist - it's OK, do not throw exception
+                // If access does not exist - it's OK, do not throw exception
                 return;
             }
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                throw new IdentityClientException($"The request to revoke access was not successful. Reason: {response.StatusCode}, {responseBody}");
-            }
+            var responseBody = await response.Content.ReadAsStringAsync();
+            throw new IdentityClientException($"The request to revoke access was not successful. Reason: {response.StatusCode}, {responseBody}");
         }
 
         private ValueTask RefreshAccessTokenIfNeededAsync(CancellationToken cancellationToken)
