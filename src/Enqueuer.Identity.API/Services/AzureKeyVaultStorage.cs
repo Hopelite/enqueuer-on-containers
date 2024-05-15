@@ -1,4 +1,5 @@
-﻿using Azure.Security.KeyVault.Secrets;
+﻿using Azure;
+using Azure.Security.KeyVault.Secrets;
 using Enqueuer.Identity.Authorization.Grants.Credentials;
 
 namespace Enqueuer.Identity.API.Services;
@@ -7,9 +8,16 @@ public class AzureKeyVaultStorage(SecretClient secretClient) : IClientCredential
 {
     private readonly SecretClient _secretClient = secretClient;
 
-    public async ValueTask<string> GetClientSecretAsync(string clientId, CancellationToken cancellationToken)
+    public async ValueTask<string?> GetClientSecretAsync(string clientId, CancellationToken cancellationToken)
     {
-        var clientSecret = (await _secretClient.GetSecretAsync(clientId, cancellationToken: cancellationToken)).Value;
-        return clientSecret.Value;
+        try
+        {
+            var clientSecret = (await _secretClient.GetSecretAsync(clientId, cancellationToken: cancellationToken)).Value;
+            return clientSecret.Value;
+        }
+        catch (RequestFailedException ex) when (ex.ErrorCode == "SecretNotFound")
+        {
+            return null;
+        }
     }
 }

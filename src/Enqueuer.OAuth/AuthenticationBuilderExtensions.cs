@@ -24,7 +24,7 @@ public static class AuthenticationBuilderExtensions
                 IssuerSigningKey = configuration.GetSigningKey(),
                 ValidIssuer = configuration.Issuer,
                 ValidateLifetime = true,
-                ValidateAudience = false, // TODO: Ignore for now
+                ValidateAudience = false, // TODO: Ignore for now (remove options.Audience and user ValidAudiences instead)
             };
         });
     }

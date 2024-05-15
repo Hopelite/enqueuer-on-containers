@@ -6,7 +6,7 @@ public abstract class ResourceAuthorizationRequest
 {
     private Uri _recourceId = null!;
 
-    [FromRoute(Name = "resource_id")] // TODO: MOVE TO FromUri, or it 
+    [FromRoute(Name = "resource_id")]
     public Uri RecourceId
     {
         get => _recourceId;

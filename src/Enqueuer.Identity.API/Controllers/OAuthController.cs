@@ -2,7 +2,7 @@
 using Enqueuer.Identity.Authorization.Exceptions;
 using Enqueuer.Identity.Authorization.Grants.Validation;
 using Enqueuer.Identity.Authorization.OAuth;
-using Enqueuer.Identity.Contract.V1;
+using Enqueuer.Identity.Contract.V1.Models;
 using Microsoft.AspNetCore.Mvc;
 using Scope = Enqueuer.Identity.Authorization.Models.Scope;
 
@@ -24,7 +24,7 @@ public class OAuthController(IOAuthService authorizationService) : ControllerBas
     public async Task<IActionResult> GetAccessToken([FromQuery] GetAccessTokenQueryParameters query, CancellationToken cancellationToken)
     {
         // TODO: add token to cache
-        AccessToken token;
+        Authorization.OAuth.AccessToken token;
         try
         {
             var scopes = query.Scopes.Select(scope => new Scope(scope, childScopes: null)).ToArray();

@@ -2,5 +2,5 @@
 
 public interface IClientCredentialsStorage
 {
-    ValueTask<string> GetClientSecretAsync(string clientId, CancellationToken cancellationToken);
+    ValueTask<string?> GetClientSecretAsync(string clientId, CancellationToken cancellationToken);
 }

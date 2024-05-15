@@ -122,13 +122,13 @@ public class AuthorizationService : IAuthorizationService
         var roleToAssign = await dbContext.Roles.FirstOrDefaultAsync(r => r.Name.Equals(role.Name), cancellationToken);
         if (roleToAssign == null)
         {
-            throw new RoleDoesNotExistException($"Role '{role.Name}' does not exist in database.");
+            throw new RoleDoesNotExistException($"Role '{role.Name}' does not exist.");
         }
 
         var userToGrantAccess = await dbContext.Users.FirstOrDefaultAsync(u => u.UserId == granteeId, cancellationToken);
         if (userToGrantAccess == null)
         {
-            throw new UserDoesNotExistException($"User '{granteeId}' does not exist in database. Unable to assign role to unknown user.");
+            throw new UserDoesNotExistException($"User '{granteeId}' does not exist.");
         }
 
         var resourceToGrantAccess = await dbContext.Resources.FirstOrDefaultAsync(r => r.Uri == resourceUri, cancellationToken);

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Enqueuer.OAuth.Core.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.AspNetCore.Authorization;
 
@@ -28,11 +28,11 @@ public class AllowedScopeAttribute : AuthorizeAttribute, IAuthorizationFilter
         var user = context.HttpContext.User;
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
-            var scopeClaim = user.Claims.FirstOrDefault(c => c.Type.Equals(OAuthConstants.ScopeClaimName));
+            var scopeClaim = user.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Scope));
             if (scopeClaim != null)
             {
-                var providedScope = scopeClaim.Value.Split(OAuthConstants.ScopeDelimiter, StringSplitOptions.RemoveEmptyEntries & StringSplitOptions.TrimEntries);
-                hasAllowedScope = AllowedScope.Any(s => providedScope.Contains(s));
+                var providedScope = ScopeClaim.Create(scopeClaim.Value);
+                hasAllowedScope = AllowedScope.Any(providedScope.Contains);
             }
         }
 

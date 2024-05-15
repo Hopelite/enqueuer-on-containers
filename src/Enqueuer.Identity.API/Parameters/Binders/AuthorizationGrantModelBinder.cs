@@ -1,7 +1,8 @@
 ﻿using Enqueuer.Identity.Authorization.Grants;
+using Enqueuer.OAuth.Core.Tokens;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Enqueuer.Identity.API.Parameters;
+namespace Enqueuer.Identity.API.Parameters.Binders;
 
 public class AuthorizationGrantModelBinder : IModelBinder
 {
@@ -15,10 +16,10 @@ public class AuthorizationGrantModelBinder : IModelBinder
         {
             grant = grantTypeValue switch
             {
-                AuthorizationGrantType.ClientCredentials => new ClientCredentialsGrant(
+                AuthorizationGrantType.ClientCredentials.Type => new ClientCredentialsGrant(
                     bindingContext.ValueProvider.GetValue("client_id").FirstValue,
                     bindingContext.ValueProvider.GetValue("client_secret").FirstValue),
-                AuthorizationGrantType.AuthorizationCode => new AuthorizationCodeGrant(
+                AuthorizationGrantType.AuthorizationCode.Type => new AuthorizationCodeGrant(
                     bindingContext.ValueProvider.GetValue("code").FirstValue,
                     bindingContext.ValueProvider.GetValue("redirect_uri").FirstValue,
                     bindingContext.ValueProvider.GetValue("client_id").FirstValue),

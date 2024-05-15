@@ -3,7 +3,7 @@
 /// <summary>
 /// Base class for all validation exceptions.
 /// </summary>
-public abstract class ValidationException : Exception
+public class ValidationException : Exception
 {
     protected ValidationException()
     {
@@ -14,8 +14,9 @@ public abstract class ValidationException : Exception
     {
     }
 
-    protected ValidationException(string? message, Exception? innerException)
-        : base(message, innerException)
+    /// <remarks>Intended to be used to envelop system exceptions which occured during the validation procces.</remarks>
+    public ValidationException(string? message, Exception innerException)
+        : base(message, innerException ?? throw new ArgumentNullException(nameof(innerException)))
     {
     }
 }

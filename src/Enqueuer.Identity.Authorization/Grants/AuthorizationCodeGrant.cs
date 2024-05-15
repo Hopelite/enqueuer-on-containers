@@ -1,4 +1,6 @@
 ﻿
+using Enqueuer.OAuth.Core.Tokens;
+
 namespace Enqueuer.Identity.Authorization.Grants;
 
 /// <summary>
@@ -20,7 +22,7 @@ public class AuthorizationCodeGrant : IAuthorizationGrant
         ClientId = clientId;
     }
 
-    public string Type => AuthorizationGrantType.AuthorizationCode;
+    public string Type => AuthorizationGrantType.AuthorizationCode.Type;
 
     /// <summary>
     /// The authorization code received from the authorization server.

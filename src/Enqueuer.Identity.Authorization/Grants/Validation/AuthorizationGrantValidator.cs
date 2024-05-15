@@ -1,10 +1,12 @@
-﻿namespace Enqueuer.Identity.Authorization.Grants.Validation;
+﻿using Enqueuer.OAuth.Core.Tokens;
+
+namespace Enqueuer.Identity.Authorization.Grants.Validation;
 
 public class AuthorizationGrantValidator : IAuthorizationGrantValidator
 {
     private static readonly string[] SupportedGrantTypes =
     [
-        AuthorizationGrantType.ClientCredentials,
+        AuthorizationGrantType.ClientCredentials.Type,
     ];
 
     /// <inheritdoc/>

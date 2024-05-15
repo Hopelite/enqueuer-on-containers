@@ -15,14 +15,14 @@ public class AuthorizationController(IAuthorizationService authorizationService)
     private readonly IAuthorizationService _authorizationService = authorizationService;
 
     [AllowedScope("user:create", "user:update", "user")]
-    [HttpPut("users/{user_id}")]
+    [HttpPut($"users/{{{CreateOrUpdateUserRequest.UserIdRouteParameter}}}")]
     public async Task<IActionResult> CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken)
     {
         await _authorizationService.CreateOrUpdateUserAsync(new User(request.UserId, request.FirstName, request.LastName), cancellationToken);
-        return Created();
+        return Created(); // TODO: change to Ok in case of update
     }
 
-    [HttpGet("{resource_id}")]
+    [HttpGet("{*resource_id}")]
     public async Task<IActionResult> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken)
     {
         bool hasAccess;
@@ -43,7 +43,7 @@ public class AuthorizationController(IAuthorizationService authorizationService)
     }
 
     [AllowedScope("access:grant", "access")]
-    [HttpPut("{resource_id}")]
+    [HttpPut("{*resource_id}")]
     public async Task<IActionResult> GrantAccessAsync(GrantAccessRequest request, CancellationToken cancellationToken)
     {
         try
@@ -67,17 +67,16 @@ public class AuthorizationController(IAuthorizationService authorizationService)
     }
 
     [AllowedScope("access:revoke", "access")]
-    [HttpDelete("{resource_id}")]
+    [HttpDelete("{*resource_id}")]
     public async Task<IActionResult> RevokeAccessAsync(RevokeAccessRequest request, CancellationToken cancellationToken)
     {
         try
         {
             await _authorizationService.RevokeAccessAsync(request.RecourceId, request.UserId, cancellationToken);
         }
-        catch (Exception)
+        catch (ApiResourceDoesNotExistException ex)
         {
-
-            throw;
+            return NotFound(ex.Message);
         }
 
         return Ok();
