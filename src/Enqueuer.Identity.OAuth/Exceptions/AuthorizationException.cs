@@ -3,19 +3,19 @@
 /// <summary>
 /// The base exception thrown in case of an authorization error.
 /// </summary>
-public class AuthorizationException : Exception
+public abstract class AuthorizationException : Exception
 {
-    public AuthorizationException(string errorCode)
+    protected AuthorizationException(string errorCode)
         : this(errorCode, message: null)
     {
     }
 
-    public AuthorizationException(string errorCode, string? message)
+    protected AuthorizationException(string errorCode, string? message)
         : this(errorCode, message, innerException: null)
     {
     }
 
-    public AuthorizationException(string errorCode, string? message, Exception? innerException)
+    protected AuthorizationException(string errorCode, string? message, Exception? innerException)
         : base(message, innerException)
     {
         ErrorCode = errorCode;

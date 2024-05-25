@@ -1,11 +1,11 @@
 ﻿using Enqueuer.Identity.OAuth.Extensions;
 
-namespace Enqueuer.Identity.Authorization.OAuth;
+namespace Enqueuer.Identity.OAuth.Models;
 
 /// <summary>
 /// Represents the issued access token.
 /// </summary>
-public readonly struct AccessToken
+internal readonly struct AccessToken
 {
     internal AccessToken(string value, string type, TimeSpan expiresIn)
     {

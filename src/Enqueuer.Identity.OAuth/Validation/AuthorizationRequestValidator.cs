@@ -55,29 +55,4 @@ public class AuthorizationRequestValidator : IAuthorizationRequestValidator
 
         await _clientSecretStorage.GetClientSecretAsync(clientId, cancellationToken);
     }
-
-
-
-    private static string[] SupportedScopes = [
-        "queue",
-        // Get from database
-    ];
-
-    private static Scope ValidateScope(Scope scope)
-    {
-        if (scope == null)
-        {
-            throw new ServerErrorException(new ArgumentNullException(nameof(scope)));
-        }
-
-        foreach (var scopeValue in scope)
-        {
-            if (!SupportedScopes.Contains(scopeValue))
-            {
-                throw InvalidScopeException.FromScope(scopeValue);
-            }
-        }
-
-        return scope;
-    }
 }
