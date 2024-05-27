@@ -6,6 +6,8 @@
 
         public const string QueueCreate = "queue:create";
 
+        public const string QueueDelete = "queue:delete";
+
         // TODO: add all the other scopes
     }
 }
