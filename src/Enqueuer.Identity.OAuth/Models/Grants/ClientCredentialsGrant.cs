@@ -1,7 +1,4 @@
-﻿using Enqueuer.Identity.OAuth.Exceptions;
-using Enqueuer.Identity.OAuth.Models.Enums;
-using Enqueuer.Identity.OAuth.Storage;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Enqueuer.Identity.OAuth.Models.Enums;
 
 namespace Enqueuer.Identity.OAuth.Models.Grants;
 
@@ -33,15 +30,4 @@ public class ClientCredentialsGrant : IAuthorizationGrant
     /// The scope of the access request.
     /// </summary>
     public Scope Scope { get; }
-
-    public async ValueTask AuthorizeAsync(IAuthorizationContext authorizationContext, CancellationToken cancellationToken)
-    {
-        var credentialStorage = authorizationContext.Services.GetRequiredService<IClientCredentialsStorage>();
-        var actualClientSecret = await credentialStorage.GetClientSecretAsync(ClientId, cancellationToken);
-
-        if (string.IsNullOrWhiteSpace(actualClientSecret) || !actualClientSecret.Equals(ClientSecret))
-        {
-            throw new InvalidClientException("The value of the client_secret parameter is invalid.");
-        }
-    }
 }

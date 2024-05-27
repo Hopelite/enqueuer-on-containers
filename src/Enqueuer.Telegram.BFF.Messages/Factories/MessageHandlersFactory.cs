@@ -24,7 +24,7 @@ public class MessageHandlersFactory(IServiceProvider serviceProvider) : IMessage
     {
         messageHandler = command switch
         {
-            "/start" => throw new NotImplementedException(),
+            "/start" =>  _serviceProvider.GetRequiredService<StartMessageHandler>(),
             "/help" => throw new NotImplementedException(),
             "/queue" or "/q" => throw new NotImplementedException(),
             "/createqueue" or "/creq" => _serviceProvider.GetRequiredService<CreateQueueMessageHandler>(),

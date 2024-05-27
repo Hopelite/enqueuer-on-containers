@@ -1,12 +1,10 @@
 ﻿using Azure.Identity;
 using Enqueuer.Identity.API.Services;
 using Enqueuer.Identity.Authorization;
-using Enqueuer.Identity.Authorization.Grants;
-using Enqueuer.Identity.Authorization.Grants.Credentials;
-using Enqueuer.Identity.Authorization.Grants.Validation;
 using Enqueuer.Identity.Authorization.OAuth;
 using Enqueuer.Identity.Authorization.OAuth.Signature;
 using Enqueuer.Identity.Authorization.Validation;
+using Enqueuer.Identity.OAuth;
 using Enqueuer.Identity.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -51,13 +49,13 @@ public static class WebApplicationBuilderExtensions
                 .WithCredential(new DefaultAzureCredential());
         });
 
-        builder.Services.AddTransient<IOAuthService, OAuthService>()
-                        .AddTransient<IAuthorizationGrantValidator, AuthorizationGrantValidator>()
-                        .AddTransient<IAuthorizationContext, AuthorizationContext>()
-                        .AddTransient<IScopeValidator, ScopeValidator>()
-                        .AddSingleton<IClientCredentialsStorage, AzureKeyVaultStorage>()
-                        .AddTransient<ISignatureProviderFactory, SignatureProviderFactory>()
-                        .Configure<OAuthConfiguration>(builder.Configuration.GetRequiredSection("OAuth"));
+        //builder.Services.AddTransient<IOAuthService, OAuthService>()
+        //                .AddTransient<IAuthorizationGrantValidator, AuthorizationGrantValidator>()
+        //                .AddTransient<IAuthorizationContext, AuthorizationContext>()
+        //                .AddTransient<IScopeValidator, ScopeValidator>()
+        //                .AddSingleton<IClientCredentialsStorage, AzureKeyVaultStorage>()
+        //                .AddTransient<ISignatureProviderFactory, SignatureProviderFactory>()
+        builder.Services.Configure<OAuthConfiguration>(builder.Configuration.GetRequiredSection("OAuth"));
 
         builder.Services.AddAuthentication(options =>
         {

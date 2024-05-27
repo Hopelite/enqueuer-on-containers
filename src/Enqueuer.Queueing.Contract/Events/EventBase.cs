@@ -9,7 +9,7 @@ namespace Enqueuer.Queueing.Contract.V1.Events
         protected EventBase()
         {
             Id = Guid.NewGuid();
-            Timestamp = DateTime.Now;
+            Timestamp = DateTime.UtcNow;
         }
 
         public Guid Id { get; }

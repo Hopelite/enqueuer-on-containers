@@ -54,6 +54,9 @@
     "child_scopes": [
       {
         "name": "group:configure"
+      },
+      {
+        "name": "group:list"
       }
     ]
   },

@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.Security.KeyVault.Secrets;
-using Enqueuer.Identity.Authorization.Grants.Credentials;
+using Enqueuer.Identity.OAuth.Exceptions;
+using Enqueuer.Identity.OAuth.Storage;
 
 namespace Enqueuer.Identity.API.Services;
 
@@ -8,7 +9,7 @@ public class AzureKeyVaultStorage(SecretClient secretClient) : IClientCredential
 {
     private readonly SecretClient _secretClient = secretClient;
 
-    public async ValueTask<string?> GetClientSecretAsync(string clientId, CancellationToken cancellationToken)
+    public async ValueTask<string> GetClientSecretAsync(string clientId, CancellationToken cancellationToken)
     {
         try
         {
@@ -17,7 +18,7 @@ public class AzureKeyVaultStorage(SecretClient secretClient) : IClientCredential
         }
         catch (RequestFailedException ex) when (ex.ErrorCode == "SecretNotFound")
         {
-            return null;
+            throw new UnauthorizedClientException();
         }
     }
 }

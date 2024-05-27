@@ -7,6 +7,7 @@ namespace Enqueuer.Identity.API.Parameters;
 [SwaggerSchema(Format = "string", Description = "Space-separated list of scopes")]
 public class ScopeCollection : IParsable<ScopeCollection>, IReadOnlyCollection<string>
 {
+    private const char WhiteSpaceDelimiter = ' ';
     private readonly string[] _scopes;
 
     private ScopeCollection()
@@ -45,8 +46,6 @@ public class ScopeCollection : IParsable<ScopeCollection>, IReadOnlyCollection<s
 
     public static bool TryParse([NotNullWhen(true)] string? value, IFormatProvider? provider, [MaybeNullWhen(false)] out ScopeCollection result)
     {
-        const string WhiteSpaceDelimiter = " ";
-
         var scopes = value?.Split(WhiteSpaceDelimiter, StringSplitOptions.RemoveEmptyEntries & StringSplitOptions.TrimEntries);
         if (scopes == null || scopes.Length == 0)
         {

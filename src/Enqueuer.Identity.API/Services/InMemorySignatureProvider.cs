@@ -20,6 +20,11 @@ public class InMemorySignatureProvider(SecurityKey signatureKey) : ITokenSignatu
             expires: token.ValidTo,
             signingCredentials: signature);
 
+        if (token.Header.TryGetValue(JwtHeaderParameterNames.Typ, out var type))
+        {
+            signedToken.Header[JwtHeaderParameterNames.Typ] = type;
+        }
+
         var handler = new JwtSecurityTokenHandler();
         return Task.FromResult(handler.WriteToken(signedToken));
     }

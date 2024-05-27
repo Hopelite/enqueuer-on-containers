@@ -79,6 +79,7 @@ public class Program
         });
 
         builder.Services.AddRabbitMQClient();
+        builder.Services.AddIdentityClient();
 
         // Event sourcing
         builder.Services.AddTransient<IGroupRepository, GroupRepository>();

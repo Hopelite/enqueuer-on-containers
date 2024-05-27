@@ -4,6 +4,8 @@ public static class MessageKeys
 {
     public const string GeneralErrorInternal = "General_Error_Internal";
 
+    public const string Authorization_AuthorizationNeeded = "Authorization_AuthorizationNeeded";
+
     public const string CreateQueueErrorMissingQueueName = "CreateQueue_Error_MissingQueueName";
 
     public const string CreateQueueErrorQueueAlreadyExists = "CreateQueue_Error_QueueAlreadyExists";

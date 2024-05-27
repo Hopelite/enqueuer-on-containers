@@ -16,6 +16,11 @@ public class User : Chat
     public string? LastName { get; init; }
 
     /// <summary>
+    /// The language code of the user interface.
+    /// </summary>
+    public required string LanguageCode { get; init; }
+
+    /// <summary>
     /// Gets the full name of the user.
     /// </summary>
     public string FullName => string.IsNullOrWhiteSpace(LastName) ? FirstName : $"{FirstName} {LastName}";

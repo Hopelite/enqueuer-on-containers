@@ -69,6 +69,7 @@ public class MessageContext
                 Id = message.From.Id,
                 FirstName = message.From.FirstName,
                 LastName = message.From.LastName,
+                LanguageCode = message.From.LanguageCode ?? DefaultValues.DefaultLanguageCode,
             },
             Chat = new Group
             {

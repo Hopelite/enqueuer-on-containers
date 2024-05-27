@@ -11,6 +11,7 @@ public class GroupsController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
+    [AllowedScope("group:list", "group")]
     [HttpGet("{groupId}/queues")]
     public Task<IActionResult> GetGroupQueues(long groupId, CancellationToken cancellationToken)
     {
@@ -18,14 +19,17 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(getGroupQueuesQuery, cancellationToken);
     }
 
+    [AllowedScope("queue:create", "queue", "group")]
     [HttpPut("{groupId}/queues/{queueName}")]
     public Task<IActionResult> CreateQueue(long groupId, string queueName, CancellationToken cancellationToken)
     {
-        var createQueueCommand = new Application.Commands.CreateQueueCommand(groupId, queueName);
+        var claims = HttpContext.User.Claims;
+
+        var createQueueCommand = new Application.Commands.CreateQueueCommand(groupId, queueName, 1);
         return _mediator.Send(createQueueCommand, cancellationToken);
     }
 
-    [AllowedScope("queue:delete", "queue", "group")]
+    [AllowedScope("queue:delete", "queue", "group")] // TODO: Get user id from access token
     [HttpDelete("{groupId}/queues/{queueName}")]
     public Task<IActionResult> DeleteQueue(long groupId, string queueName, CancellationToken cancellationToken)
     {
@@ -33,6 +37,7 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(removeQueueCommand, cancellationToken);
     }
 
+    [AllowedScope("queue:participate", "queue", "group")]
     [HttpPost("{groupId}/queues/{queueName}/participants")]
     public Task<IActionResult> EnqueueParticipant(long groupId, string queueName, EnqueueParticipantCommand command, CancellationToken cancellationToken)
     {
@@ -40,6 +45,7 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(enqueueCommand, cancellationToken);
     }
 
+    [AllowedScope("queue:participate", "queue", "group")]
     [HttpPut("{groupId}/queues/{queueName}/participants/{position}")]
     public Task<IActionResult> EnqueueParticipantTo(long groupId, string queueName, uint position, EnqueueParticipantAtCommand command, CancellationToken cancellationToken)
     {
@@ -47,6 +53,7 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(enqueueCommand, cancellationToken);
     }
 
+    [AllowedScope("queue:participate", "queue", "group")]
     [HttpDelete("{groupId}/queues/{queueName}/participants")]
     public Task<IActionResult> DequeueParticipant(long groupId, string queueName, DequeueParticipantCommand command, CancellationToken cancellationToken)
     {

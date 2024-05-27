@@ -19,6 +19,9 @@ public class AuthorizeQueryParameters
     [BindProperty(Name = "client_id")]
     public string ClientId { get; set; } = null!;
 
+    /// <summary>
+    /// 
+    /// </summary>
     [BindProperty(Name = "redirect_uri")]
     public Uri? RedirectUri { get; set; }
 

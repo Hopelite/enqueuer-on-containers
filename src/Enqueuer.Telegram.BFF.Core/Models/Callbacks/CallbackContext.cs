@@ -69,6 +69,7 @@ public class CallbackContext
                 Id = callbackQuery.From.Id,
                 FirstName = callbackQuery.From.FirstName,
                 LastName = callbackQuery.From.LastName,
+                LanguageCode = callbackQuery.From.LanguageCode ?? DefaultValues.DefaultLanguageCode,
             },
             Chat = new Group
             {

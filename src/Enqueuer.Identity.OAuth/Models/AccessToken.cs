@@ -5,9 +5,9 @@ namespace Enqueuer.Identity.OAuth.Models;
 /// <summary>
 /// Represents the issued access token.
 /// </summary>
-internal readonly struct AccessToken
+public readonly struct AccessToken
 {
-    internal AccessToken(string value, string type, TimeSpan expiresIn)
+    public AccessToken(string value, string type, TimeSpan expiresIn)
     {
         Value = value.ThrowIfNullOrWhitespace(nameof(value));
         Type = type.ThrowIfNullOrWhitespace(nameof(type));

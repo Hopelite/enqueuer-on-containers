@@ -6,8 +6,6 @@ namespace Enqueuer.Identity.Contract.V1
 {
     public interface IIdentityClient
     {
-        Task<AccessToken> GetAccessTokenAsync(CancellationToken cancellationToken);
-
         Task<bool> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken);
 
         Task CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken);

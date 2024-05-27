@@ -1,4 +1,4 @@
-﻿using Enqueuer.Identity.Authorization.Grants;
+﻿using Enqueuer.Identity.OAuth.Models.Grants;
 using Enqueuer.OAuth.Core.Tokens;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -18,10 +18,11 @@ public class AuthorizationGrantModelBinder : IModelBinder
             {
                 AuthorizationGrantType.ClientCredentials.Type => new ClientCredentialsGrant(
                     bindingContext.ValueProvider.GetValue("client_id").FirstValue,
-                    bindingContext.ValueProvider.GetValue("client_secret").FirstValue),
+                    bindingContext.ValueProvider.GetValue("client_secret").FirstValue,
+                    new OAuth.Models.Scope(bindingContext.ValueProvider.GetValue("scope").FirstValue)),
                 AuthorizationGrantType.AuthorizationCode.Type => new AuthorizationCodeGrant(
                     bindingContext.ValueProvider.GetValue("code").FirstValue,
-                    bindingContext.ValueProvider.GetValue("redirect_uri").FirstValue,
+                    new Uri(bindingContext.ValueProvider.GetValue("redirect_uri").FirstValue),
                     bindingContext.ValueProvider.GetValue("client_id").FirstValue),
                 _ => null
             };

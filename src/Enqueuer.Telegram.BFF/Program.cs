@@ -1,3 +1,4 @@
+using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Telegram.BFF.Core.Models.Callbacks;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
@@ -28,6 +29,9 @@ public class Program
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
         builder.AddTelegramClient();
 
+        builder.Services.Configure<IdentityClientOptions>(builder.Configuration.GetRequiredSection("IdentityProvider"));
+        builder.Services.AddIdentityClient();
+
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
@@ -55,6 +59,11 @@ public class Program
                 throw new NotImplementedException();
             }
 
+            return Results.Ok();
+        });
+
+        app.MapGet("/oauth/callback", async (HttpRequest request, [FromServices] IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
+        {
             return Results.Ok();
         });
 

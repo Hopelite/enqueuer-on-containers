@@ -2,6 +2,7 @@
 using Enqueuer.Identity.OAuth.Models;
 using Enqueuer.Identity.OAuth.Storage;
 using Enqueuer.Identity.OAuth.Validation;
+using Enqueuer.Identity.OAuth.Validation.Grants;
 
 namespace Enqueuer.Identity.OAuth;
 
@@ -10,16 +11,16 @@ public class OAuthService : IOAuthService
 {
     private readonly IAuthorizationRequestValidator _requestValidator;
     private readonly IAuthorizationStorage _authorizationStorage;
-    private readonly IAuthorizationContext _authorizationContext;
+    private readonly IAccessTokenManager _tokenManager;
 
     public OAuthService(
         IAuthorizationRequestValidator requestValidator,
         IAuthorizationStorage authorizationStorage,
-        IAuthorizationContext authorizationContext)
+        IAccessTokenManager tokenManager)
     {
         _requestValidator = requestValidator;
         _authorizationStorage = authorizationStorage;
-        _authorizationContext = authorizationContext;
+        _tokenManager = tokenManager;
     }
 
     public async Task<AuthorizationResponse> AuthorizeAsync(AuthorizationRequest request, CancellationToken cancellationToken)
@@ -28,11 +29,11 @@ public class OAuthService : IOAuthService
         {
             await _requestValidator.ValidateAsync(request, cancellationToken);
 
-            var code = await _authorizationStorage.RequestCodeAsync(cancellationToken);
+            var clientAuthorization = await _authorizationStorage.RegisterClientAuthorization(cancellationToken);
 
             // TODO: if the RedirectUri is null - use the one in the registration
             // If not - validate that it is one of the registered
-            return new AuthorizationResponse(code, request.State, request.RedirectUri);
+            return new AuthorizationResponse(clientAuthorization.Code, request.State, request.RedirectUri);
         }
         catch (AuthorizationException)
         {
@@ -49,9 +50,7 @@ public class OAuthService : IOAuthService
     {
         try
         {
-            await request.AuthorizationGrant.AuthorizeAsync(_authorizationContext, cancellationToken);
-
-            var token = new AccessToken(); // TODO: implement access token generation
+            var token = await _tokenManager.GetAccessTokenAsync(request.AuthorizationGrant, cancellationToken);
 
             return new AccessTokenResponse(token);
         }

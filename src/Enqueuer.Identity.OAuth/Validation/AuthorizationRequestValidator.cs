@@ -29,7 +29,7 @@ public class AuthorizationRequestValidator : IAuthorizationRequestValidator
     {
         if (string.IsNullOrWhiteSpace(responseType))
         {
-            throw new InvalidRequestException("The response_type parameter is required.");
+            throw new InvalidRequestException("The 'response_type' query parameter is required.");
         }
 
         if (responseType != ResponseType.AuthorizationCode)
@@ -42,7 +42,7 @@ public class AuthorizationRequestValidator : IAuthorizationRequestValidator
     {
         if (redirectUri != null && !redirectUri.IsAbsoluteUri)
         {
-            throw new InvalidRequestException("The redirect_uri parameter must contain an absolute URL.");
+            throw new InvalidRequestException("The 'redirect_uri' query parameter must contain an absolute URL.");
         }
     }
 
@@ -50,7 +50,7 @@ public class AuthorizationRequestValidator : IAuthorizationRequestValidator
     {
         if (string.IsNullOrWhiteSpace(clientId))
         {
-            throw new InvalidRequestException("The client_id parameter is required.");
+            throw new InvalidRequestException("The 'client_id' query parameter is required.");
         }
 
         await _clientSecretStorage.GetClientSecretAsync(clientId, cancellationToken);
