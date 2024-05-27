@@ -1,3 +1,4 @@
+using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Queueing.API.Application.Messaging;
 using Enqueuer.Queueing.API.Mapping;
 using Enqueuer.Queueing.API.Mapping.RejectedEvents;
@@ -79,6 +80,9 @@ public class Program
         });
 
         builder.Services.AddRabbitMQClient();
+
+        builder.Services.Configure<IdentityClientOptions>(builder.Configuration.GetRequiredSection("IdentityProvider"))
+                        .AddIdentityClient();
 
         // Event sourcing
         builder.Services.AddTransient<IGroupRepository, GroupRepository>();

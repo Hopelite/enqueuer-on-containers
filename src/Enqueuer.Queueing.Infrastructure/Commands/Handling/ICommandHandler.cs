@@ -7,5 +7,5 @@ public interface ICommandHandler<TAggregate> : IHostedService
     /// <summary>
     /// Handles the incoming <paramref name="command"/>.
     /// </summary>
-    Task HandleAsync(ICommand command, CancellationToken cancellationToken);
+    ValueTask HandleAsync(ICommand command, CancellationToken cancellationToken);
 }

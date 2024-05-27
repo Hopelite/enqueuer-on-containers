@@ -8,10 +8,11 @@ namespace Enqueuer.Queueing.Domain.Events;
 /// </summary>
 public class QueueCreatedEvent : DomainEvent
 {
-    public QueueCreatedEvent(long groupId, string queueName, DateTime timestamp)
+    public QueueCreatedEvent(long groupId, string queueName, long creatorId, DateTime timestamp)
         : base(groupId, timestamp)
     {
         QueueName = queueName;
+        CreatorId = creatorId;
     }
 
     public override string Name => "QueueCreated";
@@ -20,6 +21,11 @@ public class QueueCreatedEvent : DomainEvent
     /// The name of the created queue.
     /// </summary>
     public string QueueName { get; }
+
+    /// <summary>
+    /// The unique identifier of the queue creator.
+    /// </summary>
+    public long CreatorId { get; }
 
     public override void ApplyTo(Group group)
     {
