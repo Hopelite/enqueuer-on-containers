@@ -35,9 +35,9 @@ public class CommandHandler : BackgroundService, ICommandHandler<Group>
         _logger = logger;
     }
 
-    public Task HandleAsync(ICommand command, CancellationToken cancellationToken)
+    public ValueTask HandleAsync(ICommand command, CancellationToken cancellationToken)
     {
-        return _commandsToProcess.Writer.WriteAsync(command, cancellationToken).AsTask();
+        return _commandsToProcess.Writer.WriteAsync(command, cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

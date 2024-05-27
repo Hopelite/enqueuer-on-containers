@@ -31,7 +31,7 @@ public class Group : IEntity, IGroupAggregate
 
     public IReadOnlyCollection<Queue> Queues => _queues.Values;
 
-    public void CreateQueue(string queueName)
+    public void CreateQueue(string queueName, long creatorId)
     {
         if (string.IsNullOrWhiteSpace(queueName))
         {
@@ -48,7 +48,7 @@ public class Group : IEntity, IGroupAggregate
             throw new QueueAlreadyExistsException(queueName, $"Queue '{queueName}' already exists in the chat '{Id}'.");
         }
 
-        AddDomainEvent(new QueueCreatedEvent(Id, queueName, DateTime.UtcNow));
+        AddDomainEvent(new QueueCreatedEvent(Id, queueName, creatorId, DateTime.UtcNow));
     }
 
     public void DeleteQueue(string queueName)

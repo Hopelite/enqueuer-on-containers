@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,9 @@ public static class AuthenticationBuilderExtensions
     /// <remarks>Requires <see cref="OAuthConfiguration"/> class to be registered and configured.</remarks>
     public static AuthenticationBuilder AddJwtTokenAuthentication(this AuthenticationBuilder builder)
     {
+        // TODO: temporarily removed the default mappings for the sake of "sub" claim
+        JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
         var configuration = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<OAuthConfiguration>>().Value;
         return builder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
         {

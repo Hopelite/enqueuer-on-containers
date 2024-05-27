@@ -23,7 +23,7 @@ public class DocumentEventStorage : IEventStorage
         BsonClassMap.RegisterClassMap<QueueCreatedEvent>(c =>
         {
             c.MapMember(e => e.QueueName);
-            c.MapCreator(e => new QueueCreatedEvent(e.AggregateId, e.QueueName, e.Timestamp));
+            c.MapCreator(e => new QueueCreatedEvent(e.AggregateId, e.QueueName, e.CreatorId, e.Timestamp));
         });
 
         BsonClassMap.RegisterClassMap<QueueDeletedEvent>(c =>

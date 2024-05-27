@@ -10,6 +10,7 @@ public class InMemorySignatureProvider(SecurityKey signatureKey) : ITokenSignatu
 
     public Task<string> SignAsync(JwtSecurityToken token, CancellationToken cancellationToken)
     {
+        // TODO: consider to not recreate the token 
         ArgumentNullException.ThrowIfNull(token, nameof(token));
 
         var signature = new SigningCredentials(_signatureKey, SecurityAlgorithms.HmacSha256);

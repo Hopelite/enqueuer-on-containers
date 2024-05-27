@@ -1,6 +1,5 @@
 using Enqueuer.Queueing.Domain.Exceptions;
 using Enqueuer.Queueing.Domain.Factories;
-using Enqueuer.Queueing.Domain.Models;
 
 namespace Enqueuer.Queueing.Domain.Tests;
 
@@ -22,10 +21,10 @@ public class GroupTests
     [InlineData("QueueWithQuiteLongNameButShorterThan64Characters")]
     public void CreateQueue_SuccessfullyAddsQueue(string queueName)
     {
-        const long GroupId = 1;
+        const long GroupId = 1, CreatorId = 1;
         var group = _groupFactory.Create(GroupId);
 
-        group.CreateQueue(queueName);
+        group.CreateQueue(queueName, CreatorId);
 
         Assert.Contains(group.Queues, q => q.Name.Equals(queueName));
     }
@@ -33,34 +32,34 @@ public class GroupTests
     [Fact]
     public void CreateQueue_QueueAlreadyExists_ThrowsException()
     {
-        const long GroupId = 1;
+        const long GroupId = 1, CreatorId = 1;
         const string QueueName = "ExistingQueueName";
 
         var group = _groupFactory.Create(GroupId);
-        group.CreateQueue(QueueName);
+        group.CreateQueue(QueueName, CreatorId);
 
-        Assert.Throws<QueueAlreadyExistsException>(() => group.CreateQueue(QueueName));
+        Assert.Throws<QueueAlreadyExistsException>(() => group.CreateQueue(QueueName, CreatorId));
     }
 
     [Fact]
     public void CreateQueue_QueueNameIsTooLong_ThrowsException()
     {
-        const long GroupId = 1;
+        const long GroupId = 1, CreatorId = 1;
         const string ExtremelyLongQueueName = "QueueWithQuiteLongNameThatIsDefinitelyLongerThan64CharactersLikeThisOne";
 
         var group = _groupFactory.Create(GroupId);
 
-        Assert.Throws<InvalidQueueNameException>(() => group.CreateQueue(ExtremelyLongQueueName));
+        Assert.Throws<InvalidQueueNameException>(() => group.CreateQueue(ExtremelyLongQueueName, CreatorId));
     }
 
     [Fact]
     public void DeleteQueue_SuccessfullyDeletesQueue()
     {
-        const long GroupId = 1;
+        const long GroupId = 1, CreatorId = 1;
         const string QueueName = "ExistingQueueName";
 
         var group = _groupFactory.Create(GroupId);
-        group.CreateQueue(QueueName);
+        group.CreateQueue(QueueName, CreatorId);
 
         group.DeleteQueue(QueueName);
 

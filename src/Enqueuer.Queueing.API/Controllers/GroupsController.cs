@@ -18,10 +18,11 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(getGroupQueuesQuery, cancellationToken);
     }
 
+    [AllowedScope("queue:create", "queue", "group")]
     [HttpPut("{groupId}/queues/{queueName}")]
-    public Task<IActionResult> CreateQueue(long groupId, string queueName, CancellationToken cancellationToken)
+    public Task<IActionResult> CreateQueue(long groupId, string queueName, CreateQueueCommand command, CancellationToken cancellationToken)
     {
-        var createQueueCommand = new Application.Commands.CreateQueueCommand(groupId, queueName);
+        var createQueueCommand = new Application.Commands.CreateQueueCommand(groupId, queueName, command.CreatorId);
         return _mediator.Send(createQueueCommand, cancellationToken);
     }
 

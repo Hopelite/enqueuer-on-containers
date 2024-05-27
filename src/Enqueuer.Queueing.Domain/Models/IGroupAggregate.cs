@@ -16,11 +16,11 @@ public interface IGroupAggregate
     IReadOnlyCollection<Queue> Queues { get; }
 
     /// <summary>
-    /// Creates queue with the specified <paramref name="queueName"/> in the group.
+    /// Creates queue with the specified <paramref name="queueName"/> in the group on behalf of the <paramref name="creatorId"/>.
     /// </summary>
     /// <exception cref="Exceptions.QueueAlreadyExistsException">Thrown if queue with the specified <paramref name="queueName"/> already exists in the group.</exception>
     /// <exception cref="Exceptions.InvalidQueueNameException">Thrown if specified <paramref name="queueName"/> is invalid.</exception>
-    void CreateQueue(string queueName);
+    void CreateQueue(string queueName, long creatorId);
 
     /// <summary>
     /// Deletes queue with the specified <paramref name="queueName"/>.
