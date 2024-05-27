@@ -1,6 +1,7 @@
 ﻿using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Identity.Contract.V1.Models;
 using Enqueuer.Identity.Contract.V1.Models.Enums;
+using Enqueuer.Queueing.API.Application.Claims;
 using Enqueuer.Queueing.Domain.Models;
 using Enqueuer.Queueing.Infrastructure.Commands.Handling;
 using Microsoft.AspNetCore.Mvc;
@@ -9,17 +10,28 @@ namespace Enqueuer.Queueing.API.Application.Commands.Handlers;
 
 public class CreateQueueCommandHandler : IOperationHandler<CreateQueueCommand>
 {
+    private readonly IClaimsAccessor _claimsAccessor;
     private readonly IIdentityClient _identityClient;
     private readonly ICommandHandlerManager<Group> _commandHandlerManager;
 
-    public CreateQueueCommandHandler(IIdentityClient identityClient, ICommandHandlerManager<Group> commandHandlerManager)
+    public CreateQueueCommandHandler(
+        IClaimsAccessor claimsAccessor,
+        IIdentityClient identityClient,
+        ICommandHandlerManager<Group> commandHandlerManager)
     {
+        _claimsAccessor = claimsAccessor;
         _identityClient = identityClient;
         _commandHandlerManager = commandHandlerManager;
     }
 
     public async Task<IActionResult> Handle(CreateQueueCommand request, CancellationToken cancellationToken)
     {
+        var authorizedUserId = _claimsAccessor.GetUserIdFromClaims();
+        if (authorizedUserId.HasValue && authorizedUserId != request.CreatorId)
+        {
+            return new BadRequestObjectResult("The creatorId must match the access token subject claim.");
+        }
+
         var resourceId = new Uri($"groups/{request.GroupId}/queues", UriKind.Relative);
         var hasAccess = await _identityClient.CheckAccessAsync(new CheckAccessRequest(resourceId, request.CreatorId, AllowedScope.QueueCreate), cancellationToken);
         if (!hasAccess)
