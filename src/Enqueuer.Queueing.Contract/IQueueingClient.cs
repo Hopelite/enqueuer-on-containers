@@ -12,7 +12,7 @@ namespace Enqueuer.Queueing.Contract.V1
     public interface IQueueingClient
     {
         /// <summary>
-        /// Gets all queues existing within the group..
+        /// Gets all queues existing within the group.
         /// </summary>
         Task<IReadOnlyCollection<Queue>> GetGroupQueuesAsync(long groupId, CancellationToken cancellationToken);
 
@@ -24,7 +24,7 @@ namespace Enqueuer.Queueing.Contract.V1
         /// <summary>
         /// Creates a queue with the specified name.
         /// </summary>
-        Task CreateQueueAsync(long groupId, string queueName, CancellationToken cancellationToken);
+        Task CreateQueueAsync(long groupId, string queueName, CreateQueueCommand command, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes a queue with the specified name.

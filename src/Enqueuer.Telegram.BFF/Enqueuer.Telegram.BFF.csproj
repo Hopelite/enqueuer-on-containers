@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Enqueuer.Identity.Contract.V1\Enqueuer.Identity.Contract.V1.csproj" />
     <ProjectReference Include="..\Enqueuer.Telegram.BFF.Messages\Enqueuer.Telegram.BFF.Messages.csproj" />
   </ItemGroup>
 

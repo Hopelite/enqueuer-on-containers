@@ -15,13 +15,9 @@ namespace Enqueuer.Queueing.Contract.V1
     {
         private readonly HttpClient _httpClient;
 
-        public QueueingClient(Uri queueingApiUrl)
+        public QueueingClient(HttpClient httpClient)
         {
-            // TODO: add tokens to client
-            _httpClient = new HttpClient()
-            {
-                BaseAddress = queueingApiUrl ?? throw new ArgumentNullException(nameof(queueingApiUrl))
-            };
+            _httpClient = httpClient;
         }
 
         public async Task<IReadOnlyCollection<Queue>> GetGroupQueuesAsync(long groupId, CancellationToken cancellationToken)
@@ -47,9 +43,10 @@ namespace Enqueuer.Queueing.Contract.V1
             throw new NotImplementedException();
         }
 
-        public async Task CreateQueueAsync(long groupId, string queueName, CancellationToken cancellationToken)
+        public async Task CreateQueueAsync(long groupId, string queueName, CreateQueueCommand command, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PutAsync($"/api/groups/{groupId}/queues/{queueName}", content: null, cancellationToken);
+            var content = JsonContent.Create(command);
+            var response = await _httpClient.PutAsync($"/api/groups/{groupId}/queues/{queueName}", content, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
                 var reasonMessage = await response.Content.ReadAsStringAsync();

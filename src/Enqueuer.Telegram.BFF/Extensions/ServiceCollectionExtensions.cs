@@ -1,4 +1,7 @@
-﻿using Enqueuer.Telegram.BFF.Messages.Handlers;
+﻿using Enqueuer.Queueing.Contract.V1;
+using Enqueuer.Queueing.Contract.V1.Configuration;
+using Enqueuer.Telegram.BFF.Extensions.RequestHandlers;
+using Enqueuer.Telegram.BFF.Messages.Handlers;
 using Enqueuer.Telegram.Shared.Configuration;
 using Enqueuer.Telegram.Shared.Exceptions;
 using Enqueuer.Telegram.Shared.Markup;
@@ -49,5 +52,20 @@ public static class ServiceCollectionExtensions
             .AddTransient<IDataSerializer, JsonDataSerializer>();
 
         return builder;
+    }
+
+    public static IHttpClientBuilder AddQueueingClient(this WebApplicationBuilder builder, string name = "Enqueuer Queueing Client")
+    {
+        builder.Services.AddSingleton<AccessTokenHandler>();
+        builder.Services.Configure<QueueingClientOptions>(builder.Configuration.GetRequiredSection("QueueingClient"));
+        return builder.Services.AddHttpClient<IQueueingClient, QueueingClient>(name, (serviceProvider, client) =>
+        {
+            var options = serviceProvider.GetRequiredService<IOptions<QueueingClientOptions>>().Value;
+            client.BaseAddress = options.BaseAddress;
+        })
+        .AddHttpMessageHandler(serviceProvider =>
+        {
+            return serviceProvider.GetRequiredService<AccessTokenHandler>();
+        });
     }
 }

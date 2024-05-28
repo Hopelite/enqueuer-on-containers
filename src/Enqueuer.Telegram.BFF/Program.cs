@@ -1,3 +1,4 @@
+using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Telegram.BFF.Core.Models.Callbacks;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
@@ -23,10 +24,14 @@ public class Program
 
         builder.Services.AddTransient<IMessageHandlersFactory, MessageHandlersFactory>();
         builder.Services.AddScoped<IMessageDistributor, MessageDistributor>();
-        builder.Services.AddSingleton<IQueueingClient, QueueingClient>(c => new QueueingClient(new Uri(builder.Configuration.GetConnectionString("QueueingAPI"))));
         builder.Services.AddMessageHandlers();
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
         builder.AddTelegramClient();
+
+        builder.Services.Configure<IdentityClientOptions>(builder.Configuration.GetRequiredSection("IdentityProvider"))
+                        .AddIdentityClient();
+
+        builder.AddQueueingClient();
 
         var app = builder.Build();
 
