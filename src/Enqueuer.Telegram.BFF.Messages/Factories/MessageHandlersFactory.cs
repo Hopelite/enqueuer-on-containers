@@ -26,7 +26,7 @@ public class MessageHandlersFactory(IServiceProvider serviceProvider) : IMessage
         {
             "/start" => throw new NotImplementedException(),
             "/help" => throw new NotImplementedException(),
-            "/queue" or "/q" => throw new NotImplementedException(),
+            "/queue" or "/q" => _serviceProvider.GetRequiredService<QueueMessageHandler>(),
             "/createqueue" or "/creq" => _serviceProvider.GetRequiredService<CreateQueueMessageHandler>(),
             "/removequeue" or "/req" => _serviceProvider.GetRequiredService<RemoveQueueMessageHandler>(),
             "/enqueue" or "/enq" => _serviceProvider.GetRequiredService<EnqueueMessageHandler>(),

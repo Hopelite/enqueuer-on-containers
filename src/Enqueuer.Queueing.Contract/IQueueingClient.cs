@@ -1,4 +1,6 @@
 ﻿using Enqueuer.Queueing.Contract.V1.Commands;
+using Enqueuer.Queueing.Contract.V1.Queries.ViewModels;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,6 +11,16 @@ namespace Enqueuer.Queueing.Contract.V1
     /// </summary>
     public interface IQueueingClient
     {
+        /// <summary>
+        /// Gets all queues existing within the group..
+        /// </summary>
+        Task<IReadOnlyCollection<Queue>> GetGroupQueuesAsync(long groupId, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the list of participants of the queue.
+        /// </summary>
+        Task<IReadOnlyCollection<Participant>> GetQueueParticipantsAsync(long groupId, string queueName, CancellationToken cancellationToken);
+
         /// <summary>
         /// Creates a queue with the specified name.
         /// </summary>
