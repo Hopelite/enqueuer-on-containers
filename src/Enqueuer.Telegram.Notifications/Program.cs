@@ -29,7 +29,6 @@ public class Program
         builder.Services.AddRabbitMQClient()
             .SubscribeAllHandlers();
 
-        builder.Services.MigrateDatabase();
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
 
         builder.AddTelegramClient();
@@ -43,7 +42,11 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
+        // TODO: create certificates for API
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseHttpsRedirection();
+        }
 
         app.UseAuthorization();
 
@@ -62,6 +65,8 @@ public class Program
         })
         .WithName("Configure Chat's Cotifications")
         .WithOpenApi();
+
+        app.MigrateDatabase();
 
         app.Run();
     }

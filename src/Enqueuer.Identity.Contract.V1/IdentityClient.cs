@@ -21,9 +21,8 @@ namespace Enqueuer.Identity.Contract.V1
         private readonly HttpClient _httpClient;
         private readonly IAccessTokenCache _tokenCache;
         private readonly IdentityClientOptions _options;
-        private readonly Uri _accessTokenUrl;
 
-        // TODO: reduce token scope for required by each client only
+        // TODO: reduce token scope to required by each client only
         private static readonly string[] RequiredScopes = new string[] { "queue", "group", "user", "access" };
 
         public IdentityClient(HttpClient httpClient, IAccessTokenCache tokenCache, IOptions<IdentityClientOptions> options)
@@ -31,12 +30,11 @@ namespace Enqueuer.Identity.Contract.V1
             _httpClient = httpClient;
             _tokenCache = tokenCache;
             _options = options.Value;
-            _accessTokenUrl = GetAccessTokenUrl();
         }
 
-        public async Task<AccessToken> GetAccessTokenAsync(CancellationToken cancellationToken)
+        public async Task<AccessToken> GetAccessTokenAsync(IReadOnlyCollection<string> scopes, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PostAsync(_accessTokenUrl, content: null, cancellationToken);
+            var response = await _httpClient.PostAsync(GetAccessTokenUrl(scopes), content: null, cancellationToken);
 
             var responseBody = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -156,7 +154,7 @@ namespace Enqueuer.Identity.Contract.V1
 
         private async ValueTask RefreshTokenAsync(CancellationToken cancellationToken)
         {
-            var token = await GetAccessTokenAsync(cancellationToken);
+            var token = await GetAccessTokenAsync(RequiredScopes, cancellationToken);
             if (_options.CacheToken)
             {
                 _tokenCache.SetAccessToken(token);
@@ -165,9 +163,9 @@ namespace Enqueuer.Identity.Contract.V1
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.Type, token.Value);
         }
 
-        private Uri GetAccessTokenUrl()
+        private Uri GetAccessTokenUrl(IReadOnlyCollection<string> requestedScopes)
         {
-            var requiredScope = OAuth.Core.Models.Scope.Create(RequiredScopes);
+            var requiredScope = OAuth.Core.Models.Scope.Create(requestedScopes);
             var queryParameters = new Dictionary<string, string>()
             {
                 { AuthorizationGrantType.GrantTypeParameter,                        AuthorizationGrantType.ClientCredentials.Type },

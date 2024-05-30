@@ -19,7 +19,7 @@ public abstract class MessageHandlerBase(
     {
         var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.GeneralErrorInternal, MessageParameters.None, cancellationToken);
         await telegramClient.SendTextMessageAsync(
-        chatId: messageContext.Chat.Id,
+            chatId: messageContext.Chat.Id,
             text: errorMessage,
             parseMode: ParseMode.Html,
             cancellationToken: cancellationToken);

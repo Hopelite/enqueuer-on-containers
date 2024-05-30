@@ -1,6 +1,8 @@
 ﻿using Enqueuer.Queueing.Contract.V1.Commands;
 using Enqueuer.Queueing.Contract.V1.Exceptions;
+using Enqueuer.Queueing.Contract.V1.Queries.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -13,17 +15,38 @@ namespace Enqueuer.Queueing.Contract.V1
     {
         private readonly HttpClient _httpClient;
 
-        public QueueingClient(Uri queueingApiUrl)
+        public QueueingClient(HttpClient httpClient)
         {
-            _httpClient = new HttpClient()
-            {
-                BaseAddress = queueingApiUrl ?? throw new ArgumentNullException(nameof(queueingApiUrl))
-            };
+            _httpClient = httpClient;
         }
 
-        public async Task CreateQueueAsync(long groupId, string queueName, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<Queue>> GetGroupQueuesAsync(long groupId, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PutAsync($"/api/groups/{groupId}/queues/{queueName}", content: null, cancellationToken);
+            var response = await _httpClient.GetAsync($"/api/groups/{groupId}/queues", cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var reasonMessage = await response.Content.ReadAsStringAsync();
+                throw new QueueingClientException($"Response code for groups queues listing indicates failure. Reason: {response.StatusCode}, {reasonMessage}");
+            }
+
+            var queues = await response.Content.ReadFromJsonAsync<List<Queue>>();
+            if (queues == null)
+            {
+                throw new QueueingClientException("Unable to deserialize response into group queues.");
+            }
+
+            return queues;
+        }
+
+        public Task<IReadOnlyCollection<Participant>> GetQueueParticipantsAsync(long groupId, string queueName, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task CreateQueueAsync(long groupId, string queueName, CreateQueueCommand command, CancellationToken cancellationToken)
+        {
+            var content = JsonContent.Create(command);
+            var response = await _httpClient.PutAsync($"/api/groups/{groupId}/queues/{queueName}", content, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
                 var reasonMessage = await response.Content.ReadAsStringAsync();

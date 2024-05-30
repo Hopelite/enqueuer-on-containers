@@ -31,8 +31,11 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        // TODO: enable once add certificates
-        //app.UseHttpsRedirection();
+        // TODO: create certificates for API
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseHttpsRedirection();
+        }
 
         // TODO: add correlationId
 

@@ -38,7 +38,7 @@ public class CreateQueueMessageHandler(
 
         try
         {
-            await _queueingClient.CreateQueueAsync(messageContext.Chat.Id, queueContext.QueueName, cancellationToken);
+            await _queueingClient.CreateQueueAsync(messageContext.Chat.Id, queueContext.QueueName, new CreateQueueCommand(messageContext.Sender.Id), cancellationToken);
         }
         catch (QueueAlreadyExistsException)
         {

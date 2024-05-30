@@ -1,11 +1,12 @@
-﻿using Telegram.Bot.Exceptions;
+﻿using Microsoft.AspNetCore.Http;
+using Telegram.Bot.Exceptions;
 
 namespace Enqueuer.Telegram.Shared.Exceptions;
 
 public class NotFoundException : ApiRequestException
 {
     public NotFoundException(string message)
-        : this(message, (int)Exceptions.ErrorCode.NotFound)
+        : this(message, StatusCodes.Status404NotFound)
     {
     }
 

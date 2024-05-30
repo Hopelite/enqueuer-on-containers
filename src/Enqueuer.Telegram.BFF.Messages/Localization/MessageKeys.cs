@@ -4,6 +4,14 @@ public static class MessageKeys
 {
     public const string GeneralErrorInternal = "General_Error_Internal";
 
+    public const string QueueMessageGroupDoesNotHaveAnyQueue = "Queue_Message_GroupDoesNotHaveAnyQueue";
+
+    public const string QueueMessageQueueIsEmpty = "Queue_Message_QueueIsEmpty";
+
+    public const string QueueMessageListGroupQueuesHeader = "Queue_Message_ListGroupQueues_Header";
+
+    public const string QueueMessageListGroupQueuesFooter = "Queue_Message_ListGroupQueues_Footer";
+
     public const string CreateQueueErrorMissingQueueName = "CreateQueue_Error_MissingQueueName";
 
     public const string CreateQueueErrorQueueAlreadyExists = "CreateQueue_Error_QueueAlreadyExists";

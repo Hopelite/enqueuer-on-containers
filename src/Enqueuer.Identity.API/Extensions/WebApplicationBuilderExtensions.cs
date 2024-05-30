@@ -7,43 +7,17 @@ using Enqueuer.Identity.Authorization.Grants.Validation;
 using Enqueuer.Identity.Authorization.OAuth;
 using Enqueuer.Identity.Authorization.OAuth.Signature;
 using Enqueuer.Identity.Authorization.Validation;
-using Enqueuer.Identity.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
-using System.Text.Json;
 
 namespace Enqueuer.Identity.API.Extensions;
 
 public static class WebApplicationBuilderExtensions
 {
-    public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder ConfigureOAuth(this WebApplicationBuilder builder)
     {
-        builder.Services.AddControllers()
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
-            });
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
-        {
-            c.EnableAnnotations();
-        });
-
-        builder.Services.AddSingleton<IAuthorizationService, AuthorizationService>()
-                        .AddDbContext<IdentityContext>(options =>
-                            options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityDB")));
-
-        ConfigureOAuth(builder);
-
-        return builder;
-    }
-
-    private static WebApplicationBuilder ConfigureOAuth(this WebApplicationBuilder builder)
-    {
-        var keyVaultUri = builder.Configuration.GetRequiredSection("KeyVault").GetRequiredUri("Url");
+        var keyVaultUri = builder.Configuration.GetRequiredSection("KeyVault")
+                                               .GetRequiredUri("Url");
 
         builder.Services.AddAzureClients(azureBuilder =>
         {
