@@ -1,5 +1,4 @@
 using Enqueuer.Identity.Contract.V1;
-using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Telegram.BFF.Core.Models.Callbacks;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
 using Enqueuer.Telegram.BFF.Localization;
@@ -41,7 +40,11 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
+        // TODO: create certificates for API
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseHttpsRedirection();
+        }
 
         app.MapPost("/bot", async (Update telegramUpdate, [FromServices] IServiceProvider serviceProvider, CancellationToken cancellationToken) =>
         {

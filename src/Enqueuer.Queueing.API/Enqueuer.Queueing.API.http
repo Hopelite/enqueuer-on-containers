@@ -1,6 +1,0 @@
-@Enqueuer.Queueing.API_HostAddress = http://localhost:5232
-
-GET {{Enqueuer.Queueing.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
