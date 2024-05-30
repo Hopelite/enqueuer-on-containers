@@ -56,7 +56,7 @@ public static class ServiceCollectionExtensions
 
     public static IHttpClientBuilder AddQueueingClient(this WebApplicationBuilder builder, string name = "Enqueuer Queueing Client")
     {
-        builder.Services.AddSingleton<AccessTokenHandler>();
+        builder.Services.AddTransient<AccessTokenHandler>();
         builder.Services.Configure<QueueingClientOptions>(builder.Configuration.GetRequiredSection("QueueingClient"));
         return builder.Services.AddHttpClient<IQueueingClient, QueueingClient>(name, (serviceProvider, client) =>
         {

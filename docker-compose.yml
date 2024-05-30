@@ -1,6 +1,21 @@
 version: '3.4'
 
 services:
+  enqueuer.telegram.bff:
+    image: ${DOCKER_REGISTRY-}enqueuertelegrambff
+    build:
+      context: .
+      dockerfile: src/Enqueuer.Telegram.BFF/Dockerfile
+    environment:
+      - QueueingClient__BaseAddress=http://enqueuer.queueing.api:8080
+      - TelegramClient__AccessToken=${ENQUEUER_TELEGRAM_BOT_ACCESS_TOKEN}
+      - IdentityProvider__BaseAddress=http://enqueuer.indentity.api:8086
+      - IdentityProvider__ClientId=${ENQUEUER_TELEGRAM_BFF_CLIENT_ID}
+      - IdentityProvider__ClientSecret=${ENQUEUER_TELEGRAM_BFF_CLIENT_SECRET}
+      - IdentityProvider__Timeout=00:00:30
+    depends_on:
+      - enqueuer.queueing.api
+
   enqueuer.queueing.api:
     image: ${DOCKER_REGISTRY-}enqueuerqueueingapi
     build:
@@ -9,9 +24,15 @@ services:
     environment:
       - ConnectionStrings__EventBus=amqp://guest:guest@eventbus:5672
       - EventsDatabase__ConnectionString=mongodb://user:pass@mongodb
+      - OAuth__Issuer=https://enqueuer.indentity.api:8087
+      - OAuth__SigningKey=MYBIGGESTKEYPOSSIBLEJUSTLOOKATTHISDUDE
+      - IdentityProvider__BaseAddress=http://enqueuer.indentity.api:8086
+      - IdentityProvider__ClientId=${ENQUEUER_QUEUEING_API_CLIENT_ID}
+      - IdentityProvider__ClientSecret=${ENQUEUER_QUEUEING_API_CLIENT_SECRET}
     depends_on:
       - eventbus
       - mongodb
+      - enqueuer.indentity.api
 
   eventbus:
     image: rabbitmq:management-alpine
@@ -26,10 +47,10 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=user
       - MONGO_INITDB_ROOT_PASSWORD=pass
-    volumes:
-      - type: bind
-        source: C:/Users/vkurd/EnqueuerData/Queueing/DB
-        target: /data/db
+    # volumes:
+    #   - type: bind
+    #     source: C:/Users/vkurd/EnqueuerData/Queueing/DB
+    #     target: /data/db
 
   enqueuer.telegram.notifications:
     image: ${DOCKER_REGISTRY-}enqueuertelegramnotifications
@@ -46,16 +67,18 @@ services:
     volumes:
       - C:/Users/vkurd/EnqueuerData/Notifications/DB:/data
 
-  enqueuer.telegram.bff:
-    image: ${DOCKER_REGISTRY-}enqueuertelegrambff
+  enqueuer.indentity.api:
+    image: ${DOCKER_REGISTRY-}enqueuerindentityapi
     build:
       context: .
-      dockerfile: src/Enqueuer.Telegram.BFF/Dockerfile
+      dockerfile: src/Enqueuer.Identity.API/Dockerfile
     environment:
-      - ConnectionStrings__QueueingAPI=http://enqueuer.queueing.api:8080
-      - TelegramClient__AccessToken=${ENQUEUER_TELEGRAM_BOT_ACCESS_TOKEN}
-    depends_on:
-      - enqueuer.queueing.api
+      - ConnectionStrings__IdentityDB=Host=host.docker.internal;Port=5432;Username=postgres;Password=m1gLP@T3;Database=enqueuer-identity;Timeout=10
+      - OAuth__Issuer=https://enqueuer.indentity.api:8087
+      - KeyVault__Url=${ENQUEUER_IDENTITY_API_KEY_VAULT_URL}
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET}
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID}
 
 volumes:
   notificationsdb:

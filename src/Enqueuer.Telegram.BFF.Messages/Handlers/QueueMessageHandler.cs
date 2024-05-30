@@ -1,9 +1,11 @@
 ﻿using Enqueuer.Queueing.Contract.V1;
+using Enqueuer.Queueing.Contract.V1.Queries.ViewModels;
 using Enqueuer.Telegram.BFF.Core.Models.Extensions;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
 using Enqueuer.Telegram.BFF.Messages.Localization;
 using Enqueuer.Telegram.Shared.Localization;
 using Microsoft.Extensions.Logging;
+using System.Text;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
@@ -22,7 +24,7 @@ public class QueueMessageHandler(
     {
         var queueContext = messageContext.Command!.GetQueueName();
 
-        if (queueContext == null)
+        if (string.IsNullOrEmpty(queueContext.QueueName))
         {
             return ListGroupQueuesAsync(messageContext, cancellationToken);
         }
@@ -40,7 +42,7 @@ public class QueueMessageHandler(
             {
                 var message = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageGroupDoesNotHaveAnyQueue, MessageParameters.None, cancellationToken);
                 await telegramClient.SendTextMessageAsync(
-                    chatId: messageContext.Chat.Id,
+                        chatId: messageContext.Chat.Id,
                         text: message,
                         parseMode: ParseMode.Html,
                         cancellationToken: cancellationToken);
@@ -48,7 +50,12 @@ public class QueueMessageHandler(
                 return;
             }
 
-            // List queues
+            var messageWithQueues = await ListGroupQueuesInMessage(queues, cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: messageWithQueues,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
         }
         catch (Exception ex)
         {
@@ -66,7 +73,7 @@ public class QueueMessageHandler(
             {
                 var message = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageQueueIsEmpty, new MessageParameters(queueContext.QueueName), cancellationToken);
                 await telegramClient.SendTextMessageAsync(
-                    chatId: messageContext.Chat.Id,
+                        chatId: messageContext.Chat.Id,
                         text: message,
                         parseMode: ParseMode.Html,
                         cancellationToken: cancellationToken);
@@ -74,12 +81,29 @@ public class QueueMessageHandler(
                 return;
             }
 
-            // List participants
+            throw new NotImplementedException();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occured during queue '{QueueName}' participants listing in the chat '{ChatId}'.", queueContext.QueueName, messageContext.Chat.Id);
             await NotifyUserAboutInternalErrorAsync(messageContext, cancellationToken);
         }
+    }
+
+    private async ValueTask<string> ListGroupQueuesInMessage(IReadOnlyCollection<Queue> queues, CancellationToken cancellationToken)
+    {
+        var messageHeader = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageListGroupQueuesHeader, MessageParameters.None, cancellationToken);
+        var messageBuilder = new StringBuilder(messageHeader);
+
+        messageBuilder.AppendLine();
+        foreach (var queue in queues)
+        {
+            messageBuilder.AppendLine(queue.Name);
+        }
+
+        var messageFooter = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageListGroupQueuesFooter, MessageParameters.None, cancellationToken);
+        messageBuilder.AppendLine(messageFooter);
+
+        return messageBuilder.ToString();
     }
 }
