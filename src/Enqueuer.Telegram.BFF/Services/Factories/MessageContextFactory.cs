@@ -11,10 +11,10 @@ namespace Enqueuer.Telegram.BFF.Services.Factories;
 
 public class MessageContextFactory : IMessageContextFactory
 {
-    private readonly IChatMessagesConfigurationCache _configurationCache;
+    private readonly IChatConfigurationCache _configurationCache;
     private readonly IChatConfigurationClient _configurationClient;
 
-    public MessageContextFactory(IChatMessagesConfigurationCache configurationCache, IChatConfigurationClient configurationClient)
+    public MessageContextFactory(IChatConfigurationCache configurationCache, IChatConfigurationClient configurationClient)
     {
         _configurationCache = configurationCache;
         _configurationClient = configurationClient;

@@ -22,7 +22,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Messages {
+    internal class Messages {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Enqueuer.Telegram.BFF.Resources.Messages", typeof(Messages).Assembly);
@@ -51,7 +51,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Queue name is missing. Please write command this way: &quot;/createqueue [queue name]&quot;..
         /// </summary>
-        public static string CreateQueue_Error_MissingQueueName {
+        internal static string CreateQueue_Error_MissingQueueName {
             get {
                 return ResourceManager.GetString("CreateQueue_Error_MissingQueueName", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         /// <summary>
         ///   Looks up a localized string similar to An internal error occurred during your request. Please, try again later or contact support..
         /// </summary>
-        public static string General_Error_Internal {
+        internal static string General_Error_Internal {
             get {
                 return ResourceManager.GetString("General_Error_Internal", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         /// <summary>
         ///   Looks up a localized string similar to This group doesn&apos;t have any queue. If you want to create one, please use the &quot;/createqueue&quot; command..
         /// </summary>
-        public static string Queue_Message_GroupDoesNotHaveAnyQueue {
+        internal static string Queue_Message_GroupDoesNotHaveAnyQueue {
             get {
                 return ResourceManager.GetString("Queue_Message_GroupDoesNotHaveAnyQueue", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         /// <summary>
         ///   Looks up a localized string similar to To display information about specific queue and list its participants use the &quot;/queue [queue name]&quot; command..
         /// </summary>
-        public static string Queue_Message_ListGroupQueues_Footer {
+        internal static string Queue_Message_ListGroupQueues_Footer {
             get {
                 return ResourceManager.GetString("Queue_Message_ListGroupQueues_Footer", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         /// <summary>
         ///   Looks up a localized string similar to This group has these queues:.
         /// </summary>
-        public static string Queue_Message_ListGroupQueues_Header {
+        internal static string Queue_Message_ListGroupQueues_Header {
             get {
                 return ResourceManager.GetString("Queue_Message_ListGroupQueues_Header", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Queue &quot;{0}&quot; is empty. To enlist, please use the &quot;/enqueue {0}&quot; command..
         /// </summary>
-        public static string Queue_Message_QueueIsEmpty {
+        internal static string Queue_Message_QueueIsEmpty {
             get {
                 return ResourceManager.GetString("Queue_Message_QueueIsEmpty", resourceCulture);
             }

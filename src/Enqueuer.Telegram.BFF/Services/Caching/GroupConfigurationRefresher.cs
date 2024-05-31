@@ -7,9 +7,9 @@ namespace Enqueuer.Telegram.BFF.Services.Caching;
 
 public class GroupConfigurationRefresher : IntegrationEventHandlerBase<ChatLanguageChangedEvent>
 {
-    private readonly IChatMessagesConfigurationCache _configurationCache;
+    private readonly IChatConfigurationCache _configurationCache;
 
-    public GroupConfigurationRefresher(IChatMessagesConfigurationCache configurationCache)
+    public GroupConfigurationRefresher(IChatConfigurationCache configurationCache)
     {
         _configurationCache = configurationCache;
     }

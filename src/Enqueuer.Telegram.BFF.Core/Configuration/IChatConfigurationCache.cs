@@ -2,7 +2,7 @@
 
 namespace Enqueuer.Telegram.BFF.Core.Configuration;
 
-public interface IChatMessagesConfigurationCache
+public interface IChatConfigurationCache
 {
     ValueTask<ChatMessagingConfiguration?> GetGroupConfigurationAsync(long groupId, CancellationToken cancellationToken);
 

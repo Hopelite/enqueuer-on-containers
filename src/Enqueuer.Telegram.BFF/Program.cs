@@ -9,6 +9,7 @@ using Enqueuer.Telegram.BFF.Services.Caching;
 using Enqueuer.Telegram.BFF.Services.Factories;
 using Enqueuer.Telegram.Shared.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -36,7 +37,15 @@ public class Program
 
         builder.AddQueueingClient();
 
-        builder.Services.AddSingleton<IChatMessagesConfigurationCache, InMemoryGroupConfigurationCache>();
+        builder.Services.Configure<ConfigurationCacheOptions>(builder.Configuration.GetRequiredSection("ConfigurationCacheOptions"));
+
+        // TODO: verify this warning
+        var cacheConfiguration = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ConfigurationCacheOptions>>().Value;
+        builder.Services.AddMemoryCache(options =>
+        {
+            options.SizeLimit = cacheConfiguration.MaxSize; // An arbitrary value - maybe memory or entry count
+        });
+        builder.Services.AddSingleton<IChatConfigurationCache, InMemoryGroupConfigurationCache>();
         builder.AddChatConfigurationClient();
         builder.Services.AddRabbitMQClient()
                         .SubscribeAllHandlers();
