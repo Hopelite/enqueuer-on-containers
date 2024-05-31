@@ -50,9 +50,15 @@ public class Program
 
         app.UseAuthorization();
 
-        // TODO: add get endpoint for chat language and requests it from BFF (it may take a while for changes to apply)
+        app.MapGet("/chats/{chatId}", async (long chatId, [FromQuery(Name = "language_code")] string? languageCode, [FromServices] IChatConfigurationService configurationService, CancellationToken cancellationToken) =>
+        {
+            var chatConfiguration = await configurationService.GetChatConfigurationAsync(chatId, languageCode, cancellationToken);
+            return Results.Ok(chatConfiguration);
+        })
+        .WithName("Get Chat Notification Settings")
+        .WithOpenApi();
 
-        app.MapPut("/chats/{chatId}/language", async (long chatId, [FromBody] ChatNotificationsConfiguration chatConfiguration, [FromServices] IChatConfigurationService configurationService, CancellationToken cancellationToken) =>
+        app.MapPut("/chats/{chatId}", async (long chatId, [FromBody] ChatNotificationsConfiguration chatConfiguration, [FromServices] IChatConfigurationService configurationService, CancellationToken cancellationToken) =>
         {
             // TODO: add validation whether user has rights to change language via Identity API (requests made on behalf of user)
             if (chatConfiguration == null)
@@ -63,7 +69,7 @@ public class Program
             await configurationService.ConfigureChatNotificationsAsync(chatConfiguration, cancellationToken);
             return Results.Ok();
         })
-        .WithName("Configure Chat's Cotifications")
+        .WithName("Configure Chat Notification Settings")
         .WithOpenApi();
 
         app.MigrateDatabase();

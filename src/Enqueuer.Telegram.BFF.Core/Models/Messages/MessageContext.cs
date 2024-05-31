@@ -11,10 +11,6 @@ namespace Enqueuer.Telegram.BFF.Core.Models.Messages;
 /// </summary>
 public class MessageContext
 {
-    private MessageContext()
-    {
-    }
-
     /// <summary>
     /// The <see cref="MessageType"/> of the Telegram message.
     /// </summary>

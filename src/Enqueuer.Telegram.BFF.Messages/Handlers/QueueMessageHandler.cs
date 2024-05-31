@@ -40,7 +40,7 @@ public class QueueMessageHandler(
 
             if (queues.Count == 0)
             {
-                var message = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageGroupDoesNotHaveAnyQueue, MessageParameters.None, cancellationToken);
+                var message = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageGroupDoesNotHaveAnyQueue, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
                 await telegramClient.SendTextMessageAsync(
                         chatId: messageContext.Chat.Id,
                         text: message,
@@ -50,7 +50,7 @@ public class QueueMessageHandler(
                 return;
             }
 
-            var messageWithQueues = await ListGroupQueuesInMessage(queues, cancellationToken);
+            var messageWithQueues = await ListGroupQueuesInMessage(messageContext, queues, cancellationToken);
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: messageWithQueues,
@@ -71,7 +71,7 @@ public class QueueMessageHandler(
             var participants = await _queueingClient.GetQueueParticipantsAsync(messageContext.Chat.Id, queueContext.QueueName, cancellationToken);
             if (participants.Count == 0)
             {
-                var message = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageQueueIsEmpty, new MessageParameters(queueContext.QueueName), cancellationToken);
+                var message = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageQueueIsEmpty, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName), cancellationToken);
                 await telegramClient.SendTextMessageAsync(
                         chatId: messageContext.Chat.Id,
                         text: message,
@@ -90,9 +90,9 @@ public class QueueMessageHandler(
         }
     }
 
-    private async ValueTask<string> ListGroupQueuesInMessage(IReadOnlyCollection<Queue> queues, CancellationToken cancellationToken)
+    private async ValueTask<string> ListGroupQueuesInMessage(MessageContext messageContext, IReadOnlyCollection<Queue> queues, CancellationToken cancellationToken)
     {
-        var messageHeader = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageListGroupQueuesHeader, MessageParameters.None, cancellationToken);
+        var messageHeader = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageListGroupQueuesHeader, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
         var messageBuilder = new StringBuilder(messageHeader);
 
         messageBuilder.AppendLine();
@@ -101,7 +101,7 @@ public class QueueMessageHandler(
             messageBuilder.AppendLine(queue.Name);
         }
 
-        var messageFooter = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageListGroupQueuesFooter, MessageParameters.None, cancellationToken);
+        var messageFooter = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageListGroupQueuesFooter, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
         messageBuilder.AppendLine(messageFooter);
 
         return messageBuilder.ToString();

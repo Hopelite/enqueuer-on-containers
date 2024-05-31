@@ -24,7 +24,7 @@ public class RemoveQueueMessageHandler(
 
         if (string.IsNullOrEmpty(queueContext.QueueName))
         {
-            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.RemoveQueueErrorMissingQueueName, MessageParameters.None, cancellationToken);
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.RemoveQueueErrorMissingQueueName, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,

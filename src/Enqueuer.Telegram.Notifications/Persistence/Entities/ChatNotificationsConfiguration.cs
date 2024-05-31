@@ -18,5 +18,5 @@ public class ChatNotificationsConfiguration
     /// <summary>
     /// The code of the language used in the chat.
     /// </summary>
-    public Language NotificationsLanguage { get; set; }
+    public Language NotificationsLanguage { get; set; } = null!;
 }

@@ -21,8 +21,8 @@ public class QueueDoesNotExistHandler(
 
     public override async Task HandleAsync(QueueDoesNotExistEvent @event, CancellationToken cancellationToken)
     {
-        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken);
-        var chatCulture = new CultureInfo(chatConfiguration.NotificationsLanguageCode);
+        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken: cancellationToken);
+        var chatCulture = new CultureInfo(chatConfiguration.MessageLanguageCode);
 
         var message = await _localizationProvider.GetMessageAsync(
             key: NotificationKeys.QueueDoesNotExistNotification,

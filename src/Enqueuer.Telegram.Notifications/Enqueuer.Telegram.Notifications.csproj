@@ -30,6 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Enqueuer.EventBus.RabbitMQ\Enqueuer.EventBus.RabbitMQ.csproj" />
     <ProjectReference Include="..\Enqueuer.Queueing.Contract\Enqueuer.Queueing.Contract.V1.csproj" />
+    <ProjectReference Include="..\Enqueuer.Telegram.Notifications.Contract.V1\Enqueuer.Telegram.Notifications.Contract.V1.csproj" />
     <ProjectReference Include="..\Enqueuer.Telegram.Shared\Enqueuer.Telegram.Shared.csproj" />
   </ItemGroup>
 

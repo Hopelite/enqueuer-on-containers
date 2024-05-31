@@ -7,12 +7,14 @@ services:
       context: .
       dockerfile: src/Enqueuer.Telegram.BFF/Dockerfile
     environment:
+      - ConnectionStrings__EventBus=amqp://guest:guest@eventbus:5672
       - QueueingClient__BaseAddress=http://enqueuer.queueing.api:8080
       - TelegramClient__AccessToken=${ENQUEUER_TELEGRAM_BOT_ACCESS_TOKEN}
       - IdentityProvider__BaseAddress=http://enqueuer.indentity.api:8086
       - IdentityProvider__ClientId=${ENQUEUER_TELEGRAM_BFF_CLIENT_ID}
       - IdentityProvider__ClientSecret=${ENQUEUER_TELEGRAM_BFF_CLIENT_SECRET}
       - IdentityProvider__Timeout=00:00:30
+      - ChatConfigurationClient__BaseAddress=http://enqueuer.telegram.notifications:8082
     depends_on:
       - enqueuer.queueing.api
 

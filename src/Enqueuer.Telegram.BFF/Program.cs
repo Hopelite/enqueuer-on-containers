@@ -1,9 +1,12 @@
 using Enqueuer.Identity.Contract.V1;
+using Enqueuer.Telegram.BFF.Core.Configuration;
+using Enqueuer.Telegram.BFF.Core.Factories;
 using Enqueuer.Telegram.BFF.Core.Models.Callbacks;
-using Enqueuer.Telegram.BFF.Core.Models.Messages;
 using Enqueuer.Telegram.BFF.Localization;
 using Enqueuer.Telegram.BFF.Messages;
 using Enqueuer.Telegram.BFF.Messages.Factories;
+using Enqueuer.Telegram.BFF.Services.Caching;
+using Enqueuer.Telegram.BFF.Services.Factories;
 using Enqueuer.Telegram.Shared.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
@@ -21,6 +24,7 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        builder.Services.AddTransient<IMessageContextFactory, MessageContextFactory>();
         builder.Services.AddTransient<IMessageHandlersFactory, MessageHandlersFactory>();
         builder.Services.AddScoped<IMessageDistributor, MessageDistributor>();
         builder.Services.AddMessageHandlers();
@@ -31,6 +35,11 @@ public class Program
                         .AddIdentityClient();
 
         builder.AddQueueingClient();
+
+        builder.Services.AddSingleton<IChatMessagesConfigurationCache, InMemoryGroupConfigurationCache>();
+        builder.AddChatConfigurationClient();
+        builder.Services.AddRabbitMQClient()
+                        .SubscribeAllHandlers();
 
         var app = builder.Build();
 
@@ -53,8 +62,15 @@ public class Program
                 return Results.BadRequest();
             }
 
-            if (telegramUpdate.Type == UpdateType.Message && MessageContext.TryCreate(telegramUpdate.Message!, out var messageContext))
+            if (telegramUpdate.Type == UpdateType.Message)
             {
+                var messageContextFactory = serviceProvider.GetRequiredService<IMessageContextFactory>();
+                var messageContext = await messageContextFactory.CreateMessageContextAsync(telegramUpdate.Message!, cancellationToken);
+                if (messageContext == null)
+                {
+                    return Results.Ok();
+                }
+
                 var distributor = serviceProvider.GetRequiredService<IMessageDistributor>();
                 await distributor.DistributeAsync(messageContext, cancellationToken);
             }

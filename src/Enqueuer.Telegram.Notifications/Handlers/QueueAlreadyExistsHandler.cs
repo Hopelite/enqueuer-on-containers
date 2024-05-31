@@ -22,8 +22,8 @@ public class QueueAlreadyExistsHandler(
     public override async Task HandleAsync(QueueAlreadyExistsEvent @event, CancellationToken cancellationToken)
     {
         // TODO: possibly move to base class
-        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken);
-        var chatCulture = new CultureInfo(chatConfiguration.NotificationsLanguageCode);
+        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken: cancellationToken);
+        var chatCulture = new CultureInfo(chatConfiguration.MessageLanguageCode);
 
         var message = await _localizationProvider.GetMessageAsync(
             key: NotificationKeys.QueueAlreadyExistsNotification,

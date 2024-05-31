@@ -2,6 +2,8 @@
 using Enqueuer.Queueing.Contract.V1.Configuration;
 using Enqueuer.Telegram.BFF.Extensions.RequestHandlers;
 using Enqueuer.Telegram.BFF.Messages.Handlers;
+using Enqueuer.Telegram.Notifications.Contract.V1;
+using Enqueuer.Telegram.Notifications.Contract.V1.Configuration;
 using Enqueuer.Telegram.Shared.Configuration;
 using Enqueuer.Telegram.Shared.Exceptions;
 using Enqueuer.Telegram.Shared.Markup;
@@ -66,6 +68,16 @@ public static class ServiceCollectionExtensions
         .AddHttpMessageHandler(serviceProvider =>
         {
             return serviceProvider.GetRequiredService<AccessTokenHandler>();
+        });
+    }
+
+    public static IHttpClientBuilder AddChatConfigurationClient(this WebApplicationBuilder builder, string name = "Enqueuer Chat Configuration Client")
+    {
+        builder.Services.Configure<ChatConfigurationClientOptions>(builder.Configuration.GetRequiredSection("ChatConfigurationClient"));
+        return builder.Services.AddHttpClient<IChatConfigurationClient, ChatConfigurationClient>(name, (serviceProvider, client) =>
+        {
+            var options = serviceProvider.GetRequiredService<IOptions<ChatConfigurationClientOptions>>().Value;
+            client.BaseAddress = options.BaseAddress;
         });
     }
 }

@@ -26,10 +26,10 @@ namespace Enqueuer.Queueing.Contract.V1
             if (!response.IsSuccessStatusCode)
             {
                 var reasonMessage = await response.Content.ReadAsStringAsync();
-                throw new QueueingClientException($"Response code for groups queues listing indicates failure. Reason: {response.StatusCode}, {reasonMessage}");
+                throw new QueueingClientException($"Response code for group '{groupId}' queues listing indicates failure. Reason: {response.StatusCode}, {reasonMessage}");
             }
 
-            var queues = await response.Content.ReadFromJsonAsync<List<Queue>>();
+            var queues = await response.Content.ReadFromJsonAsync<List<Queue>>(cancellationToken);
             if (queues == null)
             {
                 throw new QueueingClientException("Unable to deserialize response into group queues.");
