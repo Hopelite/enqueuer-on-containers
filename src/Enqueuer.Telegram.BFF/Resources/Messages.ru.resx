@@ -117,8 +117,38 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CreateQueue_Error_InvalidQueueName" xml:space="preserve">
+    <value />
+  </data>
   <data name="CreateQueue_Error_MissingQueueName" xml:space="preserve">
     <value>Пожалуйста, укажите название очереди. Используйте команду: "/createqueue [название очереди]".</value>
+  </data>
+  <data name="CreateQueue_Error_PositionMustBePositive" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CreateQueue_Error_QueueAlreadyExists" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Dequeue_Error_MissingQueueName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Dequeue_Error_ParticipantIsNotEnqueued" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Dequeue_Error_QueueDoesNotExist" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enqueue_Error_MissingQueueName" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enqueue_Error_PositionIsReserved" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enqueue_Error_QueueDoesNotExist" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Enqueue_Error_UserAlreadyParticipates" xml:space="preserve">
+    <value />
   </data>
   <data name="General_Error_Internal" xml:space="preserve">
     <value>Произошла ошибка. Пожалуйста, попробуйте еще раз позже или обратитесь в поддержку.</value>
@@ -134,5 +164,8 @@
   </data>
   <data name="Queue_Message_QueueIsEmpty" xml:space="preserve">
     <value>Очередь "{0}" пуста. Чтобы записаться, пожалуйста, используйте команду "/enqueue {0}".</value>
+  </data>
+  <data name="RemoveQueue_Error_MissingQueueName" xml:space="preserve">
+    <value />
   </data>
 </root>

@@ -61,11 +61,101 @@ namespace Enqueuer.Telegram.BFF.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string CreateQueue_Error_InvalidQueueName {
+            get {
+                return ResourceManager.GetString("CreateQueue_Error_InvalidQueueName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Queue name is missing. Please write command this way: &quot;/createqueue [queue name]&quot;..
         /// </summary>
         internal static string CreateQueue_Error_MissingQueueName {
             get {
                 return ResourceManager.GetString("CreateQueue_Error_MissingQueueName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string CreateQueue_Error_PositionMustBePositive {
+            get {
+                return ResourceManager.GetString("CreateQueue_Error_PositionMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Queue with the name &quot;{0}&quot; already exists..
+        /// </summary>
+        internal static string CreateQueue_Error_QueueAlreadyExists {
+            get {
+                return ResourceManager.GetString("CreateQueue_Error_QueueAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Dequeue_Error_MissingQueueName {
+            get {
+                return ResourceManager.GetString("Dequeue_Error_MissingQueueName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Dequeue_Error_ParticipantIsNotEnqueued {
+            get {
+                return ResourceManager.GetString("Dequeue_Error_ParticipantIsNotEnqueued", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Dequeue_Error_QueueDoesNotExist {
+            get {
+                return ResourceManager.GetString("Dequeue_Error_QueueDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Queue name is missing. Please write command this way: &quot;/enqueue [queue name] {position}&quot;..
+        /// </summary>
+        internal static string Enqueue_Error_MissingQueueName {
+            get {
+                return ResourceManager.GetString("Enqueue_Error_MissingQueueName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Enqueue_Error_PositionIsReserved {
+            get {
+                return ResourceManager.GetString("Enqueue_Error_PositionIsReserved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Queue with name &quot;{0}&quot; does not exist in this group..
+        /// </summary>
+        internal static string Enqueue_Error_QueueDoesNotExist {
+            get {
+                return ResourceManager.GetString("Enqueue_Error_QueueDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You already participate in the queue &quot;{0}&quot;..
+        /// </summary>
+        internal static string Enqueue_Error_UserAlreadyParticipates {
+            get {
+                return ResourceManager.GetString("Enqueue_Error_UserAlreadyParticipates", resourceCulture);
             }
         }
         
@@ -111,6 +201,15 @@ namespace Enqueuer.Telegram.BFF.Resources {
         internal static string Queue_Message_QueueIsEmpty {
             get {
                 return ResourceManager.GetString("Queue_Message_QueueIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string RemoveQueue_Error_MissingQueueName {
+            get {
+                return ResourceManager.GetString("RemoveQueue_Error_MissingQueueName", resourceCulture);
             }
         }
     }
