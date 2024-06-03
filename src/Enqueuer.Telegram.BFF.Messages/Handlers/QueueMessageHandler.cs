@@ -124,10 +124,10 @@ public class QueueMessageHandler(
         foreach (var participant in participants)
         {
             var participantInfo = await _identityClient.GetUserInfoAsync(participant.Id, cancellationToken);
-            messageBuilder.AppendLine($"{participant.Position}) {participantInfo.FullName}");
+            messageBuilder.AppendLine($"{participant.Position}) {participantInfo.FullName}"); // TODO: move to localization provider
         }
 
-        var messageFooter = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageListQueueParticipantsFooter, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
+        var messageFooter = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageListQueueParticipantsFooter, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName), cancellationToken);
         messageBuilder.AppendLine(messageFooter);
 
         return messageBuilder.ToString();

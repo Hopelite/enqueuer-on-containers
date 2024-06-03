@@ -88,6 +88,8 @@ namespace Enqueuer.Identity.Contract.V1
                 throw new InvalidCredentialsException($"Authorization error. Reason: {GetUnauthorizedErrorDescription(response.Headers)}");
             }
 
+            // TODO: cache response
+
             var responseBody = await response.Content.ReadAsStringAsync();
             var userInfo = JsonSerializer.Deserialize<UserInfo>(responseBody, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower });
             if (userInfo == null)

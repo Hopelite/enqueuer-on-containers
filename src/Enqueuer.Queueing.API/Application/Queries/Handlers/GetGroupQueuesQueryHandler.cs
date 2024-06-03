@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Queueing.API.Application.Queries.Handlers;
 
-public class GetQueueQueryHandler : IOperationHandler<GetGroupQueuesQuery>
+public class GetGroupQueuesQueryHandler : IOperationHandler<GetGroupQueuesQuery>
 {
     private readonly IGroupRepository _groupRepository;
 
-    public GetQueueQueryHandler(IGroupRepository groupRepository)
+    public GetGroupQueuesQueryHandler(IGroupRepository groupRepository)
     {
         _groupRepository = groupRepository;
     }
@@ -17,10 +17,7 @@ public class GetQueueQueryHandler : IOperationHandler<GetGroupQueuesQuery>
     {
         var group = await _groupRepository.GetOrCreateGroupAsync(request.GroupId, cancellationToken);
 
-        var queues = group.Queues.Select(q => new Queue(
-            q.GroupId,
-            q.Name,
-            q.Participants.Select(p => new Participant(p.Id, p.Position.Number)).ToArray()));
+        var queues = group.Queues.Select(q => new Queue(q.GroupId, q.Name));
 
         return new OkObjectResult(queues);
     }

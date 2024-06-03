@@ -34,6 +34,14 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(removeQueueCommand, cancellationToken);
     }
 
+    // TODO: consider to add pagination
+    [HttpGet("{groupId}/queues/{queueName}/participants")]
+    public Task<IActionResult> GetQueueParticipants(long groupId, string queueName, CancellationToken cancellationToken)
+    {
+        var getQueueParticipantsQuery = new Application.Queries.GetQueueParticipantsQuery(groupId, queueName);
+        return _mediator.Send(getQueueParticipantsQuery, cancellationToken);
+    }
+
     [HttpPost("{groupId}/queues/{queueName}/participants")]
     public Task<IActionResult> EnqueueParticipant(long groupId, string queueName, EnqueueParticipantCommand command, CancellationToken cancellationToken)
     {

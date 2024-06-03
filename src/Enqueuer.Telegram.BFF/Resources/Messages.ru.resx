@@ -163,10 +163,10 @@
     <value>В этой группе есть следующие очереди:</value>
   </data>
   <data name="Queue_Message_ListQueueParticipants_Footer" xml:space="preserve">
-    <value />
+    <value>Чтобы записаться, используйте команду "/enqueue {0} {{позиция}}".</value>
   </data>
   <data name="Queue_Message_ListQueueParticipants_Header" xml:space="preserve">
-    <value />
+    <value>В очереди "{0}" участвуют:</value>
   </data>
   <data name="Queue_Message_QueueIsEmpty" xml:space="preserve">
     <value>Очередь "{0}" пуста. Чтобы записаться, пожалуйста, используйте команду "/enqueue {0}".</value>

@@ -196,7 +196,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to To enlist, please use the &quot;/enqueue {0} {{position}}&quot; command..
         /// </summary>
         internal static string Queue_Message_ListQueueParticipants_Footer {
             get {
@@ -205,7 +205,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Here are the queue &quot;{0}&quot; participants:.
         /// </summary>
         internal static string Queue_Message_ListQueueParticipants_Header {
             get {

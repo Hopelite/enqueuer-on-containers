@@ -38,9 +38,23 @@ namespace Enqueuer.Queueing.Contract.V1
             return queues;
         }
 
-        public Task<IReadOnlyCollection<Participant>> GetQueueParticipantsAsync(long groupId, string queueName, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<Participant>> GetQueueParticipantsAsync(long groupId, string queueName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetAsync($"/api/groups/{groupId}/queues/{queueName}/participants", cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var reasonMessage = await response.Content.ReadAsStringAsync();
+                throw new QueueingClientException($"Response code for queue '{queueName}' participants listing of the group '{groupId}' indicates failure. Reason: {response.StatusCode}, {reasonMessage}");
+            }
+
+            var participants = await response.Content.ReadFromJsonAsync<List<Participant>>(cancellationToken);
+            if (participants == null)
+            {
+                // TODO: move to separate method
+                throw new QueueingClientException("Unable to deserialize response into queue participants.");
+            }
+
+            return participants;
         }
 
         public async Task CreateQueueAsync(long groupId, string queueName, CreateQueueCommand command, CancellationToken cancellationToken)
