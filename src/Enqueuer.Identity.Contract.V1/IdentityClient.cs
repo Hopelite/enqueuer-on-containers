@@ -60,7 +60,7 @@ namespace Enqueuer.Identity.Contract.V1
         {
             await RefreshAccessTokenIfNeededAsync(cancellationToken);
 
-            var uri = GetUrlWithQuery($"api/authorization/{request.ResourceId}", request.GetQueryParameters());
+            var uri = GetUrlWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters());
             var response = await _httpClient.GetAsync(uri, cancellationToken);
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -76,6 +76,29 @@ namespace Enqueuer.Identity.Contract.V1
             throw new IdentityClientException($"The request to check access was not successful. Reason: {response.StatusCode}, {responseBody}");
         }
 
+        public async Task<UserInfo> GetUserInfoAsync(long userId, CancellationToken cancellationToken)
+        {
+            await RefreshAccessTokenIfNeededAsync(cancellationToken);
+
+            var uri = new Uri($"api/authorization/users/{userId}", UriKind.Relative);
+
+            var response = await _httpClient.GetAsync(uri, cancellationToken);
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new InvalidCredentialsException($"Authorization error. Reason: {GetUnauthorizedErrorDescription(response.Headers)}");
+            }
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var userInfo = JsonSerializer.Deserialize<UserInfo>(responseBody, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower });
+            if (userInfo == null)
+            {
+                // TODO: extract to single method
+                throw new IdentityClientException("Unable to deserialize the GetUserInfo response.");
+            }
+
+            return userInfo;
+        }
+
         public async Task CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken)
         {
             await RefreshAccessTokenIfNeededAsync(cancellationToken);
@@ -83,6 +106,11 @@ namespace Enqueuer.Identity.Contract.V1
             var uri = new Uri($"api/authorization/users/{request.UserId}", UriKind.Relative);
 
             var response = await _httpClient.PutAsync(uri, request.GetBody(), cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                return;
+            }
+
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 throw new InvalidCredentialsException($"Authorization error. Reason: {GetUnauthorizedErrorDescription(response.Headers)}");
@@ -96,7 +124,7 @@ namespace Enqueuer.Identity.Contract.V1
         {
             await RefreshAccessTokenIfNeededAsync(cancellationToken);
 
-            var uri = GetUrlWithQuery($"api/authorization/{request.ResourceId}", request.GetQueryParameters());
+            var uri = GetUrlWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters());
             var response = await _httpClient.PutAsync(uri, content: null, cancellationToken);
 
             if (response.IsSuccessStatusCode)
@@ -112,7 +140,7 @@ namespace Enqueuer.Identity.Contract.V1
         {
             await RefreshAccessTokenIfNeededAsync(cancellationToken);
 
-            var uri = GetUrlWithQuery($"api/authorization/{request.ResourceId}", request.GetQueryParameters());
+            var uri = GetUrlWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters());
             var response = await _httpClient.DeleteAsync(uri, cancellationToken);
 
             if (response.IsSuccessStatusCode)

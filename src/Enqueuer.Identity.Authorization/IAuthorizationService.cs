@@ -5,6 +5,11 @@ namespace Enqueuer.Identity.Authorization;
 public interface IAuthorizationService
 {
     /// <summary>
+    /// 
+    /// </summary>
+    Task<User> GetUserInfoAsync(long userId, CancellationToken cancellationToken);
+
+    /// <summary>
     /// Creates new or updates the existing <paramref name="role"/>.
     /// </summary>
     Task CreateOrUpdateRoleAsync(Role role, CancellationToken cancellationToken);

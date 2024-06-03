@@ -196,6 +196,24 @@ namespace Enqueuer.Telegram.BFF.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Queue_Message_ListQueueParticipants_Footer {
+            get {
+                return ResourceManager.GetString("Queue_Message_ListQueueParticipants_Footer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Queue_Message_ListQueueParticipants_Header {
+            get {
+                return ResourceManager.GetString("Queue_Message_ListQueueParticipants_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Queue &quot;{0}&quot; is empty. To enlist, please use the &quot;/enqueue {0}&quot; command..
         /// </summary>
         internal static string Queue_Message_QueueIsEmpty {

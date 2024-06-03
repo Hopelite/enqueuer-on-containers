@@ -7,6 +7,8 @@ namespace Enqueuer.Identity.Contract.V1
 {
     public interface IIdentityClient
     {
+        Task<UserInfo> GetUserInfoAsync(long userId, CancellationToken cancellationToken);
+
         Task<AccessToken> GetAccessTokenAsync(IReadOnlyCollection<string> scopes, CancellationToken cancellationToken);
 
         Task<bool> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken);

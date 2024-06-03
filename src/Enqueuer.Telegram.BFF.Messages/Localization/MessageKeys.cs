@@ -12,6 +12,10 @@ public static class MessageKeys
 
     public const string QueueMessageListGroupQueuesFooter = "Queue_Message_ListGroupQueues_Footer";
 
+    public const string QueueMessageListQueueParticipantsHeader = "Queue_Message_ListQueueParticipants_Header";
+
+    public const string QueueMessageListQueueParticipantsFooter = "Queue_Message_ListQueueParticipants_Footer";
+
     public const string CreateQueueErrorMissingQueueName = "CreateQueue_Error_MissingQueueName";
 
     public const string CreateQueueErrorQueueAlreadyExists = "CreateQueue_Error_QueueAlreadyExists";

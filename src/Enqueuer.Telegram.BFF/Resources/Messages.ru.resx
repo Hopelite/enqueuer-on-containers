@@ -162,6 +162,12 @@
   <data name="Queue_Message_ListGroupQueues_Header" xml:space="preserve">
     <value>В этой группе есть следующие очереди:</value>
   </data>
+  <data name="Queue_Message_ListQueueParticipants_Footer" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Queue_Message_ListQueueParticipants_Header" xml:space="preserve">
+    <value />
+  </data>
   <data name="Queue_Message_QueueIsEmpty" xml:space="preserve">
     <value>Очередь "{0}" пуста. Чтобы записаться, пожалуйста, используйте команду "/enqueue {0}".</value>
   </data>
