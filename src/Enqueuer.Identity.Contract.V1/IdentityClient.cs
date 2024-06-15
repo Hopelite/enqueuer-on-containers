@@ -88,17 +88,25 @@ namespace Enqueuer.Identity.Contract.V1
                 throw new InvalidCredentialsException($"Authorization error. Reason: {GetUnauthorizedErrorDescription(response.Headers)}");
             }
 
-            // TODO: cache response
+            if (!response.IsSuccessStatusCode)
+            {
+                // Error
+            }
 
             var responseBody = await response.Content.ReadAsStringAsync();
-            var userInfo = JsonSerializer.Deserialize<UserInfo>(responseBody, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower });
+            var userInfo = JsonSerializer.Deserialize<GetUserInfoResponse>(responseBody, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower });
             if (userInfo == null)
             {
                 // TODO: extract to single method
                 throw new IdentityClientException("Unable to deserialize the GetUserInfo response.");
             }
 
-            return userInfo;
+            var cachingHeader = response.Headers.Age;
+            var metadata = !cachingHeader.HasValue || cachingHeader.Value.Seconds <= 0
+                ? new Metadata(0)
+                : new Metadata(cachingHeader.Value);
+
+            return new UserInfo(userInfo.UserId, userInfo.FirstName, userInfo.LastName, metadata);
         }
 
         public async Task CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken)

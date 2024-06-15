@@ -1,3 +1,4 @@
+using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Telegram.Notifications.Contract.V1.Models;
 using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Persistence;
@@ -30,6 +31,9 @@ public class Program
             .SubscribeAllHandlers();
 
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
+
+        builder.Services.Configure<IdentityClientOptions>(builder.Configuration.GetRequiredSection("IdentityProvider"))
+                .AddIdentityClient();
 
         builder.AddTelegramClient();
 

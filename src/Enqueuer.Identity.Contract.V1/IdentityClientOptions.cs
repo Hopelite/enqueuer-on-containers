@@ -8,6 +8,7 @@ namespace Enqueuer.Identity.Contract.V1
         private string _clientSecret = null!;
         private string _clientId = null!;
         private Uri _baseAddress = null!;
+        private string[] _requiredScopes;
         public const int DefaultRetries = 3;
 
         public Uri BaseAddress
@@ -36,6 +37,12 @@ namespace Enqueuer.Identity.Contract.V1
         /// Whether to cache the access tokens. Set to true by default.
         /// </summary>
         public bool CacheToken { get; set; } = true;
+
+        public string[] RequiredScopes
+        {
+            get => _requiredScopes;
+            set => _requiredScopes = value ?? throw new ArgumentNullException(nameof(_requiredScopes));
+        }
 
         private static string ValidateRequiredOption(string value, string optionName)
         {

@@ -1,4 +1,5 @@
 ﻿using Enqueuer.EventBus.Abstractions;
+using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Events.RejectedEvents;
 using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Services;
@@ -12,21 +13,25 @@ namespace Enqueuer.Telegram.Notifications.Handlers;
 public class ParticipantAlreadyExistsHandler(
     IChatConfigurationService chatConfigurationService,
     ILocalizationProvider localizationProvider,
+    IIdentityClient identityClient,
     ITelegramBotClient telegramClient)
     : IntegrationEventHandlerBase<ParticipantAlreadyExistsEvent>
 {
     private readonly IChatConfigurationService _chatConfigurationService = chatConfigurationService;
     private readonly ILocalizationProvider _localizationProvider = localizationProvider;
+    private readonly IIdentityClient _identityClient = identityClient;
     private readonly ITelegramBotClient _telegramClient = telegramClient;
 
     public override async Task HandleAsync(ParticipantAlreadyExistsEvent @event, CancellationToken cancellationToken)
     {
+        var userInfo = await _identityClient.GetUserInfoAsync(@event.ParticipantId, cancellationToken);
+
         var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken: cancellationToken);
         var chatCulture = new CultureInfo(chatConfiguration.MessageLanguageCode);
 
         var message = await _localizationProvider.GetMessageAsync(
             key: NotificationKeys.UserAlreadyParticipatesInQueueNotification,
-            messageParameters: new MessageParameters(chatCulture, "Vadzim", @event.QueueName),
+            messageParameters: new MessageParameters(chatCulture, userInfo.FirstName, @event.QueueName),
             cancellationToken);
 
         await _telegramClient.SendTextMessageAsync(

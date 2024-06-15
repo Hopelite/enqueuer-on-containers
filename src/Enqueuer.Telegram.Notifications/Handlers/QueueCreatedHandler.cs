@@ -1,4 +1,5 @@
 ﻿using Enqueuer.EventBus.Abstractions;
+using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Events;
 using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Services;
@@ -16,22 +17,26 @@ public class QueueCreatedHandler(
     IChatConfigurationService chatConfigurationService,
     ILocalizationProvider localizationProvider,
     IInlineMarkupBuilder markupBuilder,
+    IIdentityClient identityClient,
     ITelegramBotClient telegramClient)
     : IntegrationEventHandlerBase<QueueCreatedEvent>
 {
     private readonly IChatConfigurationService _chatConfigurationService = chatConfigurationService;
     private readonly ILocalizationProvider _localizationProvider = localizationProvider;
     private readonly IInlineMarkupBuilder _markupBuilder = markupBuilder;
+    private readonly IIdentityClient _identityClient = identityClient;
     private readonly ITelegramBotClient _telegramClient = telegramClient;
 
     public override async Task HandleAsync(QueueCreatedEvent @event, CancellationToken cancellationToken)
     {
+        var userInfo = await _identityClient.GetUserInfoAsync(@event.CreatorId, cancellationToken);
+
         var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken: cancellationToken);
         var chatCulture = new CultureInfo(chatConfiguration.MessageLanguageCode);
 
         var message = await _localizationProvider.GetMessageAsync(
             key: NotificationKeys.QueueCreatedNotification,
-            messageParameters: new MessageParameters(chatCulture, "Vadzim", @event.QueueName),
+            messageParameters: new MessageParameters(chatCulture, userInfo.FirstName, @event.QueueName),
             cancellationToken);
 
         var buttonText = await _localizationProvider.GetMessageAsync(NotificationKeys.EnqueueMeButton, new MessageParameters(chatCulture), cancellationToken);

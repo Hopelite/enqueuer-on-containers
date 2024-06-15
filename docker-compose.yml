@@ -63,6 +63,9 @@ services:
       - ConnectionStrings__EventBus=amqp://guest:guest@eventbus:5672
       - ConnectionStrings__NotificationsDB=Data Source=/data/NotificationsDB.db
       - TelegramClient__AccessToken=${ENQUEUER_TELEGRAM_BOT_ACCESS_TOKEN}
+      - IdentityProvider__BaseAddress=http://enqueuer.indentity.api:8086
+      - IdentityProvider__ClientId=${ENQUEUER_NOTIFICATIONS_CLIENT_ID}
+      - IdentityProvider__ClientSecret=${ENQUEUER_NOTIFICATIONS_CLIENT_SECRET}
     depends_on:
       - enqueuer.queueing.api
       - eventbus

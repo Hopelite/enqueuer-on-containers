@@ -12,5 +12,6 @@ public class CreateQueueCommand : IOperation
     public long GroupId { get; }
 
     public string QueueName { get; }
+
     public long CreatorId { get; }
 }

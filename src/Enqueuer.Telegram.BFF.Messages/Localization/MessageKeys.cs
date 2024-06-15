@@ -16,6 +16,8 @@ public static class MessageKeys
 
     public const string QueueMessageListQueueParticipantsFooter = "Queue_Message_ListQueueParticipants_Footer";
 
+    public const string QueueErrorQueueDoesNotExist = "Queue_Error_QueueDoesNotExist";
+
     public const string CreateQueueErrorMissingQueueName = "CreateQueue_Error_MissingQueueName";
 
     public const string CreateQueueErrorQueueAlreadyExists = "CreateQueue_Error_QueueAlreadyExists";

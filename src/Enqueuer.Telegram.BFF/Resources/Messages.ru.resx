@@ -151,7 +151,10 @@
     <value />
   </data>
   <data name="General_Error_Internal" xml:space="preserve">
-    <value>Произошла ошибка. Пожалуйста, попробуйте еще раз позже или обратитесь в поддержку.</value>
+    <value>Произошла ошибка. Пожалуйста, попробуйте позже или обратитесь в поддержку.</value>
+  </data>
+  <data name="Queue_Error_QueueDoesNotExist" xml:space="preserve">
+    <value>В этой группе нет очереди с названием "{0}".</value>
   </data>
   <data name="Queue_Message_GroupDoesNotHaveAnyQueue" xml:space="preserve">
     <value>В этой группе нет очередей. Если вы хотите создать очередь, используйте команду "/createqueue".</value>

@@ -169,6 +169,15 @@ namespace Enqueuer.Telegram.BFF.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Queue with name &quot;{0}&quot; does not exist in this group..
+        /// </summary>
+        internal static string Queue_Error_QueueDoesNotExist {
+            get {
+                return ResourceManager.GetString("Queue_Error_QueueDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This group doesn&apos;t have any queue. If you want to create one, please use the &quot;/createqueue&quot; command..
         /// </summary>
         internal static string Queue_Message_GroupDoesNotHaveAnyQueue {

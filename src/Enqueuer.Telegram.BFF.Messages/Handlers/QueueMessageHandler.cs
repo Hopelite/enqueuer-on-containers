@@ -1,5 +1,6 @@
 ﻿using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Queueing.Contract.V1;
+using Enqueuer.Queueing.Contract.V1.Exceptions;
 using Enqueuer.Queueing.Contract.V1.Queries.ViewModels;
 using Enqueuer.Telegram.BFF.Core.Models.Extensions;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
@@ -91,6 +92,15 @@ public class QueueMessageHandler(
                 parseMode: ParseMode.Html,
                 cancellationToken: cancellationToken);
         }
+        catch (QueueDoesNotExistException)
+        {
+            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.QueueErrorQueueDoesNotExist, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName), cancellationToken);
+            await telegramClient.SendTextMessageAsync(
+                chatId: messageContext.Chat.Id,
+                text: errorMessage,
+                parseMode: ParseMode.Html,
+                cancellationToken: cancellationToken);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occured during queue '{QueueName}' participants listing in the chat '{ChatId}'.", queueContext.QueueName, messageContext.Chat.Id);
@@ -106,7 +116,7 @@ public class QueueMessageHandler(
         messageBuilder.AppendLine();
         foreach (var queue in queues)
         {
-            messageBuilder.AppendLine(queue.Name);
+            messageBuilder.AppendLine($"- {queue.Name}");
         }
 
         var messageFooter = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageListGroupQueuesFooter, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
@@ -124,7 +134,7 @@ public class QueueMessageHandler(
         foreach (var participant in participants)
         {
             var participantInfo = await _identityClient.GetUserInfoAsync(participant.Id, cancellationToken);
-            messageBuilder.AppendLine($"{participant.Position}) {participantInfo.FullName}"); // TODO: move to localization provider
+            messageBuilder.AppendLine($"{participant.Position}) {participantInfo.FirstName}"); // TODO: move to localization provider
         }
 
         var messageFooter = await localizationProvider.GetMessageAsync(MessageKeys.QueueMessageListQueueParticipantsFooter, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName), cancellationToken);

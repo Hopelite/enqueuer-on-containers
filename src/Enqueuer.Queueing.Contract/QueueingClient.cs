@@ -44,6 +44,11 @@ namespace Enqueuer.Queueing.Contract.V1
             if (!response.IsSuccessStatusCode)
             {
                 var reasonMessage = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new QueueDoesNotExistException(reasonMessage);
+                }
+
                 throw new QueueingClientException($"Response code for queue '{queueName}' participants listing of the group '{groupId}' indicates failure. Reason: {response.StatusCode}, {reasonMessage}");
             }
 

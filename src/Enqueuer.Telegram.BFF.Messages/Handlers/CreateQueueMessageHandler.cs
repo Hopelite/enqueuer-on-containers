@@ -1,4 +1,5 @@
-﻿using Enqueuer.Queueing.Contract.V1;
+﻿using Enqueuer.Identity.Contract.V1;
+using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Commands;
 using Enqueuer.Queueing.Contract.V1.Exceptions;
 using Enqueuer.Telegram.BFF.Core.Models.Extensions;
@@ -35,6 +36,7 @@ public class CreateQueueMessageHandler(
 
             return;
         }
+
 
         try
         {

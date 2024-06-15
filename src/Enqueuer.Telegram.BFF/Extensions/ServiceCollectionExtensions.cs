@@ -1,6 +1,6 @@
-﻿using Enqueuer.Queueing.Contract.V1;
+﻿using Enqueuer.Identity.Contract.V1.RequestHandlers;
+using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Configuration;
-using Enqueuer.Telegram.BFF.Extensions.RequestHandlers;
 using Enqueuer.Telegram.BFF.Messages.Handlers;
 using Enqueuer.Telegram.Notifications.Contract.V1;
 using Enqueuer.Telegram.Notifications.Contract.V1.Configuration;

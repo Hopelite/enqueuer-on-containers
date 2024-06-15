@@ -1,15 +1,13 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Enqueuer.Identity.Contract.V1.Models
+﻿namespace Enqueuer.Identity.Contract.V1.Models
 {
     public class UserInfo
     {
-        [JsonConstructor]
-        public UserInfo(long userId, string firstName, string? lastName)
+        internal UserInfo(long userId, string firstName, string? lastName, Metadata metadata)
         {
             UserId = userId;
             FirstName = firstName;
             LastName = lastName;
+            Metadata = metadata;
         }
 
         public long UserId { get; }
@@ -18,9 +16,6 @@ namespace Enqueuer.Identity.Contract.V1.Models
 
         public string? LastName { get; }
 
-        /// <summary>
-        /// Gets the full name of the user.
-        /// </summary>
-        public string FullName => string.IsNullOrWhiteSpace(LastName) ? FirstName : $"{FirstName} {LastName}";
+        public Metadata Metadata { get; }
     }
 }
