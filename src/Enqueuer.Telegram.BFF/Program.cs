@@ -1,10 +1,14 @@
 using Enqueuer.Identity.Contract.V1;
+using Enqueuer.Identity.Contract.V1.OAuth.RequestHandlers;
+using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Telegram.BFF.Core.Configuration;
 using Enqueuer.Telegram.BFF.Core.Factories;
 using Enqueuer.Telegram.BFF.Core.Models.Callbacks;
+using Enqueuer.Telegram.BFF.Core.Services;
 using Enqueuer.Telegram.BFF.Localization;
 using Enqueuer.Telegram.BFF.Messages;
 using Enqueuer.Telegram.BFF.Messages.Factories;
+using Enqueuer.Telegram.BFF.Services;
 using Enqueuer.Telegram.BFF.Services.Caching;
 using Enqueuer.Telegram.BFF.Services.Factories;
 using Enqueuer.Telegram.Shared.Localization;
@@ -32,8 +36,23 @@ public class Program
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
         builder.AddTelegramClient();
 
-        builder.Services.Configure<IdentityClientOptions>(builder.Configuration.GetRequiredSection("IdentityProvider"))
-                        .AddIdentityClient();
+
+
+        builder.Services.AddSingleton<IUserSynchronizationService, UserSynchronizationService>();
+        builder.Services.AddSingleton<IUserInfoCache, InMemoryUserInfoCache>();
+
+
+
+        builder.Services.Configure<IdentityClientOptions>(builder.Configuration.GetRequiredSection("IdentityProvider"), configure =>
+                        {
+                            configure.BindNonPublicProperties = true;
+                        })
+                        .AddTransient<ClientCredentialsTokenHandler<IIdentityClient>>()
+                        .AddIdentityClient()
+                        .AddHttpMessageHandler(serviceProvider =>
+                        {
+                            return serviceProvider.GetRequiredService<ClientCredentialsTokenHandler<IIdentityClient>>();
+                        });
 
         builder.AddQueueingClient();
 

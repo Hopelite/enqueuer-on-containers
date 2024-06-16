@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net.Http;
 using Enqueuer.Identity.Contract.V1;
+using Enqueuer.Identity.Contract.V1.OAuth;
+using Enqueuer.Identity.Contract.V1.OAuth.Configuration;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
@@ -15,6 +17,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <remarks>Requires <see cref="IdentityClientOptions"/> class to be registered and configured.</remarks>
         public static IHttpClientBuilder AddIdentityClient(this IServiceCollection services, string name = "Enqueuer Identity Client")
         {
+            services.AddTransient<IOptions<ClientCredentialsAuthorizationOptions<IIdentityClient>>>(services => services.GetRequiredService<IOptions<IdentityClientOptions>>());
+            services.AddHttpClient<IOAuthClient, OAuthClient>((serviceProvider, client) =>
+            {
+                var options = serviceProvider.GetRequiredService<IOptions<IdentityClientOptions>>().Value;
+                client.BaseAddress = options.BaseAddress;
+                client.Timeout = options.Timeout;
+            });
+
             return services.AddHttpClient<IIdentityClient, IdentityClient>(name, (serviceProvider, client) =>
             {
                 var options = serviceProvider.GetRequiredService<IOptions<IdentityClientOptions>>().Value;
@@ -25,8 +35,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 var options = serviceProvider.GetRequiredService<IOptions<IdentityClientOptions>>().Value;
                 return GetRetryPolicy(options);
             });
-
-            // TODO: Add token refresher here
         }
 
         private static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(IdentityClientOptions options)

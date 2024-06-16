@@ -1,13 +1,13 @@
-﻿using Enqueuer.Queueing.Contract.V1.Commands;
-using Enqueuer.Queueing.Contract.V1.Exceptions;
-using Enqueuer.Queueing.Contract.V1.Queries.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Enqueuer.Queueing.Contract.V1.Commands;
+using Enqueuer.Queueing.Contract.V1.Exceptions;
+using Enqueuer.Queueing.Contract.V1.Queries.ViewModels;
 
 namespace Enqueuer.Queueing.Contract.V1
 {

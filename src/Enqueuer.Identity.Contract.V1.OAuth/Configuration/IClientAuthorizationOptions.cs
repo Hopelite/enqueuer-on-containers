@@ -10,6 +10,6 @@ namespace Enqueuer.Identity.Contract.V1.OAuth.Configuration
         /// <summary>
         /// The scope required to be included in access tokens for the <typeparamref name="TClient"/>.
         /// </summary>
-        public Scope RequiredScope { get; }
+        public Scope Scope { get; }
     }
 }

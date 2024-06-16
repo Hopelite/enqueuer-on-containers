@@ -9,6 +9,7 @@ public class InMemoryGroupConfigurationCache : IChatConfigurationCache
 {
     private const int ConfigurationEntrySize = (8 + 8 + 16) + 32;
 
+    // TODO: replace this cache since it shares memory
     private readonly IMemoryCache _memoryCache;
     private readonly MemoryCacheEntryOptions _cacheOptions;
 

@@ -4,12 +4,14 @@ namespace Enqueuer.Identity.Contract.V1.OAuth.Configuration
 {
     public class ClientCredentialsAuthorizationOptions<TClient> : IClientAuthorizationOptions<TClient>
     {
-        private readonly Scope _scope;
+        // TODO: add init when possible
+        public string ClientId { get; set; } = null!;
 
-        public string ClientId { get; }
+        public string ClientSecret { get; set; } = null!;
 
-        public string ClientSecret { get; }
+        public Scope Scope => new Scope(RequiredScope);
 
-        public Scope RequiredScope => _scope;
+        // Backing field for Scope to be set from configuration
+        private string[] RequiredScope { get; set; } = null!;
     }
 }
