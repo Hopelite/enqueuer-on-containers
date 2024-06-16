@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 using Enqueuer.Identity.Contract.V1.Exceptions;
 using Enqueuer.Identity.Contract.V1.Models;
 using Enqueuer.Identity.Contract.V1.OAuth.Exceptions;
-using Microsoft.AspNetCore.Http.Extensions;
+using Enqueuer.OAuth.Core.Helpers;
 
 namespace Enqueuer.Identity.Contract.V1
 {
@@ -24,7 +23,7 @@ namespace Enqueuer.Identity.Contract.V1
 
         public async Task<bool> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken)
         {
-            var uri = GetUrlWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters());
+            var uri = UriHelper.GetUriWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters(), UriKind.Relative);
             var response = await _httpClient.GetAsync(uri, cancellationToken);
             if (response.StatusCode == HttpStatusCode.OK)
             {
@@ -92,7 +91,7 @@ namespace Enqueuer.Identity.Contract.V1
 
         public async Task GrantAccessAsync(GrantAccessRequest request, CancellationToken cancellationToken)
         {
-            var uri = GetUrlWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters());
+            var uri = UriHelper.GetUriWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters(), UriKind.Relative);
             var response = await _httpClient.PutAsync(uri, content: null, cancellationToken);
 
             if (response.IsSuccessStatusCode)
@@ -106,7 +105,7 @@ namespace Enqueuer.Identity.Contract.V1
 
         public async Task RevokeAccessAsync(RevokeAccessRequest request, CancellationToken cancellationToken)
         {
-            var uri = GetUrlWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters());
+            var uri = UriHelper.GetUriWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters(), UriKind.Relative);
             var response = await _httpClient.DeleteAsync(uri, cancellationToken);
 
             if (response.IsSuccessStatusCode)
@@ -127,15 +126,6 @@ namespace Enqueuer.Identity.Contract.V1
 
             var responseBody = await response.Content.ReadAsStringAsync();
             throw new IdentityClientException($"The request to revoke access was not successful. Reason: {response.StatusCode}, {responseBody}");
-        }
-
-        private static Uri GetUrlWithQuery(string path, IDictionary<string, string> queryParameters)
-        {
-            return new Uri(new UriBuilder()
-            {
-                Path = path,
-                Query = new QueryBuilder(queryParameters).ToQueryString().ToString()
-            }.Uri.PathAndQuery, UriKind.Relative);
         }
 
         private static string GetUnauthorizedErrorDescription(HttpResponseHeaders headers)

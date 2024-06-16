@@ -4,14 +4,9 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Enqueuer.Identity.API.Services;
 
-public class InMemoryTokenStorage : IAccessTokenStorage
+public class InMemoryTokenStorage(IMemoryCache memoryCache) : IAccessTokenStorage
 {
-    private readonly IMemoryCache _memoryCache;
-
-    public InMemoryTokenStorage(IMemoryCache memoryCache)
-    {
-        _memoryCache = memoryCache;
-    }
+    private readonly IMemoryCache _memoryCache = memoryCache;
 
     public ValueTask SaveAccessTokenAsync(AccessToken accessToken, CancellationToken cancellationToken)
     {

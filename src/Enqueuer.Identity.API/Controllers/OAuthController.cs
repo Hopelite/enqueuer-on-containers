@@ -2,20 +2,50 @@
 using Enqueuer.Identity.OAuth;
 using Enqueuer.Identity.OAuth.Models;
 using Enqueuer.OAuth.Core.Exceptions;
+using Enqueuer.OAuth.Core.Helpers;
+using Enqueuer.OAuth.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Identity.API.Controllers;
 
 [ApiController]
 [Route("oauth2")]
-public class OAuthController(IOAuthService authorizationService) : ControllerBase
+public class OAuthController : ControllerBase
 {
-    private readonly IOAuthService _authorizationService = authorizationService;
+    private readonly IOAuthService _authorizationService;
+    private readonly ILogger<OAuthController> _logger;
+
+    public OAuthController(IOAuthService authorizationService, ILogger<OAuthController> logger)
+    {
+        _authorizationService = authorizationService;
+        _logger = logger;
+    }
 
     [HttpGet("authorize")]
-    public Task<IActionResult> Authorize([FromQuery] AuthorizeQueryParameters query, CancellationToken cancellationToken)
+    public async Task<IActionResult> Authorize([FromQuery] AuthorizeQueryParameters query, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var scope = new Scope(query.Scope);
+        var request = new AuthorizationRequest(query.ResponseType, query.ClientId, query.RedirectUri, scope, query.State);
+
+        try
+        {
+            var response = await _authorizationService.AuthorizeAsync(request, cancellationToken);
+            return Redirect(response.RedirectUri.AbsoluteUri);
+        }
+        catch (ServerErrorException ex)
+        {
+            _logger.LogError(ex, "An internal server error occured during the authorization request handling for the client '{ClientId}'.", query.ClientId);
+
+            // TODO: if redirect URI is null - use the registered one
+            return RedirectToRedirectUri(request.RedirectUri, ex.GetQueryParameters());
+        }
+        catch (AuthorizationException ex)
+        {
+            _logger.LogInformation(ex, "Authorization request for the client '{ClientId}' has failed.", query.ClientId);
+
+            // TODO: if redirect URI is null - use the registered one
+            return RedirectToRedirectUri(request.RedirectUri, ex.GetQueryParameters());
+        }
     }
 
     [HttpPost("token")]
@@ -31,6 +61,11 @@ public class OAuthController(IOAuthService authorizationService) : ControllerBas
         {
             return BadRequest(ex.Message);
         }
+        catch (ServerErrorException ex)
+        {
+            _logger.LogError(ex, "An internal server error occured during the access token reqest.");
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
         catch (AuthorizationException ex)
         {
             return Unauthorized(ex.Message);
@@ -38,5 +73,11 @@ public class OAuthController(IOAuthService authorizationService) : ControllerBas
 
         var response = new GetAccessTokenResponse(token.Value, token.Type, token.ExpiresIn);
         return Ok(response);
+    }
+
+    private RedirectResult RedirectToRedirectUri(Uri redirectUri, IDictionary<string, string> queryParameters)
+    {
+        var completeUri = redirectUri.AppendQuery(queryParameters);
+        return Redirect(completeUri.AbsoluteUri);
     }
 }

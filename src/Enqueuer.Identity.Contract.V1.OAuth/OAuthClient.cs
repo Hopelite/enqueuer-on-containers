@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
@@ -7,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Enqueuer.Identity.Contract.V1.OAuth.Exceptions;
 using Enqueuer.Identity.Contract.V1.OAuth.Models;
+using Enqueuer.OAuth.Core.Helpers;
 using Enqueuer.OAuth.Core.Tokens;
-using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Enqueuer.Identity.Contract.V1.OAuth
 {
@@ -24,7 +23,8 @@ namespace Enqueuer.Identity.Contract.V1.OAuth
 
         public async Task<AccessToken> GetAccessTokenAsync(IAccessTokenRequest request, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.PostAsync(GetUrlWithQuery("oauth2/token", request.GetQueryParameters()), content: null, cancellationToken);
+            var uri = UriHelper.GetUriWithQuery("oauth2/token", request.GetQueryParameters(), UriKind.Relative);
+            var response = await _httpClient.PostAsync(uri, content: null, cancellationToken);
 
             var responseBody = await response.Content.ReadAsStringAsync();
             if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -44,15 +44,6 @@ namespace Enqueuer.Identity.Contract.V1.OAuth
             }
 
             return new AccessToken(tokenResponse.AccessToken, tokenResponse.TokenType, TimeSpan.FromSeconds(tokenResponse.ExpiresIn));
-        }
-
-        private static Uri GetUrlWithQuery(string path, IDictionary<string, string> queryParameters)
-        {
-            return new Uri(new UriBuilder()
-            {
-                Path = path,
-                Query = new QueryBuilder(queryParameters).ToQueryString().ToString()
-            }.Uri.PathAndQuery, UriKind.Relative);
         }
     }
 }

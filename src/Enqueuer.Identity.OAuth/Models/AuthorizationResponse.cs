@@ -1,5 +1,5 @@
 ﻿using Enqueuer.OAuth.Core.Enums;
-using Microsoft.AspNetCore.Http.Extensions;
+using Enqueuer.OAuth.Core.Helpers;
 
 namespace Enqueuer.Identity.OAuth.Models;
 
@@ -45,10 +45,7 @@ public class AuthorizationResponse
                 queryParameters[QueryParameter.AuthorizationResponse.State] = State;
             }
 
-            return new UriBuilder(_redirectUri)
-            {
-                Query = new QueryBuilder(queryParameters).ToQueryString().Value
-            }.Uri;
+            return _redirectUri.AppendQuery(queryParameters);
         }
     }
 }
