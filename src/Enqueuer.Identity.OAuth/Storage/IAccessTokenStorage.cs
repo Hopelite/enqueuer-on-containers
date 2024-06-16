@@ -1,4 +1,4 @@
-﻿using Enqueuer.Identity.OAuth.Tokens;
+﻿using Enqueuer.OAuth.Core.Tokens;
 
 namespace Enqueuer.Identity.OAuth.Storage;
 

@@ -1,5 +1,6 @@
-﻿using Enqueuer.Identity.OAuth.Exceptions;
-using Enqueuer.Identity.OAuth.Models.Grants;
+﻿using Enqueuer.OAuth.Core.Exceptions;
+using Enqueuer.OAuth.Core.Tokens;
+using Enqueuer.OAuth.Core.Tokens.Grants;
 
 namespace Enqueuer.Identity.OAuth.Tokens;
 

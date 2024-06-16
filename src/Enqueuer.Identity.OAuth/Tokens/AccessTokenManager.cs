@@ -1,6 +1,7 @@
 ﻿using Enqueuer.Identity.OAuth.Authorization;
-using Enqueuer.Identity.OAuth.Models.Grants;
 using Enqueuer.Identity.OAuth.Storage;
+using Enqueuer.OAuth.Core.Tokens;
+using Enqueuer.OAuth.Core.Tokens.Grants;
 
 namespace Enqueuer.Identity.OAuth.Tokens;
 

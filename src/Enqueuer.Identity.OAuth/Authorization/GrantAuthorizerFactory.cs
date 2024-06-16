@@ -1,5 +1,5 @@
-﻿using Enqueuer.Identity.OAuth.Exceptions;
-using Enqueuer.Identity.OAuth.Models.Enums;
+﻿using Enqueuer.OAuth.Core.Enums;
+using Enqueuer.OAuth.Core.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Enqueuer.Identity.OAuth.Authorization;
@@ -15,11 +15,14 @@ public class GrantAuthorizerFactory : IGrantAuthorizerFactory
 
     public IGrantAuthorizer GetAuthorizerFor(string grantType)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(grantType);
+        if (string.IsNullOrWhiteSpace(grantType))
+        {
+            throw new InvalidRequestException("The 'grant_type' parameter is required.");
+        }
 
         return grantType switch
         {
-            AuthorizationGrantType.ClientCredentials => _serviceProvider.GetRequiredService<ClientCredentialsGrantAuthorizer>(),
+            AuthorizationGrantType.ClientCredentials.Type => _serviceProvider.GetRequiredService<ClientCredentialsGrantAuthorizer>(),
             _ => throw UnsupportedGrantTypeException.FromGrantType(grantType)
         };
     }

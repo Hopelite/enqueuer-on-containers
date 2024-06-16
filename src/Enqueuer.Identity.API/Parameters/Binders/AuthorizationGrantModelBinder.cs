@@ -1,6 +1,6 @@
-﻿using Enqueuer.Identity.OAuth.Models;
-using Enqueuer.Identity.OAuth.Models.Grants;
-using Enqueuer.OAuth.Core.Tokens;
+﻿using Enqueuer.OAuth.Core.Enums;
+using Enqueuer.OAuth.Core.Models;
+using Enqueuer.OAuth.Core.Tokens.Grants;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Enqueuer.Identity.API.Parameters.Binders;

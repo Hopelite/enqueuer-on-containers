@@ -1,6 +1,6 @@
-﻿using Enqueuer.Identity.OAuth.Exceptions;
-using Enqueuer.Identity.OAuth.Models;
+﻿using Enqueuer.Identity.OAuth.Models;
 using Enqueuer.Identity.OAuth.Tokens;
+using Enqueuer.OAuth.Core.Exceptions;
 using Microsoft.Extensions.Logging;
 
 namespace Enqueuer.Identity.OAuth;

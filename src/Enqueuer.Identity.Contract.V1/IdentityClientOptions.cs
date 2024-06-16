@@ -8,7 +8,7 @@ namespace Enqueuer.Identity.Contract.V1
         private string _clientSecret = null!;
         private string _clientId = null!;
         private Uri _baseAddress = null!;
-        private string[] _requiredScopes;
+        private string[] _requiredScopes = null!;
         public const int DefaultRetries = 3;
 
         public Uri BaseAddress

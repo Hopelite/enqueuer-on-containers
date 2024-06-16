@@ -1,18 +1,19 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Enqueuer.Identity.OAuth.JWT.Claims;
 using Enqueuer.Identity.OAuth.Tokens;
+using Enqueuer.OAuth.Core.Claims;
+using Enqueuer.OAuth.Core.Enums;
+using Enqueuer.OAuth.Core.Tokens;
 using Microsoft.Extensions.Options;
 
 namespace Enqueuer.Identity.OAuth.JWT;
 
 public class JwtTokenGenerator : IAccessTokenGenerator
 {
-    private const string BearerTokenType = "bearer";
-    private readonly JwtTokenConfiguration _tokenConfiguration;
+    private readonly JwtTokenIssuingConfiguration _tokenConfiguration;
     private readonly ISignatureProvider _signatureProvider;
 
-    public JwtTokenGenerator(ISignatureProvider signatureProvider, IOptions<JwtTokenConfiguration> options)
+    public JwtTokenGenerator(ISignatureProvider signatureProvider, IOptions<JwtTokenIssuingConfiguration> options)
     {
         _signatureProvider = signatureProvider;
         _tokenConfiguration = options.Value;
@@ -27,18 +28,20 @@ public class JwtTokenGenerator : IAccessTokenGenerator
 
         if (context.Scope.HasValue)
         {
-            claims.Add(new ScopeClaim(context.Scope));
+            claims.Add(new ScopeClaim(context.Scope, _tokenConfiguration.Issuer));
         }
 
         var signingCredentials = _signatureProvider.GetSigningCredentials();
 
-        var token = new JwtSecurityTokenHandler().CreateJwtSecurityToken(
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        var token = tokenHandler.CreateJwtSecurityToken(
             issuer: _tokenConfiguration.Issuer,
             audience: context.Audience,
             subject: new ClaimsIdentity(claims),
             expires: DateTime.UtcNow.Add(_tokenConfiguration.TokenLifetime),
             signingCredentials: signingCredentials);
 
-        return new AccessToken(token.ToString(), BearerTokenType, _tokenConfiguration.TokenLifetime);
+        return new AccessToken(tokenHandler.WriteToken(token), TokenTypes.Bearer, _tokenConfiguration.TokenLifetime);
     }
 }

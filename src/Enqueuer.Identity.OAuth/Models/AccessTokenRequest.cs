@@ -1,4 +1,4 @@
-﻿using Enqueuer.Identity.OAuth.Models.Grants;
+﻿using Enqueuer.OAuth.Core.Tokens.Grants;
 
 namespace Enqueuer.Identity.OAuth.Models;
 

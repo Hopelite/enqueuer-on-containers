@@ -1,11 +1,12 @@
 ﻿using Enqueuer.Identity.OAuth.JWT;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Enqueuer.Identity.API.Services;
 
-public class InMemorySignatureProvider(SecurityKey signatureKey) : ISignatureProvider
+public class InMemorySignatureProvider(IOptions<OAuthConfiguration> options) : ISignatureProvider
 {
-    private readonly SecurityKey _signatureKey = signatureKey;
+    private readonly SecurityKey _signatureKey = options.Value.GetSigningKey();
 
     public SigningCredentials GetSigningCredentials()
     {

@@ -1,12 +1,10 @@
-﻿using Enqueuer.Identity.OAuth.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Enqueuer.OAuth.Core.Models;
 
 namespace Enqueuer.Identity.OAuth.Tokens;
 
+/// <summary>
+/// Containing neccessary data for access token generation.
+/// </summary>
 public class AccessTokenContext
 {
     public AccessTokenContext(string audience, Scope scope)

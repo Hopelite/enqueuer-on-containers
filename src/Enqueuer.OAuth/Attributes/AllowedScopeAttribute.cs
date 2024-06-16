@@ -28,7 +28,7 @@ public class AllowedScopeAttribute : AuthorizeAttribute, IAuthorizationFilter
         var user = context.HttpContext.User;
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
-            var scopeClaim = user.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Scope));
+            var scopeClaim = user.Claims.FirstOrDefault(c => c.Type.Equals(ScopeClaim.ClaimType));
             if (scopeClaim != null)
             {
                 var providedScope = ScopeClaim.Create(scopeClaim.Value);

@@ -1,4 +1,4 @@
-﻿using Enqueuer.Identity.Contract.V1.RequestHandlers;
+﻿using Enqueuer.Identity.Contract.V1.OAuth.RequestHandlers;
 using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Configuration;
 using Enqueuer.Telegram.BFF.Messages.Handlers;
@@ -58,7 +58,7 @@ public static class ServiceCollectionExtensions
 
     public static IHttpClientBuilder AddQueueingClient(this WebApplicationBuilder builder, string name = "Enqueuer Queueing Client")
     {
-        builder.Services.AddTransient<AccessTokenHandler>();
+        builder.Services.AddTransient<ClientCredentialsTokenHandler<IQueueingClient>>();
         builder.Services.Configure<QueueingClientOptions>(builder.Configuration.GetRequiredSection("QueueingClient"));
         return builder.Services.AddHttpClient<IQueueingClient, QueueingClient>(name, (serviceProvider, client) =>
         {
@@ -67,7 +67,7 @@ public static class ServiceCollectionExtensions
         })
         .AddHttpMessageHandler(serviceProvider =>
         {
-            return serviceProvider.GetRequiredService<AccessTokenHandler>();
+            return serviceProvider.GetRequiredService<ClientCredentialsTokenHandler<IQueueingClient>>();
         });
     }
 

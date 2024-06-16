@@ -1,4 +1,6 @@
-﻿namespace Enqueuer.Identity.OAuth.Models;
+﻿using Enqueuer.OAuth.Core.Models;
+
+namespace Enqueuer.Identity.OAuth.Models;
 
 public class AuthorizationRequest
 {

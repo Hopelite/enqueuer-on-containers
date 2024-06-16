@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Security.KeyVault.Secrets;
-using Enqueuer.Identity.OAuth.Exceptions;
 using Enqueuer.Identity.OAuth.Storage;
+using Enqueuer.OAuth.Core.Exceptions;
 
 namespace Enqueuer.Identity.API.Services;
 
@@ -11,8 +11,15 @@ public class AzureKeyVaultStorage(SecretClient secretClient) : IClientCredential
 
     public async Task AuthorizeClientAsync(string clientId, string clientSecret, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(nameof(clientId));
-        ArgumentNullException.ThrowIfNull(nameof(clientSecret));
+        if (string.IsNullOrWhiteSpace(clientId))
+        {
+            throw new InvalidClientException("Missing the 'client_id' parameter.");
+        }
+
+        if (string.IsNullOrWhiteSpace(clientSecret))
+        {
+            throw new InvalidClientException("Missing the 'client_secret' parameter.");
+        }
 
         try
         {

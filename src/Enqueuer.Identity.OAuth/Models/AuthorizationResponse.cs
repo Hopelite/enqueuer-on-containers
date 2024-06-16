@@ -1,4 +1,4 @@
-﻿using Enqueuer.Identity.OAuth.Models.Enums;
+﻿using Enqueuer.OAuth.Core.Enums;
 using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Enqueuer.Identity.OAuth.Models;

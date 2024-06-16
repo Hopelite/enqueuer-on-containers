@@ -1,11 +1,4 @@
-﻿using Enqueuer.Identity.Contract.V1.Caching;
-using Enqueuer.Identity.Contract.V1.Exceptions;
-using Enqueuer.Identity.Contract.V1.Models;
-using Enqueuer.OAuth.Core.Claims;
-using Enqueuer.OAuth.Core.Tokens;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.Extensions.Options;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -13,53 +6,24 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Enqueuer.Identity.Contract.V1.Exceptions;
+using Enqueuer.Identity.Contract.V1.Models;
+using Enqueuer.Identity.Contract.V1.OAuth.Exceptions;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace Enqueuer.Identity.Contract.V1
 {
     public class IdentityClient : IIdentityClient
     {
         private readonly HttpClient _httpClient;
-        private readonly IAccessTokenCache _tokenCache;
-        private readonly IdentityClientOptions _options;
 
-        // TODO: reduce token scope to required by each client only
-        private static readonly string[] RequiredScopes = new string[] { "queue", "group", "user", "access" };
-
-        public IdentityClient(HttpClient httpClient, IAccessTokenCache tokenCache, IOptions<IdentityClientOptions> options)
+        public IdentityClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _tokenCache = tokenCache;
-            _options = options.Value;
-        }
-
-        public async Task<AccessToken> GetAccessTokenAsync(IReadOnlyCollection<string> scopes, CancellationToken cancellationToken)
-        {
-            var response = await _httpClient.PostAsync(GetAccessTokenUrl(scopes), content: null, cancellationToken);
-
-            var responseBody = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                throw new InvalidCredentialsException($"The provided credentials are invalid. Reason: {responseBody}");
-            }
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new IdentityClientException($"The request to get access token was not successful. Reason: {response.StatusCode}, {responseBody}");
-            }
-
-            var tokenResponse = JsonSerializer.Deserialize<GetAccessTokenResponse>(responseBody, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower });
-            if (tokenResponse == null)
-            {
-                throw new IdentityClientException("Unable to deserialize the GetAccessToken response.");
-            }
-
-            return new AccessToken(tokenResponse.AccessToken, tokenResponse.TokenType, TimeSpan.FromSeconds(tokenResponse.ExpiresIn));
         }
 
         public async Task<bool> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken)
         {
-            await RefreshAccessTokenIfNeededAsync(cancellationToken);
-
             var uri = GetUrlWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters());
             var response = await _httpClient.GetAsync(uri, cancellationToken);
             if (response.StatusCode == HttpStatusCode.OK)
@@ -78,8 +42,6 @@ namespace Enqueuer.Identity.Contract.V1
 
         public async Task<UserInfo> GetUserInfoAsync(long userId, CancellationToken cancellationToken)
         {
-            await RefreshAccessTokenIfNeededAsync(cancellationToken);
-
             var uri = new Uri($"api/authorization/users/{userId}", UriKind.Relative);
 
             var response = await _httpClient.GetAsync(uri, cancellationToken);
@@ -111,8 +73,6 @@ namespace Enqueuer.Identity.Contract.V1
 
         public async Task CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken)
         {
-            await RefreshAccessTokenIfNeededAsync(cancellationToken);
-
             var uri = new Uri($"api/authorization/users/{request.UserId}", UriKind.Relative);
 
             var response = await _httpClient.PutAsync(uri, request.GetBody(), cancellationToken);
@@ -132,8 +92,6 @@ namespace Enqueuer.Identity.Contract.V1
 
         public async Task GrantAccessAsync(GrantAccessRequest request, CancellationToken cancellationToken)
         {
-            await RefreshAccessTokenIfNeededAsync(cancellationToken);
-
             var uri = GetUrlWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters());
             var response = await _httpClient.PutAsync(uri, content: null, cancellationToken);
 
@@ -148,8 +106,6 @@ namespace Enqueuer.Identity.Contract.V1
 
         public async Task RevokeAccessAsync(RevokeAccessRequest request, CancellationToken cancellationToken)
         {
-            await RefreshAccessTokenIfNeededAsync(cancellationToken);
-
             var uri = GetUrlWithQuery($"api/authorization/access/{request.ResourceId}", request.GetQueryParameters());
             var response = await _httpClient.DeleteAsync(uri, cancellationToken);
 
@@ -171,48 +127,6 @@ namespace Enqueuer.Identity.Contract.V1
 
             var responseBody = await response.Content.ReadAsStringAsync();
             throw new IdentityClientException($"The request to revoke access was not successful. Reason: {response.StatusCode}, {responseBody}");
-        }
-
-        private ValueTask RefreshAccessTokenIfNeededAsync(CancellationToken cancellationToken)
-        {
-            if (!_options.CacheToken)
-            {
-                return RefreshTokenAsync(cancellationToken);
-            }
-
-            var token = _tokenCache.GetAccessToken();
-            if (token != null && !token.HasExpired)
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.Type, token.Value);
-                return default;
-            }
-
-            return RefreshTokenAsync(cancellationToken);
-        }
-
-        private async ValueTask RefreshTokenAsync(CancellationToken cancellationToken)
-        {
-            var token = await GetAccessTokenAsync(RequiredScopes, cancellationToken);
-            if (_options.CacheToken)
-            {
-                _tokenCache.SetAccessToken(token);
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.Type, token.Value);
-        }
-
-        private Uri GetAccessTokenUrl(IReadOnlyCollection<string> requestedScopes)
-        {
-            var requiredScope = OAuth.Core.Models.Scope.Create(requestedScopes);
-            var queryParameters = new Dictionary<string, string>()
-            {
-                { AuthorizationGrantType.GrantTypeParameter,                        AuthorizationGrantType.ClientCredentials.Type },
-                { AuthorizationGrantType.ClientCredentials.ClientIdParameter,       _options.ClientId },
-                { AuthorizationGrantType.ClientCredentials.ClientSecretParameter,   _options.ClientSecret },
-                { ClaimTypes.Scope,                                                 requiredScope.Value }
-            };
-
-            return GetUrlWithQuery("oauth2/token", queryParameters);
         }
 
         private static Uri GetUrlWithQuery(string path, IDictionary<string, string> queryParameters)

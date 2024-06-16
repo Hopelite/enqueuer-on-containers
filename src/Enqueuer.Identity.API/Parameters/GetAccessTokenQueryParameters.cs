@@ -1,5 +1,5 @@
 ﻿using Enqueuer.Identity.API.Parameters.Binders;
-using Enqueuer.Identity.OAuth.Models.Grants;
+using Enqueuer.OAuth.Core.Tokens.Grants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Identity.API.Parameters;

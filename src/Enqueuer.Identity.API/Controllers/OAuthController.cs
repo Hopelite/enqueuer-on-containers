@@ -1,8 +1,7 @@
 ﻿using Enqueuer.Identity.API.Parameters;
-using Enqueuer.Identity.Contract.V1.Models;
 using Enqueuer.Identity.OAuth;
-using Enqueuer.Identity.OAuth.Exceptions;
 using Enqueuer.Identity.OAuth.Models;
+using Enqueuer.OAuth.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Identity.API.Controllers;

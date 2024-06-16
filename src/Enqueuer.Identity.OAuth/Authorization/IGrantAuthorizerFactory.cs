@@ -1,4 +1,4 @@
-﻿using Enqueuer.Identity.OAuth.Exceptions;
+﻿using Enqueuer.OAuth.Core.Exceptions;
 
 namespace Enqueuer.Identity.OAuth.Authorization;
 
