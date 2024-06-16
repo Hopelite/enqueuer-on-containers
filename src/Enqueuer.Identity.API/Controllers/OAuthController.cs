@@ -1,6 +1,7 @@
 ﻿using Enqueuer.Identity.API.Parameters;
 using Enqueuer.Identity.OAuth;
 using Enqueuer.Identity.OAuth.Models;
+using Enqueuer.OAuth.Core.Enums;
 using Enqueuer.OAuth.Core.Exceptions;
 using Enqueuer.OAuth.Core.Helpers;
 using Enqueuer.OAuth.Core.Models;
@@ -37,14 +38,14 @@ public class OAuthController : ControllerBase
             _logger.LogError(ex, "An internal server error occured during the authorization request handling for the client '{ClientId}'.", query.ClientId);
 
             // TODO: if redirect URI is null - use the registered one
-            return RedirectToRedirectUri(request.RedirectUri, ex.GetQueryParameters());
+            return RedirectToRedirectUri(request.RedirectUri, ex.GetQueryParameters(), query.State);
         }
         catch (AuthorizationException ex)
         {
             _logger.LogInformation(ex, "Authorization request for the client '{ClientId}' has failed.", query.ClientId);
 
             // TODO: if redirect URI is null - use the registered one
-            return RedirectToRedirectUri(request.RedirectUri, ex.GetQueryParameters());
+            return RedirectToRedirectUri(request.RedirectUri, ex.GetQueryParameters(), query.State);
         }
     }
 
@@ -75,8 +76,13 @@ public class OAuthController : ControllerBase
         return Ok(response);
     }
 
-    private RedirectResult RedirectToRedirectUri(Uri redirectUri, IDictionary<string, string> queryParameters)
+    private RedirectResult RedirectToRedirectUri(Uri redirectUri, IDictionary<string, string> queryParameters, string? state)
     {
+        if (!string.IsNullOrWhiteSpace(state))
+        {
+            queryParameters[QueryParameter.AuthorizationResponse.State] = state;
+        }
+
         var completeUri = redirectUri.AppendQuery(queryParameters);
         return Redirect(completeUri.AbsoluteUri);
     }

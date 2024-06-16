@@ -30,9 +30,6 @@ namespace Enqueuer.OAuth.Core.Exceptions
         /// </summary>
         public string ErrorCode { get; }
 
-        // TODO: set this value
-        public string? State { get; }
-
         public IDictionary<string, string> GetQueryParameters()
         {
             var parameters = new Dictionary<string, string>()
@@ -43,11 +40,6 @@ namespace Enqueuer.OAuth.Core.Exceptions
             if (!string.IsNullOrWhiteSpace(Message))
             {
                 parameters.Add(QueryParameter.ErrorResponse.ErrorDescription, Message);
-            }
-
-            if (!string.IsNullOrWhiteSpace(State))
-            {
-                parameters.Add(QueryParameter.ErrorResponse.State, State);
             }
 
             return parameters;

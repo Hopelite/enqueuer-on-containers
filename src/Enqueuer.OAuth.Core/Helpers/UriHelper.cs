@@ -35,10 +35,12 @@ namespace Enqueuer.OAuth.Core.Helpers
 
         private static string GetRelativeUriPath(this Uri uri)
         {
-            var pathAndQuery = uri.OriginalString.Split('?');
+            const char QuerySeparator = '?';
+
+            var pathAndQuery = uri.OriginalString.Split(QuerySeparator, StringSplitOptions.RemoveEmptyEntries);
             if (pathAndQuery.Length == 0)
             {
-                throw new InvalidOperationException();
+                throw new ArgumentException("Cannot extract path from empty Uri.", nameof(uri));
             }
 
             return pathAndQuery[0];
