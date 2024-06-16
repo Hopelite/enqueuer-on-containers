@@ -59,16 +59,16 @@ public class OAuthController : ControllerBase
         }
         catch (UnsupportedGrantTypeException ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(ex.GetQueryParameters());
         }
         catch (ServerErrorException ex)
         {
             _logger.LogError(ex, "An internal server error occured during the access token reqest.");
-            return StatusCode(StatusCodes.Status500InternalServerError);
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetQueryParameters());
         }
         catch (AuthorizationException ex)
         {
-            return Unauthorized(ex.Message);
+            return Unauthorized(ex.GetQueryParameters());
         }
 
         var response = new GetAccessTokenResponse(token.Value, token.Type, token.ExpiresIn);

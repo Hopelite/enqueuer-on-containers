@@ -20,7 +20,7 @@ namespace Enqueuer.OAuth.Core.Exceptions
         }
 
         protected AuthorizationException(string errorCode, string? message, Exception? innerException)
-            : base(message, innerException)
+            : base(message ?? string.Empty, innerException)
         {
             ErrorCode = errorCode;
         }
