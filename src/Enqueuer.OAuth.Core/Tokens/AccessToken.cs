@@ -2,6 +2,9 @@
 
 namespace Enqueuer.OAuth.Core.Tokens
 {
+    /// <summary>
+    /// Represents an issued access token.
+    /// </summary>
     public class AccessToken
     {
         private readonly DateTime _expires;
@@ -32,6 +35,9 @@ namespace Enqueuer.OAuth.Core.Tokens
         /// </summary>
         public TimeSpan ExpiresIn { get; }
 
+        /// <summary>
+        /// Checks whether this access token has expired or not.
+        /// </summary>
         public bool HasExpired => _expires <= DateTime.UtcNow;
 
         private static TimeSpan ValidateLifetime(in TimeSpan expiresIn)

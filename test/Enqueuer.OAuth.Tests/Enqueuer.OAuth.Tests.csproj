@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Enqueuer.OAuth\Enqueuer.OAuth.csproj" />
+    <ProjectReference Include="..\..\src\Enqueuer.OAuth.JWT\Enqueuer.OAuth.JWT.csproj" />
   </ItemGroup>
 
 </Project>

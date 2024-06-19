@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Enqueuer.Identity.Persistence\Enqueuer.Identity.Persistence.csproj" />
-    <ProjectReference Include="..\Enqueuer.OAuth\Enqueuer.OAuth.csproj" />
   </ItemGroup>
 
 </Project>

@@ -32,7 +32,7 @@
     <ProjectReference Include="..\Enqueuer.Identity.Authorization\Enqueuer.Identity.Authorization.csproj" />
     <ProjectReference Include="..\Enqueuer.Identity.Contract.V1\Enqueuer.Identity.Contract.V1.csproj" />
     <ProjectReference Include="..\Enqueuer.Identity.OAuth.JWT\Enqueuer.Identity.OAuth.JWT.csproj" />
-    <ProjectReference Include="..\Enqueuer.OAuth\Enqueuer.OAuth.csproj" />
+    <ProjectReference Include="..\Enqueuer.OAuth.JWT\Enqueuer.OAuth.JWT.csproj" />
   </ItemGroup>
 
   <ItemGroup>

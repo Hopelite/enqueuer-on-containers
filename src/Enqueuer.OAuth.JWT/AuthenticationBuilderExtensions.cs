@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class AuthenticationBuilderExtensions
 {
     /// <summary>
-    /// Adds the JWT bearer authentication.
+    /// Adds the JWT bearer authentication for a resource server.
     /// </summary>
     /// <remarks>Requires <see cref="OAuthConfiguration"/> class to be registered and configured.</remarks>
     public static AuthenticationBuilder AddJwtTokenAuthentication(this AuthenticationBuilder builder)
@@ -21,7 +21,6 @@ public static class AuthenticationBuilderExtensions
         var configuration = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<OAuthConfiguration>>().Value;
         return builder.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
         {
-            options.Audience = configuration.Audience;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,

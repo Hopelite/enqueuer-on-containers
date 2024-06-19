@@ -19,6 +19,9 @@ public class AllowedScopeAttribute : AuthorizeAttribute, IAuthorizationFilter
         AllowedScope = allowedScope;
     }
 
+    /// <summary>
+    /// Gets or sets a list of allowed scope values.
+    /// </summary>
     public string[] AllowedScope { get; init; }
 
     public void OnAuthorization(AuthorizationFilterContext context)
