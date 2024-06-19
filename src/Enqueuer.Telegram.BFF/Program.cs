@@ -62,7 +62,7 @@ public class Program
         var cacheConfiguration = builder.Services.BuildServiceProvider().GetRequiredService<IOptions<ConfigurationCacheOptions>>().Value;
         builder.Services.AddMemoryCache(options =>
         {
-            options.SizeLimit = cacheConfiguration.MaxSize; // An arbitrary value - maybe memory or entry count
+            options.SizeLimit = cacheConfiguration.MaxSize; // An arbitrary value - may be memory size or entry count
         });
         builder.Services.AddSingleton<IChatConfigurationCache, InMemoryGroupConfigurationCache>();
         builder.AddChatConfigurationClient();
