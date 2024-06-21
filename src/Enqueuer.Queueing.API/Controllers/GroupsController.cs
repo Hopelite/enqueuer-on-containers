@@ -18,7 +18,7 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(getGroupQueuesQuery, cancellationToken);
     }
 
-    [AllowedScope("queue:create", "queue", "group")]
+    [AllowedScopes("queue:create", "queue", "group")]
     [HttpPut("{groupId}/queues/{queueName}")]
     public Task<IActionResult> CreateQueue(long groupId, string queueName, CreateQueueCommand command, CancellationToken cancellationToken)
     {
@@ -26,7 +26,7 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(createQueueCommand, cancellationToken);
     }
 
-    [AllowedScope("queue:delete", "queue", "group")]
+    [AllowedScopes("queue:delete", "queue", "group")]
     [HttpDelete("{groupId}/queues/{queueName}")]
     public Task<IActionResult> DeleteQueue(long groupId, string queueName, CancellationToken cancellationToken)
     {

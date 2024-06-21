@@ -10,7 +10,7 @@ public class AuthorizationResponse
 {
     private readonly Uri _redirectUri;
 
-    internal AuthorizationResponse(in AuthorizationCode code, string? state, Uri redirectUri)
+    internal AuthorizationResponse(ref readonly AuthorizationCode code, string? state, Uri redirectUri)
     {
         Code = code;
         State = state;

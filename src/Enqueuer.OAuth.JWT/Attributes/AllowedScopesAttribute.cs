@@ -7,22 +7,22 @@ namespace Microsoft.AspNetCore.Authorization;
 /// <summary>
 /// Specifies that the class or method that this attribute is applied to requires the authorization by scope.
 /// </summary>
-public class AllowedScopeAttribute : AuthorizeAttribute, IAuthorizationFilter
+public class AllowedScopesAttribute : AuthorizeAttribute, IAuthorizationFilter
 {
-    public AllowedScopeAttribute()
+    public AllowedScopesAttribute()
         : this(Array.Empty<string>())
     {
     }
 
-    public AllowedScopeAttribute(params string[] allowedScope)
+    public AllowedScopesAttribute(params string[] allowedScope)
     {
-        AllowedScope = allowedScope;
+        AllowedScopes = allowedScope;
     }
 
     /// <summary>
-    /// Gets or sets a list of allowed scope values.
+    /// Gets or sets a list of allowed scopes.
     /// </summary>
-    public string[] AllowedScope { get; init; }
+    public string[] AllowedScopes { get; init; }
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
@@ -35,7 +35,7 @@ public class AllowedScopeAttribute : AuthorizeAttribute, IAuthorizationFilter
             if (scopeClaim != null)
             {
                 var providedScope = ScopeClaim.Create(scopeClaim.Value);
-                hasAllowedScope = AllowedScope.Any(providedScope.Contains);
+                hasAllowedScope = AllowedScopes.Any(providedScope.Contains);
             }
         }
 

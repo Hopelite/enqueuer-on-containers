@@ -1,6 +1,5 @@
 using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Identity.Contract.V1.OAuth.RequestHandlers;
-using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Telegram.BFF.Core.Configuration;
 using Enqueuer.Telegram.BFF.Core.Factories;
 using Enqueuer.Telegram.BFF.Core.Models.Callbacks;
