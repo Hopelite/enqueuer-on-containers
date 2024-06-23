@@ -39,25 +39,6 @@ namespace Enqueuer.Telegram.Notifications.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "localized_messages",
-                columns: table => new
-                {
-                    language_code = table.Column<string>(type: "TEXT", nullable: false),
-                    key = table.Column<string>(type: "TEXT", nullable: false),
-                    value = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_localized_messages", x => new { x.language_code, x.key });
-                    table.ForeignKey(
-                        name: "fk_localized_messages_available_languages_language_code",
-                        column: x => x.language_code,
-                        principalTable: "languages",
-                        principalColumn: "code",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "ix_chat_configurations_notifications_language_code",
                 table: "chat_configurations",
@@ -69,9 +50,6 @@ namespace Enqueuer.Telegram.Notifications.Migrations
         {
             migrationBuilder.DropTable(
                 name: "chat_configurations");
-
-            migrationBuilder.DropTable(
-                name: "localized_messages");
 
             migrationBuilder.DropTable(
                 name: "languages");

@@ -10,10 +10,6 @@ public class LanguageCodeEntityConfiguration : IEntityTypeConfiguration<Language
     {
         builder.HasKey(c => c.Code);
 
-        builder.HasMany(c => c.LocalizedMessages)
-            .WithOne()
-            .HasForeignKey(m => m.LanguageCode);
-
         builder.ToTable("languages");
     }
 }

@@ -1,9 +1,9 @@
-﻿using Enqueuer.EventBus.Abstractions;
+﻿using System.Collections.Immutable;
+using Enqueuer.EventBus.Abstractions;
 using Enqueuer.Telegram.Notifications.Contract.V1.Events;
 using Enqueuer.Telegram.Notifications.Persistence;
 using Enqueuer.Telegram.Notifications.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 
 namespace Enqueuer.Telegram.Notifications.Services;
 

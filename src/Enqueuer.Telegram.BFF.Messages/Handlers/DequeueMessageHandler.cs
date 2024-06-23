@@ -26,7 +26,7 @@ public class DequeueMessageHandler(
 
         if (string.IsNullOrEmpty(queueContext.QueueName))
         {
-            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.DequeueErrorMissingQueueName, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
+            var errorMessage = localizationProvider.GetMessage(MessageKeys.DequeueErrorMissingQueueName, new MessageParameters(messageContext.Chat.Culture));
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,
@@ -42,7 +42,7 @@ public class DequeueMessageHandler(
         }
         catch (QueueDoesNotExistException)
         {
-            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.DequeueErrorQueueDoesNotExist, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName), cancellationToken);
+            var errorMessage = localizationProvider.GetMessage(MessageKeys.DequeueErrorQueueDoesNotExist, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName));
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,
@@ -51,7 +51,7 @@ public class DequeueMessageHandler(
         }
         catch (ParticipantDoesNotExistException)
         {
-            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.DequeueErrorParticipantIsNotEnqueued, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName), cancellationToken);
+            var errorMessage = localizationProvider.GetMessage(MessageKeys.DequeueErrorParticipantIsNotEnqueued, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName));
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,

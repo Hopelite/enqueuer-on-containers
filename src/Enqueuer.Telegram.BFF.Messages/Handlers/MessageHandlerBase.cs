@@ -15,10 +15,10 @@ public abstract class MessageHandlerBase(
 
     public abstract Task HandleAsync(MessageContext messageContext, CancellationToken cancellationToken);
 
-    protected async Task NotifyUserAboutInternalErrorAsync(MessageContext messageContext, CancellationToken cancellationToken)
+    protected Task NotifyUserAboutInternalErrorAsync(MessageContext messageContext, CancellationToken cancellationToken)
     {
-        var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.GeneralErrorInternal, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
-        await telegramClient.SendTextMessageAsync(
+        var errorMessage = localizationProvider.GetMessage(MessageKeys.GeneralErrorInternal, new MessageParameters(messageContext.Chat.Culture));
+        return telegramClient.SendTextMessageAsync(
             chatId: messageContext.Chat.Id,
             text: errorMessage,
             parseMode: ParseMode.Html,

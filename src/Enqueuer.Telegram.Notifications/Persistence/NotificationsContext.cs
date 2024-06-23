@@ -8,9 +8,7 @@ public class NotificationsContext : DbContext
 {
     public DbSet<ChatNotificationsConfiguration> NotificationsConfigurations { get; set; }
 
-    public DbSet<Language> AvailableLanguages { get; set; }
-
-    public DbSet<NotificationMessage> LocalizedMessages { get; set; }
+    public DbSet<Language> AvailableLanguages { get; set; } // TODO: consider better way to store them. Maybe retrieve from the Resources
 
     public NotificationsContext(DbContextOptions<NotificationsContext> options)
         : base(options)
@@ -21,7 +19,6 @@ public class NotificationsContext : DbContext
     {
         modelBuilder
             .ApplyConfiguration(new ChatNotificationsEntityConfiguration())
-            .ApplyConfiguration(new LanguageCodeEntityConfiguration())
-            .ApplyConfiguration(new NotificationMessageEntityConfiguration());
+            .ApplyConfiguration(new LanguageCodeEntityConfiguration());
     }
 }

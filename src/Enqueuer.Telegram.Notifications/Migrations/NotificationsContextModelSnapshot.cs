@@ -48,27 +48,6 @@ namespace Enqueuer.Telegram.Notifications.Migrations
                     b.ToTable("languages", (string)null);
                 });
 
-            modelBuilder.Entity("Enqueuer.Telegram.Notifications.Persistence.Entities.NotificationMessage", b =>
-                {
-                    b.Property<string>("LanguageCode")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("language_code");
-
-                    b.Property<string>("Key")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("key");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("value");
-
-                    b.HasKey("LanguageCode", "Key")
-                        .HasName("pk_localized_messages");
-
-                    b.ToTable("localized_messages", (string)null);
-                });
-
             modelBuilder.Entity("Enqueuer.Telegram.Notifications.Persistence.Entities.ChatNotificationsConfiguration", b =>
                 {
                     b.HasOne("Enqueuer.Telegram.Notifications.Persistence.Entities.Language", "NotificationsLanguage")
@@ -79,21 +58,6 @@ namespace Enqueuer.Telegram.Notifications.Migrations
                         .HasConstraintName("fk_chat_configurations_available_languages_notifications_language_code");
 
                     b.Navigation("NotificationsLanguage");
-                });
-
-            modelBuilder.Entity("Enqueuer.Telegram.Notifications.Persistence.Entities.NotificationMessage", b =>
-                {
-                    b.HasOne("Enqueuer.Telegram.Notifications.Persistence.Entities.Language", null)
-                        .WithMany("LocalizedMessages")
-                        .HasForeignKey("LanguageCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_localized_messages_available_languages_language_code");
-                });
-
-            modelBuilder.Entity("Enqueuer.Telegram.Notifications.Persistence.Entities.Language", b =>
-                {
-                    b.Navigation("LocalizedMessages");
                 });
 #pragma warning restore 612, 618
         }

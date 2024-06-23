@@ -1,5 +1,4 @@
-﻿using Enqueuer.Identity.Contract.V1;
-using Enqueuer.Queueing.Contract.V1;
+﻿using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Commands;
 using Enqueuer.Queueing.Contract.V1.Exceptions;
 using Enqueuer.Telegram.BFF.Core.Models.Extensions;
@@ -27,7 +26,7 @@ public class CreateQueueMessageHandler(
 
         if (string.IsNullOrEmpty(queueContext.QueueName))
         {
-            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorMissingQueueName, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
+            var errorMessage = localizationProvider.GetMessage(MessageKeys.CreateQueueErrorMissingQueueName, new MessageParameters(messageContext.Chat.Culture));
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,
@@ -44,7 +43,7 @@ public class CreateQueueMessageHandler(
         }
         catch (QueueAlreadyExistsException)
         {
-            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorQueueAlreadyExists, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName), cancellationToken);
+            var errorMessage = localizationProvider.GetMessage(MessageKeys.CreateQueueErrorQueueAlreadyExists, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName));
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,
@@ -55,7 +54,7 @@ public class CreateQueueMessageHandler(
         }
         catch (InvalidQueueNameException)
         {
-            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorInvalidQueueName, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
+            var errorMessage = localizationProvider.GetMessage(MessageKeys.CreateQueueErrorInvalidQueueName, new MessageParameters(messageContext.Chat.Culture));
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,
@@ -82,7 +81,7 @@ public class CreateQueueMessageHandler(
         // TODO: extract validation to separate class
         if (queueContext.Position!.Value <= 0)
         {
-            var errorMessage = await localizationProvider.GetMessageAsync(MessageKeys.CreateQueueErrorPositionMustBePositive, new MessageParameters(messageContext.Chat.Culture), cancellationToken);
+            var errorMessage = localizationProvider.GetMessage(MessageKeys.CreateQueueErrorPositionMustBePositive, new MessageParameters(messageContext.Chat.Culture));
             await telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: errorMessage,

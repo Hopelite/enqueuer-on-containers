@@ -1,6 +1,6 @@
-﻿using Enqueuer.Telegram.Notifications.Contract.V1.Models;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Enqueuer.Telegram.Notifications.Contract.V1.Models;
 
 namespace Enqueuer.Telegram.Notifications.Contract.V1
 {

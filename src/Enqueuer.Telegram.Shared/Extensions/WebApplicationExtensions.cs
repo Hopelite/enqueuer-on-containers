@@ -2,16 +2,22 @@
 using Enqueuer.Telegram.Shared.Exceptions;
 using Enqueuer.Telegram.Shared.Markup;
 using Enqueuer.Telegram.Shared.Serialization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Enqueuer.Telegram.Shared.Extensions;
 
-public static class ServiceCollectionExtensions
+public static class WebApplicationExtensions
 {
-    public static WebApplicationBuilder AddTelegramClient(this WebApplicationBuilder builder)
+    /// <summary>
+    /// Registers <see cref="ITelegramBotClient"/> along with <see cref="TelegramBotClientOptions"/>, <see cref="IInlineMarkupBuilder"/> and <see cref="IDataSerializer"/> implementations.
+    /// </summary>
+    public static WebApplicationBuilder AddTelegramClient(this WebApplicationBuilder builder, string configurationSection = "TelegramClient")
     {
-        builder.Services.Configure<TelegramBotClientConfiguration>(builder.Configuration.GetRequiredSection("TelegramClient"));
+        builder.Services.Configure<TelegramBotClientConfiguration>(builder.Configuration.GetRequiredSection(configurationSection));
 
         builder.Services.AddHttpClient(nameof(TelegramBotClient))
             .AddTypedClient<ITelegramBotClient>((httpClient, serviceProvider) =>

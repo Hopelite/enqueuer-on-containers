@@ -11,9 +11,4 @@ public class Language
     /// The unique identifier of the language.
     /// </summary>
     public string Code { get; set; } = DefaultChatLanguage;
-
-    /// <summary>
-    /// The list of messages localized to this language.
-    /// </summary>
-    public IEnumerable<NotificationMessage>? LocalizedMessages { get; set; }
 }
