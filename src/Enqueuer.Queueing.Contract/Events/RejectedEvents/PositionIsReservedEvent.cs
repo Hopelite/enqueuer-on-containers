@@ -9,6 +9,8 @@
             Position = position;
         }
 
+        public override string Name => nameof(PositionIsReservedEvent);
+
         public long GroupId { get; }
 
         public string QueueName { get; }

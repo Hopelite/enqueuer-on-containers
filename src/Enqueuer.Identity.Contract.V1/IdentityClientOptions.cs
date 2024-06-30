@@ -7,7 +7,7 @@ namespace Enqueuer.Identity.Contract.V1
     {
         public static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(10);
         public const int DefaultRetries = 3;
-
+        
         public Uri BaseAddress { get; set; } = null!;
 
         public TimeSpan Timeout { get; set; } = DefaultTimeout;

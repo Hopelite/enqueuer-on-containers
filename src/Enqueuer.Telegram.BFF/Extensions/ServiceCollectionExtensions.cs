@@ -3,6 +3,7 @@ using Enqueuer.Identity.Contract.V1.OAuth.RequestHandlers;
 using Enqueuer.Queueing.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Configuration;
 using Enqueuer.Telegram.BFF.Messages.Handlers;
+using Enqueuer.Telegram.BFF.Services.MessageHandling;
 using Enqueuer.Telegram.Notifications.Contract.V1;
 using Enqueuer.Telegram.Notifications.Contract.V1.Configuration;
 using Microsoft.Extensions.Options;
@@ -25,6 +26,11 @@ public static class ServiceCollectionExtensions
 
             foreach (var type in types)
             {
+                if (type == typeof(MessageHandlerErrorHandling))
+                {
+                    continue;
+                }
+
                 services.AddScoped(type);
             }
         }

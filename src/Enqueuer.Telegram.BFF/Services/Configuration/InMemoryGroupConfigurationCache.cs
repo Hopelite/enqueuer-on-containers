@@ -3,11 +3,11 @@ using Enqueuer.Telegram.BFF.Core.Models.Configuration;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
-namespace Enqueuer.Telegram.BFF.Services.Caching;
+namespace Enqueuer.Telegram.BFF.Services.Configuration;
 
 public class InMemoryGroupConfigurationCache : IChatConfigurationCache
 {
-    private const int ConfigurationEntrySize = (8 + 8 + 16) + 32;
+    private const int ConfigurationEntrySize = 8 + 8 + 16 + 32;
 
     // TODO: replace this cache since it shares memory
     private readonly IMemoryCache _memoryCache;

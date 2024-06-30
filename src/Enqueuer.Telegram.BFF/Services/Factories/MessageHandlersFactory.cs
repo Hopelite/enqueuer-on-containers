@@ -1,9 +1,12 @@
-﻿using Enqueuer.Telegram.BFF.Core.Models.Messages;
+﻿using System.Diagnostics.CodeAnalysis;
+using Enqueuer.Telegram.BFF.Core.Models.Messages;
+using Enqueuer.Telegram.BFF.Messages.Factories;
 using Enqueuer.Telegram.BFF.Messages.Handlers;
-using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics.CodeAnalysis;
+using Enqueuer.Telegram.BFF.Services.MessageHandling;
+using Enqueuer.Telegram.Shared.Localization;
+using Telegram.Bot;
 
-namespace Enqueuer.Telegram.BFF.Messages.Factories;
+namespace Enqueuer.Telegram.BFF.Services.Factories;
 
 public class MessageHandlersFactory(IServiceProvider serviceProvider) : IMessageHandlersFactory
 {
@@ -33,6 +36,16 @@ public class MessageHandlersFactory(IServiceProvider serviceProvider) : IMessage
             "/dequeue" or "/deq" => _serviceProvider.GetRequiredService<DequeueMessageHandler>(),
             _ => null
         };
+
+        // TODO: consider decorators via DI container
+        if (messageHandler != null)
+        {
+            messageHandler = new MessageHandlerErrorHandling(
+                messageHandler,
+                _serviceProvider.GetRequiredService<ITelegramBotClient>(),
+                _serviceProvider.GetRequiredService<ILocalizationProvider>(),
+                _serviceProvider.GetRequiredService<ILogger<MessageHandlerErrorHandling>>());
+        }
 
         return messageHandler != null;
     }

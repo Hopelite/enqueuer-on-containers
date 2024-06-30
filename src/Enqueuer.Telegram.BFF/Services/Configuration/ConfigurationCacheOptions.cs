@@ -1,4 +1,4 @@
-﻿namespace Enqueuer.Telegram.BFF.Services.Caching;
+﻿namespace Enqueuer.Telegram.BFF.Services.Configuration;
 
 public class ConfigurationCacheOptions
 {

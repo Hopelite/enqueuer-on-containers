@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Enqueuer.Telegram.BFF.Resources {
+namespace Enqueuer.Telegram.BFF.Localization {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Enqueuer.Telegram.BFF.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Enqueuer.Telegram.BFF.Resources.Messages", typeof(Messages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Enqueuer.Telegram.BFF.Localization.Messages", typeof(Messages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -84,15 +84,6 @@ namespace Enqueuer.Telegram.BFF.Resources {
         internal static string CreateQueue_Error_PositionMustBePositive {
             get {
                 return ResourceManager.GetString("CreateQueue_Error_PositionMustBePositive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Queue with the name &quot;{0}&quot; already exists..
-        /// </summary>
-        internal static string CreateQueue_Error_QueueAlreadyExists {
-            get {
-                return ResourceManager.GetString("CreateQueue_Error_QueueAlreadyExists", resourceCulture);
             }
         }
         

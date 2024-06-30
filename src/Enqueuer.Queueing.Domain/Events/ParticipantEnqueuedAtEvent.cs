@@ -37,7 +37,7 @@ public class ParticipantEnqueuedAtEvent : DomainEvent
     {
         if (!group._queues.TryGetValue(QueueName, out var queue))
         {
-            throw new QueueDoesNotExistException(QueueName, $"Queue '{QueueName}' does not exist in the group '{Id}'.");
+            throw new QueueDoesNotExistException(QueueName, $"Queue '{QueueName}' does not exist in the group '{AggregateId}'.");
         }
 
         (queue as IQueueEntity).EnqueueParticipantAt(ParticipantId, Position);

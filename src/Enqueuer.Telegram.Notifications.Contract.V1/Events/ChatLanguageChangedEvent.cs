@@ -1,5 +1,5 @@
-﻿using Enqueuer.EventBus.Abstractions;
-using System;
+﻿using System;
+using Enqueuer.EventBus.Abstractions;
 
 namespace Enqueuer.Telegram.Notifications.Contract.V1.Events
 {
@@ -12,6 +12,8 @@ namespace Enqueuer.Telegram.Notifications.Contract.V1.Events
             ChatId = chatId;
             LanguageCode = languageCode;
         }
+
+        public string Name => nameof(ChatLanguageChangedEvent);
 
         public Guid Id { get; }
 

@@ -1,5 +1,5 @@
-﻿using Enqueuer.EventBus.Abstractions;
-using System;
+﻿using System;
+using Enqueuer.EventBus.Abstractions;
 
 namespace Enqueuer.Queueing.Contract.V1.Events
 {
@@ -15,5 +15,7 @@ namespace Enqueuer.Queueing.Contract.V1.Events
         public Guid Id { get; }
 
         public DateTime Timestamp { get; }
+
+        public abstract string Name { get; }
     }
 }

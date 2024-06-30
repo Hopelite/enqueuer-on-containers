@@ -1,47 +1,42 @@
-﻿using System.Collections.Immutable;
-using Enqueuer.EventBus.Abstractions;
+﻿using Enqueuer.EventBus.Abstractions;
 using Enqueuer.Telegram.Notifications.Contract.V1.Events;
-using Enqueuer.Telegram.Notifications.Persistence;
-using Enqueuer.Telegram.Notifications.Persistence.Entities;
-using Microsoft.EntityFrameworkCore;
+using Enqueuer.Telegram.Notifications.Contract.V1.Models;
+using Enqueuer.Telegram.Notifications.Services.Factories;
+using MongoDB.Driver;
 
 namespace Enqueuer.Telegram.Notifications.Services;
 
-public class ChatConfigurationService(IServiceScopeFactory scopeFactory, IEventBusClient busClient) : IChatConfigurationService
+public class ChatConfigurationService(IMongoClientFactory clientFactory, IEventBusClient busClient) : IChatConfigurationService
 {
-    private readonly IServiceScopeFactory _scopeFactory = scopeFactory;
+    private readonly IMongoCollection<ChatNotificationsConfiguration> _configurationCollection = clientFactory.GetCollection<ChatNotificationsConfiguration>("ChatConfiguration");
     private readonly IEventBusClient _busClient = busClient;
-    private ImmutableHashSet<string>? _supportedLanguages;
 
-    public async Task ConfigureChatNotificationsAsync(Contract.V1.Models.ChatNotificationsConfiguration chatConfiguration, CancellationToken cancellationToken)
+    public async Task ConfigureChatNotificationsAsync(ChatNotificationsConfiguration chatConfiguration, CancellationToken cancellationToken)
     {
-        using var scope = _scopeFactory.CreateScope();
-        var notificationsContext = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
-
-        if (await IsNotSupportedAsync(notificationsContext, chatConfiguration.MessageLanguageCode))
-        {
-            throw new Exception();
-        }
-
+        // TODO: check if language is supported
         var wasLanguageChanged = false;
 
-        var existingChatConfiguration = await notificationsContext.NotificationsConfigurations.FindAsync(new object[] { chatConfiguration.ChatId }, cancellationToken);
+        var existingChatConfiguration = await _configurationCollection.Find(c => c.ChatId == chatConfiguration.ChatId).FirstOrDefaultAsync(cancellationToken);
         if (existingChatConfiguration != null)
         {
-            wasLanguageChanged = existingChatConfiguration.NotificationsLanguageCode != chatConfiguration.MessageLanguageCode;
+            wasLanguageChanged = existingChatConfiguration.MessageLanguageCode != chatConfiguration.MessageLanguageCode;
             if (wasLanguageChanged)
             {
-                existingChatConfiguration.NotificationsLanguageCode = chatConfiguration.MessageLanguageCode;
-                notificationsContext.Update(existingChatConfiguration);
+                var filter = Builders<ChatNotificationsConfiguration>.Filter
+                    .Eq(c => c.ChatId, chatConfiguration.ChatId);
+
+                var update = Builders<ChatNotificationsConfiguration>.Update
+                    .Set(c => c.MessageLanguageCode, chatConfiguration.MessageLanguageCode);
+
+                await _configurationCollection.UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
             }
         }
         else
         {
             wasLanguageChanged = true;
-            notificationsContext.Add(ToEntity(chatConfiguration));
+            await _configurationCollection.InsertOneAsync(chatConfiguration, cancellationToken: cancellationToken);
         }
 
-        await notificationsContext.SaveChangesAsync(cancellationToken);
         if (wasLanguageChanged)
         {
             var languageUpdatedEvent = new ChatLanguageChangedEvent(Guid.NewGuid(), DateTime.UtcNow, chatConfiguration.ChatId, chatConfiguration.MessageLanguageCode);
@@ -49,49 +44,21 @@ public class ChatConfigurationService(IServiceScopeFactory scopeFactory, IEventB
         }
     }
 
-    public async Task<Contract.V1.Models.ChatNotificationsConfiguration> GetChatConfigurationAsync(long chatId, string? languageCode = null, CancellationToken cancellationToken = default)
+    public async Task<ChatNotificationsConfiguration> GetChatConfigurationAsync(long chatId, string? languageCode = null, CancellationToken cancellationToken = default)
     {
-        using var scope = _scopeFactory.CreateScope();
-        var notificationsContext = scope.ServiceProvider.GetRequiredService<NotificationsContext>();
-
-        var chatConfiguration = await notificationsContext.NotificationsConfigurations.FindAsync(new object[] { chatId }, cancellationToken);
+        var chatConfiguration = await _configurationCollection.Find(c => c.ChatId == chatId).FirstOrDefaultAsync(cancellationToken);
         if (chatConfiguration == null)
         {
-            if (string.IsNullOrWhiteSpace(languageCode) || await IsNotSupportedAsync(notificationsContext, languageCode))
+            // TODO: check if language is supported
+            if (string.IsNullOrWhiteSpace(languageCode))
             {
-                languageCode = Language.DefaultChatLanguage;
+                languageCode = ChatNotificationsConfiguration.DefaultChatLanguage;
             }
 
-            chatConfiguration = new ChatNotificationsConfiguration() { ChatId = chatId, NotificationsLanguageCode = languageCode };
-            notificationsContext.Add(chatConfiguration);
-            await notificationsContext.SaveChangesAsync(cancellationToken);
+            chatConfiguration = new ChatNotificationsConfiguration() { ChatId = chatId, MessageLanguageCode = languageCode };
+            await _configurationCollection.InsertOneAsync(chatConfiguration, cancellationToken: cancellationToken);
         }
 
-        return ToViewModel(chatConfiguration);
+        return chatConfiguration;
     }
-
-    private async ValueTask<bool> IsNotSupportedAsync(NotificationsContext notificationsContext, string languageCode)
-    {
-        if (_supportedLanguages == null)
-        {
-            var availableLanguages = await notificationsContext.AvailableLanguages.Select(l => l.Code).ToArrayAsync();
-            _supportedLanguages = ImmutableHashSet.Create(availableLanguages);
-        }
-
-        return !_supportedLanguages.Contains(languageCode);
-    }
-
-    private static ChatNotificationsConfiguration ToEntity(Contract.V1.Models.ChatNotificationsConfiguration viewModel)
-        => new()
-        {
-            ChatId = viewModel.ChatId,
-            NotificationsLanguageCode = viewModel.MessageLanguageCode,
-        };
-
-    private static Contract.V1.Models.ChatNotificationsConfiguration ToViewModel(ChatNotificationsConfiguration entity)
-        => new()
-        {
-            ChatId = entity.ChatId,
-            MessageLanguageCode = entity.NotificationsLanguageCode
-        };
 }

@@ -1,12 +1,11 @@
 using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Telegram.Notifications.Contract.V1.Models;
 using Enqueuer.Telegram.Notifications.Localization;
-using Enqueuer.Telegram.Notifications.Persistence;
 using Enqueuer.Telegram.Notifications.Services;
+using Enqueuer.Telegram.Notifications.Services.Factories;
 using Enqueuer.Telegram.Shared.Extensions;
 using Enqueuer.Telegram.Shared.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Enqueuer.Telegram.Notifications;
 
@@ -16,20 +15,17 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        builder.Services.AddEndpointsApiExplorer()
+                        .AddSwaggerGen();
+
         builder.Services.AddAuthorization();
 
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
-        builder.Services.AddDbContext<NotificationsContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("NotificationsDB"))
-            .UseSnakeCaseNamingConvention());
-
+        builder.Services.Configure<MongoDatabaseSettings>(builder.Configuration.GetRequiredSection("NotificationsDatabase"))
+                        .AddTransient<IMongoClientFactory, MongoClientFactory>();
         builder.Services.AddTransient<IChatConfigurationService, ChatConfigurationService>();
 
         builder.Services.AddRabbitMQClient()
-            .SubscribeAllHandlers();
+                        .SubscribeAllHandlers();
 
         builder.Services.AddSingleton<ILocalizationProvider, LocalizationProvider>();
 
@@ -40,7 +36,6 @@ public class Program
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -58,6 +53,8 @@ public class Program
         app.MapGet("/chats/{chatId}", async (long chatId, [FromQuery(Name = "language_code")] string? languageCode, [FromServices] IChatConfigurationService configurationService, CancellationToken cancellationToken) =>
         {
             var chatConfiguration = await configurationService.GetChatConfigurationAsync(chatId, languageCode, cancellationToken);
+
+            // TODO: add the 3d level of a model maturity 
             return Results.Ok(chatConfiguration);
         })
         .WithName("Get Chat Notification Settings")
@@ -76,8 +73,6 @@ public class Program
         })
         .WithName("Configure Chat Notification Settings")
         .WithOpenApi();
-
-        app.MigrateDatabase();
 
         app.Run();
     }

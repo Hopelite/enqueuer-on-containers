@@ -9,6 +9,8 @@
             GroupId = groupId;
         }
 
+        public override string Name => nameof(QueueCreatedEvent);
+
         public long GroupId { get; }
 
         public string QueueName { get; }

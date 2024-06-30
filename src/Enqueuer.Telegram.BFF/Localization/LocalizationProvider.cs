@@ -6,7 +6,7 @@ public class LocalizationProvider : ILocalizationProvider
 {
     public string GetMessage(string key, MessageParameters messageParameters)
     {
-        var message = Resources.Messages.ResourceManager.GetString(key, messageParameters.Culture);
+        var message = Messages.ResourceManager.GetString(key, messageParameters.Culture);
         if (message == null)
         {
             throw new ArgumentException($"Message key '{key}' is unknown.");

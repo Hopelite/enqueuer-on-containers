@@ -5,6 +5,10 @@
     /// </summary>
     public class ChatNotificationsConfiguration
     {
+        public const string DefaultChatLanguage = "en";
+
+        public string Id { get; set; }
+
         /// <summary>
         /// The unique identifier of the chat to which this configuration is for.
         /// </summary>

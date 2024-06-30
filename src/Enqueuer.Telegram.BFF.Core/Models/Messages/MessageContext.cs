@@ -1,6 +1,6 @@
-﻿using Enqueuer.Telegram.BFF.Core.Models.Common;
+﻿using System.Diagnostics.CodeAnalysis;
+using Enqueuer.Telegram.BFF.Core.Models.Common;
 using Enqueuer.Telegram.BFF.Core.Models.Extensions;
-using System.Diagnostics.CodeAnalysis;
 using Telegram.Bot.Types;
 using User = Enqueuer.Telegram.BFF.Core.Models.Common.User;
 
@@ -11,13 +11,6 @@ namespace Enqueuer.Telegram.BFF.Core.Models.Messages;
 /// </summary>
 public class MessageContext
 {
-    /// <summary>
-    /// The <see cref="MessageType"/> of the Telegram message.
-    /// </summary>
-    public MessageType Type => Command == null
-     ? MessageType.PlainText
-     : MessageType.Command;
-
     /// <summary>
     /// The unique identifier of the message within the boundaries of the chat.
     /// </summary>

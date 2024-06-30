@@ -9,16 +9,10 @@ using Telegram.Bot.Types;
 
 namespace Enqueuer.Telegram.BFF.Services.Factories;
 
-public class MessageContextFactory : IMessageContextFactory
+public class MessageContextFactory(IChatConfigurationCache configurationCache, IChatConfigurationClient configurationClient) : IMessageContextFactory
 {
-    private readonly IChatConfigurationCache _configurationCache;
-    private readonly IChatConfigurationClient _configurationClient;
-
-    public MessageContextFactory(IChatConfigurationCache configurationCache, IChatConfigurationClient configurationClient)
-    {
-        _configurationCache = configurationCache;
-        _configurationClient = configurationClient;
-    }
+    private readonly IChatConfigurationCache _configurationCache = configurationCache;
+    private readonly IChatConfigurationClient _configurationClient = configurationClient;
 
     public ValueTask<MessageContext?> CreateMessageContextAsync(Message message, CancellationToken cancellationToken)
     {

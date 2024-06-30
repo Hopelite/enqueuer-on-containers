@@ -7,7 +7,6 @@ using Enqueuer.Telegram.BFF.Core.Models.Extensions;
 using Enqueuer.Telegram.BFF.Core.Models.Messages;
 using Enqueuer.Telegram.BFF.Messages.Localization;
 using Enqueuer.Telegram.Shared.Localization;
-using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
@@ -15,16 +14,16 @@ namespace Enqueuer.Telegram.BFF.Messages.Handlers;
 
 public class QueueMessageHandler(
     IQueueingClient queueingClient,
-    IIdentityClient identityClient,
     ITelegramBotClient telegramClient,
     ILocalizationProvider localizationProvider,
-    ILogger<QueueMessageHandler> logger) : MessageHandlerBase(telegramClient, localizationProvider)
+    IIdentityClient identityClient) : IMessageHandler
 {
     private readonly IQueueingClient _queueingClient = queueingClient;
+    private readonly ITelegramBotClient _telegramClient = telegramClient;
+    private readonly ILocalizationProvider _localizationProvider = localizationProvider;
     private readonly IIdentityClient _identityClient = identityClient;
-    private readonly ILogger<QueueMessageHandler> _logger = logger;
 
-    public override Task HandleAsync(MessageContext messageContext, CancellationToken cancellationToken)
+    public Task HandleAsync(MessageContext messageContext, CancellationToken cancellationToken)
     {
         var queueContext = messageContext.Command!.GetQueueName();
 
@@ -38,34 +37,26 @@ public class QueueMessageHandler(
 
     private async Task ListGroupQueuesAsync(MessageContext messageContext, CancellationToken cancellationToken)
     {
-        try
+        var queues = await _queueingClient.GetGroupQueuesAsync(messageContext.Chat.Id, cancellationToken);
+
+        if (queues.Count == 0)
         {
-            var queues = await _queueingClient.GetGroupQueuesAsync(messageContext.Chat.Id, cancellationToken);
+            var message = _localizationProvider.GetMessage(MessageKeys.QueueMessageGroupDoesNotHaveAnyQueue, new MessageParameters(messageContext.Chat.Culture));
+            await _telegramClient.SendTextMessageAsync(
+                    chatId: messageContext.Chat.Id,
+                    text: message,
+                    parseMode: ParseMode.Html,
+                    cancellationToken: cancellationToken);
 
-            if (queues.Count == 0)
-            {
-                var message = localizationProvider.GetMessage(MessageKeys.QueueMessageGroupDoesNotHaveAnyQueue, new MessageParameters(messageContext.Chat.Culture));
-                await telegramClient.SendTextMessageAsync(
-                        chatId: messageContext.Chat.Id,
-                        text: message,
-                        parseMode: ParseMode.Html,
-                        cancellationToken: cancellationToken);
-
-                return;
-            }
-
-            var messageWithQueues = await ListGroupQueuesInMessage(messageContext, queues, cancellationToken);
-            await telegramClient.SendTextMessageAsync(
-                chatId: messageContext.Chat.Id,
-                text: messageWithQueues,
-                parseMode: ParseMode.Html,
-                cancellationToken: cancellationToken);
+            return;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occured during chat '{ChatId}' queues listing.", messageContext.Chat.Id);
-            await NotifyUserAboutInternalErrorAsync(messageContext, cancellationToken);
-        }
+
+        var messageWithQueues = ListGroupQueuesInMessage(messageContext, queues);
+        await _telegramClient.SendTextMessageAsync(
+            chatId: messageContext.Chat.Id,
+            text: messageWithQueues,
+            parseMode: ParseMode.Html,
+            cancellationToken: cancellationToken);
     }
 
     private async Task ListQueueParticipantsAsync(MessageContext messageContext, QueueNameContext queueContext, CancellationToken cancellationToken)
@@ -75,8 +66,8 @@ public class QueueMessageHandler(
             var participants = await _queueingClient.GetQueueParticipantsAsync(messageContext.Chat.Id, queueContext.QueueName, cancellationToken);
             if (participants.Count == 0)
             {
-                var message = localizationProvider.GetMessage(MessageKeys.QueueMessageQueueIsEmpty, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName));
-                await telegramClient.SendTextMessageAsync(
+                var message = _localizationProvider.GetMessage(MessageKeys.QueueMessageQueueIsEmpty, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName));
+                await _telegramClient.SendTextMessageAsync(
                         chatId: messageContext.Chat.Id,
                         text: message,
                         parseMode: ParseMode.Html,
@@ -86,7 +77,7 @@ public class QueueMessageHandler(
             }
 
             var messageWithParticipants = await ListQueueParticipantsInMessage(messageContext, queueContext, participants, cancellationToken);
-            await telegramClient.SendTextMessageAsync(
+            await _telegramClient.SendTextMessageAsync(
                 chatId: messageContext.Chat.Id,
                 text: messageWithParticipants,
                 parseMode: ParseMode.Html,
@@ -101,16 +92,11 @@ public class QueueMessageHandler(
                 parseMode: ParseMode.Html,
                 cancellationToken: cancellationToken);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occured during queue '{QueueName}' participants listing in the chat '{ChatId}'.", queueContext.QueueName, messageContext.Chat.Id);
-            await NotifyUserAboutInternalErrorAsync(messageContext, cancellationToken);
-        }
     }
 
-    private async ValueTask<string> ListGroupQueuesInMessage(MessageContext messageContext, IReadOnlyCollection<Queue> queues, CancellationToken cancellationToken)
+    private string ListGroupQueuesInMessage(MessageContext messageContext, IReadOnlyCollection<Queue> queues)
     {
-        var messageHeader = localizationProvider.GetMessage(MessageKeys.QueueMessageListGroupQueuesHeader, new MessageParameters(messageContext.Chat.Culture));
+        var messageHeader = _localizationProvider.GetMessage(MessageKeys.QueueMessageListGroupQueuesHeader, new MessageParameters(messageContext.Chat.Culture));
         var messageBuilder = new StringBuilder(messageHeader);
 
         messageBuilder.AppendLine();
@@ -119,7 +105,7 @@ public class QueueMessageHandler(
             messageBuilder.AppendLine($"- {queue.Name}");
         }
 
-        var messageFooter = localizationProvider.GetMessage(MessageKeys.QueueMessageListGroupQueuesFooter, new MessageParameters(messageContext.Chat.Culture));
+        var messageFooter = _localizationProvider.GetMessage(MessageKeys.QueueMessageListGroupQueuesFooter, new MessageParameters(messageContext.Chat.Culture));
         messageBuilder.AppendLine(messageFooter);
 
         return messageBuilder.ToString();
@@ -127,7 +113,7 @@ public class QueueMessageHandler(
 
     private async ValueTask<string> ListQueueParticipantsInMessage(MessageContext messageContext, QueueNameContext queueContext, IReadOnlyCollection<Participant> participants, CancellationToken cancellationToken)
     {
-        var messageHeader = localizationProvider.GetMessage(MessageKeys.QueueMessageListQueueParticipantsHeader, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName));
+        var messageHeader = _localizationProvider.GetMessage(MessageKeys.QueueMessageListQueueParticipantsHeader, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName));
         var messageBuilder = new StringBuilder(messageHeader);
         messageBuilder.AppendLine();
 
@@ -137,7 +123,7 @@ public class QueueMessageHandler(
             messageBuilder.AppendLine($"{participant.Position}) {participantInfo.FirstName}"); // TODO: move to localization provider
         }
 
-        var messageFooter = localizationProvider.GetMessage(MessageKeys.QueueMessageListQueueParticipantsFooter, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName));
+        var messageFooter = _localizationProvider.GetMessage(MessageKeys.QueueMessageListQueueParticipantsFooter, new MessageParameters(messageContext.Chat.Culture, queueContext.QueueName));
         messageBuilder.AppendLine(messageFooter);
 
         return messageBuilder.ToString();

@@ -9,6 +9,8 @@
             OnBehalfId = onBehalfId;
         }
 
+        public override string Name => nameof(QueueDeletedEvent);
+
         public string QueueName { get; }
 
         public long GroupId { get; }

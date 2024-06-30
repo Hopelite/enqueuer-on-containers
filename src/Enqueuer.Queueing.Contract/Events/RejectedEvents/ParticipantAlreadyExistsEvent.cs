@@ -9,6 +9,8 @@
             ParticipantId = participantId;
         }
 
+        public override string Name => nameof(ParticipantAlreadyExistsEvent);
+
         public long GroupId { get; }
 
         public string QueueName { get; }
