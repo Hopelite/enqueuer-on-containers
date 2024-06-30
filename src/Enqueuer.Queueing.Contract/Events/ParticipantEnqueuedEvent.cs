@@ -10,6 +10,8 @@
             Position = position;
         }
 
+        public override string Name => nameof(ParticipantEnqueuedEvent);
+
         public long GroupId { get; }
 
         public string QueueName { get; }

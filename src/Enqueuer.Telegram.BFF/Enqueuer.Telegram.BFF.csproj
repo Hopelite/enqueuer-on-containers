@@ -9,6 +9,7 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+	<InvariantGlobalization>false</InvariantGlobalization>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,8 +19,28 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Enqueuer.Identity.Contract.V1\Enqueuer.Identity.Contract.V1.csproj" />
+    <ProjectReference Include="..\Enqueuer.EventBus.RabbitMQ\Enqueuer.EventBus.RabbitMQ.csproj" />
+    <ProjectReference Include="..\Enqueuer.Identity.Contract.V1.OAuth\Enqueuer.Identity.Contract.V1.OAuth.csproj" />
     <ProjectReference Include="..\Enqueuer.Telegram.BFF.Messages\Enqueuer.Telegram.BFF.Messages.csproj" />
+    <ProjectReference Include="..\Enqueuer.Telegram.Notifications.Contract.V1\Enqueuer.Telegram.Notifications.Contract.V1.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Localization\Messages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Messages.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Localization\Messages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Localization\Messages.ru.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

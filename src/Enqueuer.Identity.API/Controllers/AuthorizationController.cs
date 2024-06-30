@@ -14,7 +14,7 @@ public class AuthorizationController(IAuthorizationService authorizationService)
 {
     private readonly IAuthorizationService _authorizationService = authorizationService;
 
-    [AllowedScope("user:create", "user:update", "user")]
+    [AllowedScopes("user:create", "user:update", "user")]
     [HttpPut($"users/{{{CreateOrUpdateUserRequest.UserIdRouteParameter}}}")]
     public async Task<IActionResult> CreateOrUpdateUserAsync(CreateOrUpdateUserRequest request, CancellationToken cancellationToken)
     {
@@ -22,7 +22,22 @@ public class AuthorizationController(IAuthorizationService authorizationService)
         return Created(); // TODO: change to Ok in case of update
     }
 
-    [HttpGet("{*resource_id}")]
+    [HttpGet("users/{userId}")]
+    [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 300)]
+    public async Task<IActionResult> GetUserInfoAsync([FromRoute] long userId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var userInfo = await _authorizationService.GetUserInfoAsync(userId, cancellationToken);
+            return Ok(userInfo);
+        }
+        catch (UserDoesNotExistException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpGet("access/{*resource_id}")]
     public async Task<IActionResult> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken)
     {
         bool hasAccess;
@@ -42,8 +57,8 @@ public class AuthorizationController(IAuthorizationService authorizationService)
         return hasAccess ? Ok() : NotFound();
     }
 
-    [AllowedScope("access:grant", "access")]
-    [HttpPut("{*resource_id}")]
+    [AllowedScopes("access:grant", "access")]
+    [HttpPut("access/{*resource_id}")]
     public async Task<IActionResult> GrantAccessAsync(GrantAccessRequest request, CancellationToken cancellationToken)
     {
         try
@@ -66,8 +81,8 @@ public class AuthorizationController(IAuthorizationService authorizationService)
         return Created();
     }
 
-    [AllowedScope("access:revoke", "access")]
-    [HttpDelete("{*resource_id}")]
+    [AllowedScopes("access:revoke", "access")]
+    [HttpDelete("access/{*resource_id}")]
     public async Task<IActionResult> RevokeAccessAsync(RevokeAccessRequest request, CancellationToken cancellationToken)
     {
         try

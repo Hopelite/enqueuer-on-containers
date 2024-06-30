@@ -1,5 +1,5 @@
 ﻿using Enqueuer.Identity.API.Parameters.Binders;
-using Enqueuer.Identity.Authorization.Grants;
+using Enqueuer.OAuth.Core.Tokens.Grants;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Enqueuer.Identity.API.Parameters;
@@ -14,10 +14,4 @@ public class GetAccessTokenQueryParameters
     /// </summary>
     [ModelBinder(BinderType = typeof(AuthorizationGrantModelBinder))]
     public IAuthorizationGrant Grant { get; set; } = null!;
-
-    /// <summary>
-    /// The scope of the access request.
-    /// </summary>
-    [BindProperty(Name = "scope")]
-    public ScopeCollection Scopes { get; set; } = null!;
 }

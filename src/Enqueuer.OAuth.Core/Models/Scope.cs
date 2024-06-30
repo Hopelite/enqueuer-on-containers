@@ -9,26 +9,40 @@ namespace Enqueuer.OAuth.Core.Models
     /// </summary>
     public class Scope : IReadOnlyCollection<string>
     {
-        public const char ScopeDelimiter = ' ';
+        private const char ScopeDelimiter = ' ';
+        private readonly string? _value;
         private readonly HashSet<string> _values;
 
-        private Scope(string value, IReadOnlyCollection<string> values)
+        public static Scope Empty => new Scope(values: Array.Empty<string>());
+
+        public Scope(string? value)
+            : this(GetScopeValues(value))
         {
-            Value = value;
+        }
+
+        public Scope(IReadOnlyCollection<string> values)
+        {
+            if (values == null || values.Count == 0)
+            {
+                _values = new HashSet<string>(capacity: 0);
+                return;
+            }
+
             _values = new HashSet<string>(values);
+            _value = GetScopeValue(_values);
         }
 
         /// <summary>
-        /// The space-delimited values of the scope.
+        /// The space-delimitered value of the scope.
         /// </summary>
-        public string Value { get; }
+        public string? Value => _value;
+
+        public int Count => _values.Count;
 
         /// <summary>
-        /// The list of values set for this scope.
+        /// Checks whether the scope parameter contains any value.
         /// </summary>
-        public IReadOnlyCollection<string> Values => _values;
-
-        public int Count => Values.Count;
+        public bool HasValue => _values.Count > 0;
 
         /// <summary>
         /// Determines whether this scope has the specified value.
@@ -40,7 +54,7 @@ namespace Enqueuer.OAuth.Core.Models
 
         public IEnumerator<string> GetEnumerator()
         {
-            return Values.GetEnumerator();
+            return _values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -48,37 +62,25 @@ namespace Enqueuer.OAuth.Core.Models
             return GetEnumerator();
         }
 
-        /// <summary>
-        /// Creates a <see cref="Scope"/> containing the specified <paramref name="values"/>.
-        /// </summary>
-        public static Scope Create(IReadOnlyCollection<string> values)
+        private static string[] GetScopeValues(string? scope)
         {
-            if (values == null)
+            const char ScopeDelimiter = ' ';
+            if (scope == null)
             {
-                throw new ArgumentNullException(nameof(values));
+                return Array.Empty<string>();
             }
 
-            if (values.Count == 0)
-            {
-                throw new ArgumentException("Scope value can't be empty.", nameof(values));
-            }
-
-            var scopeValue = string.Join(ScopeDelimiter, values);
-            return new Scope(scopeValue, values);
+            return scope.Split(ScopeDelimiter, StringSplitOptions.RemoveEmptyEntries);
         }
 
-        /// <summary>
-        /// Creates a single <see cref="Scope"/> containing the specified values of the <paramref name="value"/> string.
-        /// </summary>
-        public static Scope Create(string value)
+        private static string? GetScopeValue(IReadOnlyCollection<string> values)
         {
-            if (string.IsNullOrWhiteSpace(value))
+            if (values == null || values.Count == 0)
             {
-                throw new ArgumentNullException(nameof(value));
+                return null;
             }
 
-            var values = value.Split(ScopeDelimiter, StringSplitOptions.RemoveEmptyEntries);
-            return new Scope(value, values);
+            return string.Join(ScopeDelimiter, values);
         }
     }
 }

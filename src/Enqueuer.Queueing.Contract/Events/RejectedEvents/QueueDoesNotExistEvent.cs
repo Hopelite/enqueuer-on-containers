@@ -8,6 +8,8 @@
             QueueName = queueName;
         }
 
+        public override string Name => nameof(QueueDoesNotExistEvent);
+
         public long GroupId { get; set; }
 
         public string QueueName { get; set; }

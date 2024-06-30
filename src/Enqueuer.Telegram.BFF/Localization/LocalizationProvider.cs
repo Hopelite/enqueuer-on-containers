@@ -4,8 +4,14 @@ namespace Enqueuer.Telegram.BFF.Localization;
 
 public class LocalizationProvider : ILocalizationProvider
 {
-    public ValueTask<string> GetMessageAsync(string key, MessageParameters messageParameters, CancellationToken cancellationToken)
+    public string GetMessage(string key, MessageParameters messageParameters)
     {
-        throw new NotImplementedException();
+        var message = Messages.ResourceManager.GetString(key, messageParameters.Culture);
+        if (message == null)
+        {
+            throw new ArgumentException($"Message key '{key}' is unknown.");
+        }
+
+        return string.Format(message, messageParameters.Parameters);
     }
 }

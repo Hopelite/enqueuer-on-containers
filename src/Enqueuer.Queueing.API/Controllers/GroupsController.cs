@@ -18,7 +18,7 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(getGroupQueuesQuery, cancellationToken);
     }
 
-    [AllowedScope("queue:create", "queue", "group")]
+    [AllowedScopes("queue:create", "queue", "group")]
     [HttpPut("{groupId}/queues/{queueName}")]
     public Task<IActionResult> CreateQueue(long groupId, string queueName, CreateQueueCommand command, CancellationToken cancellationToken)
     {
@@ -26,12 +26,20 @@ public class GroupsController(IMediator mediator) : ControllerBase
         return _mediator.Send(createQueueCommand, cancellationToken);
     }
 
-    [AllowedScope("queue:delete", "queue", "group")]
+    [AllowedScopes("queue:delete", "queue", "group")]
     [HttpDelete("{groupId}/queues/{queueName}")]
     public Task<IActionResult> DeleteQueue(long groupId, string queueName, CancellationToken cancellationToken)
     {
         var removeQueueCommand = new Application.Commands.DeleteQueueCommand(groupId, queueName);
         return _mediator.Send(removeQueueCommand, cancellationToken);
+    }
+
+    // TODO: consider to add pagination
+    [HttpGet("{groupId}/queues/{queueName}/participants")]
+    public Task<IActionResult> GetQueueParticipants(long groupId, string queueName, CancellationToken cancellationToken)
+    {
+        var getQueueParticipantsQuery = new Application.Queries.GetQueueParticipantsQuery(groupId, queueName);
+        return _mediator.Send(getQueueParticipantsQuery, cancellationToken);
     }
 
     [HttpPost("{groupId}/queues/{queueName}/participants")]

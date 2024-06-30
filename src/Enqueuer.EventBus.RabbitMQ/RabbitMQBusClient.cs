@@ -1,4 +1,7 @@
-﻿using Enqueuer.EventBus.Abstractions;
+﻿using System.Net.Sockets;
+using System.Text;
+using System.Text.Json;
+using Enqueuer.EventBus.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -7,9 +10,6 @@ using Polly;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
-using System.Net.Sockets;
-using System.Text;
-using System.Text.Json;
 
 namespace Enqueuer.EventBus.RabbitMQ;
 
@@ -48,14 +48,13 @@ public class RabbitMQBusClient : BackgroundService, IEventBusClient
             throw new InvalidOperationException("Bus connection hasn't been opened yet.");
         }
 
-        // TODO: consider to avoid GetType() calls
-        var routingKey = @event.GetType().Name;
+        var routingKey = @event.Name;
 
         var retryPolicy = Policy.Handle<BrokerUnreachableException>()
             .Or<SocketException>()
             .WaitAndRetry(MaxRetries, attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)), (ex, timeElapsed) =>
             {
-                _logger.LogWarning("Could not publish '{EventName}' event after {TimeElapsed}s: {Error}", routingKey, timeElapsed.TotalSeconds, ex.Message);
+                _logger.LogWarning("Could not publish '{EventName}' event after {TimeElapsed}s: {Error}", @event.Name, timeElapsed.TotalSeconds, ex.Message);
             });
 
         // TODO: Consider caching channels and binding queues in a single place
@@ -87,6 +86,7 @@ public class RabbitMQBusClient : BackgroundService, IEventBusClient
     {
         GC.SuppressFinalize(this);
         base.Dispose();
+
         _busConnection?.Dispose();
     }
 

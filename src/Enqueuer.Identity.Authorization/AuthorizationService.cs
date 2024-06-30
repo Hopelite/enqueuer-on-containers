@@ -18,6 +18,20 @@ public class AuthorizationService : IAuthorizationService
         _serviceScopeFactory = scopeFactory;
     }
 
+    public async Task<Models.User> GetUserInfoAsync(long userId, CancellationToken cancellationToken)
+    {
+        using var serviceScope = _serviceScopeFactory.CreateScope();
+        var dbContext = serviceScope.ServiceProvider.GetRequiredService<IdentityContext>();
+
+        var existingUser = await dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.UserId == userId, cancellationToken);
+        if (existingUser == null)
+        {
+            throw new UserDoesNotExistException($"User '{userId}' does not exist.");
+        }
+
+        return new Models.User(existingUser.UserId, existingUser.FirstName, existingUser.LastName);
+    }
+
     public async Task CreateOrUpdateRoleAsync(Models.Role role, CancellationToken cancellationToken)
     {
         var roleToSet = new Role

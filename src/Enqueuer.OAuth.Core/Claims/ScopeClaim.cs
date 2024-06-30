@@ -1,6 +1,6 @@
-﻿using Enqueuer.OAuth.Core.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
+using Enqueuer.OAuth.Core.Models;
 
 namespace Enqueuer.OAuth.Core.Claims
 {
@@ -9,8 +9,10 @@ namespace Enqueuer.OAuth.Core.Claims
     /// </summary>
     public class ScopeClaim : Claim
     {
-        private ScopeClaim(Scope scope, string? issuer)
-            : base(ClaimTypes.Scope, scope.Value, ClaimValueTypes.String, issuer)
+        public const string ClaimType = "scope";
+
+        public ScopeClaim(Scope scope, string? issuer)
+            : base(ClaimType, scope.Value, ClaimValueTypes.String, issuer)
         {
             Scope = scope;
         }
@@ -33,7 +35,7 @@ namespace Enqueuer.OAuth.Core.Claims
         /// </summary>
         public static ScopeClaim Create(IReadOnlyCollection<string> values, string? issuer = default)
         {
-            var scope = Scope.Create(values);
+            var scope = new Scope(values);
             return new ScopeClaim(scope, issuer);
         }
 
@@ -42,7 +44,7 @@ namespace Enqueuer.OAuth.Core.Claims
         /// </summary>
         public static ScopeClaim Create(string value, string? issuer = default)
         {
-            var scope = Scope.Create(value);
+            var scope = new Scope(value);
             return new ScopeClaim(scope, issuer);
         }
     }

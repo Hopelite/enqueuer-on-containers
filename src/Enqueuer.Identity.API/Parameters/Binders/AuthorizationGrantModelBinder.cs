@@ -1,5 +1,6 @@
-﻿using Enqueuer.Identity.Authorization.Grants;
-using Enqueuer.OAuth.Core.Tokens;
+﻿using Enqueuer.OAuth.Core.Enums;
+using Enqueuer.OAuth.Core.Models;
+using Enqueuer.OAuth.Core.Tokens.Grants;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Enqueuer.Identity.API.Parameters.Binders;
@@ -14,14 +15,16 @@ public class AuthorizationGrantModelBinder : IModelBinder
 #pragma warning disable CS8604
         try
         {
+            var scope = new Scope(bindingContext.ValueProvider.GetValue("scope").FirstValue);
             grant = grantTypeValue switch
             {
                 AuthorizationGrantType.ClientCredentials.Type => new ClientCredentialsGrant(
                     bindingContext.ValueProvider.GetValue("client_id").FirstValue,
-                    bindingContext.ValueProvider.GetValue("client_secret").FirstValue),
+                    bindingContext.ValueProvider.GetValue("client_secret").FirstValue,
+                    scope),
                 AuthorizationGrantType.AuthorizationCode.Type => new AuthorizationCodeGrant(
                     bindingContext.ValueProvider.GetValue("code").FirstValue,
-                    bindingContext.ValueProvider.GetValue("redirect_uri").FirstValue,
+                    new Uri(bindingContext.ValueProvider.GetValue("redirect_uri").FirstValue, UriKind.Relative),
                     bindingContext.ValueProvider.GetValue("client_id").FirstValue),
                 _ => null
             };

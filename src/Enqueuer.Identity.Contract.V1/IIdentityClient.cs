@@ -1,13 +1,12 @@
-﻿using Enqueuer.Identity.Contract.V1.Models;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Enqueuer.Identity.Contract.V1.Models;
 
 namespace Enqueuer.Identity.Contract.V1
 {
     public interface IIdentityClient
     {
-        Task<AccessToken> GetAccessTokenAsync(IReadOnlyCollection<string> scopes, CancellationToken cancellationToken);
+        Task<UserInfo> GetUserInfoAsync(long userId, CancellationToken cancellationToken);
 
         Task<bool> CheckAccessAsync(CheckAccessRequest request, CancellationToken cancellationToken);
 

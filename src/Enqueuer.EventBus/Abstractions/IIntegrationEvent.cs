@@ -17,5 +17,11 @@ namespace Enqueuer.EventBus.Abstractions
         /// The timespamp when this event was created.
         /// </summary>
         DateTime Timestamp { get; }
+
+        /// <summary>
+        /// The name of the event to use in publish.
+        /// </summary>
+        /// <remarks>The value must match the type name.</remarks>
+        string Name { get; }
     }
 }

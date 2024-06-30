@@ -1,11 +1,13 @@
-﻿using Enqueuer.EventBus.Abstractions;
+﻿using System.Globalization;
+using Enqueuer.EventBus.Abstractions;
+using Enqueuer.Identity.Contract.V1;
 using Enqueuer.Queueing.Contract.V1.Events;
+using Enqueuer.Telegram.Notifications.Extensions;
 using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Services;
 using Enqueuer.Telegram.Shared.Localization;
 using Enqueuer.Telegram.Shared.Markup;
 using Enqueuer.Telegram.Shared.Types;
-using System.Globalization;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -16,31 +18,34 @@ public class QueueCreatedHandler(
     IChatConfigurationService chatConfigurationService,
     ILocalizationProvider localizationProvider,
     IInlineMarkupBuilder markupBuilder,
+    IIdentityClient identityClient,
     ITelegramBotClient telegramClient)
     : IntegrationEventHandlerBase<QueueCreatedEvent>
 {
     private readonly IChatConfigurationService _chatConfigurationService = chatConfigurationService;
     private readonly ILocalizationProvider _localizationProvider = localizationProvider;
     private readonly IInlineMarkupBuilder _markupBuilder = markupBuilder;
+    private readonly IIdentityClient _identityClient = identityClient;
     private readonly ITelegramBotClient _telegramClient = telegramClient;
 
     public override async Task HandleAsync(QueueCreatedEvent @event, CancellationToken cancellationToken)
     {
-        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken);
-        var chatCulture = new CultureInfo(chatConfiguration.NotificationsLanguageCode);
+        var userInfo = await _identityClient.GetUserInfoAsync(@event.CreatorId, cancellationToken);
 
-        var message = await _localizationProvider.GetMessageAsync(
-            key: NotificationKeys.QueueCreatedNotification,
-            messageParameters: new MessageParameters(chatCulture, "Vadzim", @event.QueueName),
-            cancellationToken);
+        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken: cancellationToken);
+        var chatCulture = new CultureInfo(chatConfiguration.MessageLanguageCode);
 
-        var buttonText = await _localizationProvider.GetMessageAsync(NotificationKeys.EnqueueMeButton, new MessageParameters(chatCulture), cancellationToken);
+        var message = _localizationProvider.GetMessage(
+            NotificationKeys.QueueCreatedNotification,
+            new MessageParameters(chatCulture, userInfo.GetFullName(), @event.QueueName));
+
+        var buttonText = _localizationProvider.GetMessage(NotificationKeys.EnqueueMeButton, new MessageParameters(chatCulture));
         var markup = _markupBuilder.Add(serializer =>
         {
             var callbackData = new CallbackData
             {
                 Command = "eqm", // TODO: possibly replace with enum
-                //QueueId = @event.QueueId,
+                //QueueId = @event.QueueId, // TODO: provide internal queue id 
             };
 
             var jsonData = serializer.Serialize(callbackData);

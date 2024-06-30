@@ -1,13 +1,13 @@
-﻿using Enqueuer.Queueing.Contract.V1.Commands;
-using Enqueuer.Queueing.Contract.V1.Exceptions;
-using Enqueuer.Queueing.Contract.V1.Queries.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Enqueuer.Queueing.Contract.V1.Commands;
+using Enqueuer.Queueing.Contract.V1.Exceptions;
+using Enqueuer.Queueing.Contract.V1.Queries.ViewModels;
 
 namespace Enqueuer.Queueing.Contract.V1
 {
@@ -26,10 +26,10 @@ namespace Enqueuer.Queueing.Contract.V1
             if (!response.IsSuccessStatusCode)
             {
                 var reasonMessage = await response.Content.ReadAsStringAsync();
-                throw new QueueingClientException($"Response code for groups queues listing indicates failure. Reason: {response.StatusCode}, {reasonMessage}");
+                throw new QueueingClientException($"Response code for group '{groupId}' queues listing indicates failure. Reason: {response.StatusCode}, {reasonMessage}");
             }
 
-            var queues = await response.Content.ReadFromJsonAsync<List<Queue>>();
+            var queues = await response.Content.ReadFromJsonAsync<List<Queue>>(cancellationToken);
             if (queues == null)
             {
                 throw new QueueingClientException("Unable to deserialize response into group queues.");
@@ -38,9 +38,28 @@ namespace Enqueuer.Queueing.Contract.V1
             return queues;
         }
 
-        public Task<IReadOnlyCollection<Participant>> GetQueueParticipantsAsync(long groupId, string queueName, CancellationToken cancellationToken)
+        public async Task<IReadOnlyCollection<Participant>> GetQueueParticipantsAsync(long groupId, string queueName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetAsync($"/api/groups/{groupId}/queues/{queueName}/participants", cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var reasonMessage = await response.Content.ReadAsStringAsync();
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new QueueDoesNotExistException(reasonMessage);
+                }
+
+                throw new QueueingClientException($"Response code for queue '{queueName}' participants listing of the group '{groupId}' indicates failure. Reason: {response.StatusCode}, {reasonMessage}");
+            }
+
+            var participants = await response.Content.ReadFromJsonAsync<List<Participant>>(cancellationToken);
+            if (participants == null)
+            {
+                // TODO: move to separate method
+                throw new QueueingClientException("Unable to deserialize response into queue participants.");
+            }
+
+            return participants;
         }
 
         public async Task CreateQueueAsync(long groupId, string queueName, CreateQueueCommand command, CancellationToken cancellationToken)

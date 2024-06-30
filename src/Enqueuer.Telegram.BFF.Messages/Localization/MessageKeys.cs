@@ -12,9 +12,13 @@ public static class MessageKeys
 
     public const string QueueMessageListGroupQueuesFooter = "Queue_Message_ListGroupQueues_Footer";
 
-    public const string CreateQueueErrorMissingQueueName = "CreateQueue_Error_MissingQueueName";
+    public const string QueueMessageListQueueParticipantsHeader = "Queue_Message_ListQueueParticipants_Header";
 
-    public const string CreateQueueErrorQueueAlreadyExists = "CreateQueue_Error_QueueAlreadyExists";
+    public const string QueueMessageListQueueParticipantsFooter = "Queue_Message_ListQueueParticipants_Footer";
+
+    public const string QueueErrorQueueDoesNotExist = "Queue_Error_QueueDoesNotExist";
+
+    public const string CreateQueueErrorMissingQueueName = "CreateQueue_Error_MissingQueueName";
 
     public const string CreateQueueErrorInvalidQueueName = "CreateQueue_Error_InvalidQueueName";
 
@@ -24,15 +28,7 @@ public static class MessageKeys
     
     public const string EnqueueErrorMissingQueueName = "Enqueue_Error_MissingQueueName";
 
-    public const string EnqueueErrorQueueDoesNotExist = "Enqueue_Error_QueueDoesNotExist";
-
-    public const string EnqueueErrorUserAlreadyParticipates = "Enqueue_Error_UserAlreadyParticipates";
-
-    public const string EnqueueErrorPositionIsReserved = "Enqueue_Error_PositionIsReserved";
-
     public const string DequeueErrorMissingQueueName = "Dequeue_Error_MissingQueueName";
-
-    public const string DequeueErrorQueueDoesNotExist = "Dequeue_Error_QueueDoesNotExist";
 
     public const string DequeueErrorParticipantIsNotEnqueued = "Dequeue_Error_ParticipantIsNotEnqueued";
 }

@@ -1,6 +1,6 @@
-﻿using Npgsql;
+﻿using System;
+using Npgsql;
 using NpgsqlTypes;
-using System;
 
 namespace Enqueuer.Identity.Persistence.Procedures;
 

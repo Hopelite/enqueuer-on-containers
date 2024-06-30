@@ -1,6 +1,6 @@
-﻿using Enqueuer.EventBus.Abstractions;
-using System;
+﻿using System;
 using System.Linq;
+using Enqueuer.EventBus.Abstractions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

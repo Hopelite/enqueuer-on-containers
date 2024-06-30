@@ -1,7 +1,7 @@
-﻿using Enqueuer.Telegram.BFF.Core.Models.Common;
+﻿using System.Diagnostics.CodeAnalysis;
+using Enqueuer.Telegram.BFF.Core.Models.Common;
 using Enqueuer.Telegram.Shared.Types;
 using Newtonsoft.Json;
-using System.Diagnostics.CodeAnalysis;
 using Telegram.Bot.Types;
 using User = Enqueuer.Telegram.BFF.Core.Models.Common.User;
 

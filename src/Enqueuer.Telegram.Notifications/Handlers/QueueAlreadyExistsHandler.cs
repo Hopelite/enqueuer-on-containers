@@ -1,9 +1,9 @@
-﻿using Enqueuer.EventBus.Abstractions;
+﻿using System.Globalization;
+using Enqueuer.EventBus.Abstractions;
 using Enqueuer.Queueing.Contract.V1.Events.RejectedEvents;
 using Enqueuer.Telegram.Notifications.Localization;
 using Enqueuer.Telegram.Notifications.Services;
 using Enqueuer.Telegram.Shared.Localization;
-using System.Globalization;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
@@ -22,13 +22,12 @@ public class QueueAlreadyExistsHandler(
     public override async Task HandleAsync(QueueAlreadyExistsEvent @event, CancellationToken cancellationToken)
     {
         // TODO: possibly move to base class
-        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken);
-        var chatCulture = new CultureInfo(chatConfiguration.NotificationsLanguageCode);
+        var chatConfiguration = await _chatConfigurationService.GetChatConfigurationAsync(@event.GroupId, cancellationToken: cancellationToken);
+        var chatCulture = new CultureInfo(chatConfiguration.MessageLanguageCode);
 
-        var message = await _localizationProvider.GetMessageAsync(
-            key: NotificationKeys.QueueAlreadyExistsNotification,
-            messageParameters: new MessageParameters(chatCulture, @event.QueueName),
-            cancellationToken);
+        var message = _localizationProvider.GetMessage(
+            NotificationKeys.QueueAlreadyExistsNotification,
+            new MessageParameters(chatCulture, @event.QueueName));
 
         await _telegramClient.SendTextMessageAsync(
             @event.GroupId,

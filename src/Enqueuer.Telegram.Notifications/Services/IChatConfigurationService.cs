@@ -6,5 +6,5 @@ public interface IChatConfigurationService
 {
     Task ConfigureChatNotificationsAsync(ChatNotificationsConfiguration chatConfiguration, CancellationToken cancellationToken);
 
-    Task<ChatNotificationsConfiguration> GetChatConfigurationAsync(long chatId, CancellationToken cancellationToken);
+    Task<ChatNotificationsConfiguration> GetChatConfigurationAsync(long chatId, string? languageCode = null, CancellationToken cancellationToken = default);
 }
