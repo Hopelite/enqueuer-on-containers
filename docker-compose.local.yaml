@@ -1,0 +1,28 @@
+services:
+  queueing-api:
+    image: enqueuer-queueing-api
+    environment:
+      - EventsDatabase__ConnectionString=mongodb://user:pass@event-storage
+      - ConnectionStrings__EventBus=amqp://guest:guest@event-bus:5672
+      - OAuth__Issuer=https://enqueuer.indentity.api:8087
+      - OAuth__SigningKey=MYBIGGESTKEYPOSSIBLEJUSTLOOKATTHISDUDE
+      - IdentityProvider__BaseAddress=http://enqueuer.indentity.api:8086
+      - IdentityProvider__ClientId=${ENQUEUER_QUEUEING_API_CLIENT_ID}
+      - IdentityProvider__ClientSecret=${ENQUEUER_QUEUEING_API_CLIENT_SECRET}
+    depends_on:
+      - event-bus
+      - event-storage
+
+  event-storage:
+    image: mongodb/mongodb-community-server:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+
+  event-bus:
+    image: rabbitmq:management-alpine
+    ports:
+      - "5672:5672" # AMQP protocol port
+      - "15672:15672" # Management interface port
