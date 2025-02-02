@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Enqueuer.Queueing.Domain\Enqueuer.Queueing.Domain.csproj" />
+    <ProjectReference Include="..\..\src\queueing-api\Enqueuer.Queueing.Domain\Enqueuer.Queueing.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Enqueuer.Identity.Authorization\Enqueuer.Identity.Authorization.csproj" />
+    <ProjectReference Include="..\..\src\identity-api\Enqueuer.Identity.Authorization\Enqueuer.Identity.Authorization.csproj" />
   </ItemGroup>
 
   <ItemGroup>
