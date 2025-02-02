@@ -27,10 +27,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.BFF", "En
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.BFF.Messages", "Enqueuer.Telegram.BFF.Messages\Enqueuer.Telegram.BFF.Messages.csproj", "{B7246E3D-1858-4ABD-9D97-FF26A81C2B90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.Notifications.Contract.V1", "Enqueuer.Telegram.Notifications.Contract.V1\Enqueuer.Telegram.Notifications.Contract.V1.csproj", "{42F8AB73-665F-40B2-8F81-A47FF2E52BAA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.Notifications", "Enqueuer.Telegram.Notifications\Enqueuer.Telegram.Notifications.csproj", "{EDDD2B15-7E58-48B7-8C4E-0839E7D5357C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.Shared", "Enqueuer.Telegram.Shared\Enqueuer.Telegram.Shared.csproj", "{4877C44F-28C2-40D9-A5F0-4B23374D3303}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "identity-api", "identity-api", "{48DD3720-00E1-4974-837E-7C856B569413}"
@@ -50,6 +46,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.OAuth.JWT", "identity-api\Enqueuer.Identity.OAuth.JWT\Enqueuer.Identity.OAuth.JWT.csproj", "{1D3A4CC3-CDDB-4D9E-937F-AA4059210E49}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Persistence", "identity-api\Enqueuer.Identity.Persistence\Enqueuer.Identity.Persistence.csproj", "{E7F35B9B-0D9C-4366-8BCD-76820E272FDD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "notifications-service", "notifications-service", "{556A1FBF-045D-4FBD-AE8E-183CD15A921A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.Notifications.Contract.V1", "notifications-service\Enqueuer.Telegram.Notifications.Contract.V1\Enqueuer.Telegram.Notifications.Contract.V1.csproj", "{35BA24F0-86FF-46C2-8AF9-5BAD1546350F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.Notifications", "notifications-service\Enqueuer.Telegram.Notifications\Enqueuer.Telegram.Notifications.csproj", "{30FDF508-32CD-4CCE-80A6-CC0585AB4A21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -180,6 +182,14 @@ Global
 		{E7F35B9B-0D9C-4366-8BCD-76820E272FDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7F35B9B-0D9C-4366-8BCD-76820E272FDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7F35B9B-0D9C-4366-8BCD-76820E272FDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35BA24F0-86FF-46C2-8AF9-5BAD1546350F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35BA24F0-86FF-46C2-8AF9-5BAD1546350F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35BA24F0-86FF-46C2-8AF9-5BAD1546350F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35BA24F0-86FF-46C2-8AF9-5BAD1546350F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30FDF508-32CD-4CCE-80A6-CC0585AB4A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30FDF508-32CD-4CCE-80A6-CC0585AB4A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30FDF508-32CD-4CCE-80A6-CC0585AB4A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30FDF508-32CD-4CCE-80A6-CC0585AB4A21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C247CB45-948F-48E5-81CF-5F5C28C9FB1B} = {FFDE2255-B233-44BB-9E40-24B4DF6D8AF9}
@@ -194,5 +204,7 @@ Global
 		{598C1CDE-C872-4DAC-BB41-37D92345D433} = {48DD3720-00E1-4974-837E-7C856B569413}
 		{1D3A4CC3-CDDB-4D9E-937F-AA4059210E49} = {48DD3720-00E1-4974-837E-7C856B569413}
 		{E7F35B9B-0D9C-4366-8BCD-76820E272FDD} = {48DD3720-00E1-4974-837E-7C856B569413}
+		{35BA24F0-86FF-46C2-8AF9-5BAD1546350F} = {556A1FBF-045D-4FBD-AE8E-183CD15A921A}
+		{30FDF508-32CD-4CCE-80A6-CC0585AB4A21} = {556A1FBF-045D-4FBD-AE8E-183CD15A921A}
 	EndGlobalSection
 EndGlobal

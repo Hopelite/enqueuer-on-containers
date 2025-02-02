@@ -22,11 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Enqueuer.EventBus.RabbitMQ\Enqueuer.EventBus.RabbitMQ.csproj" />
-    <ProjectReference Include="..\identity-api\Enqueuer.Identity.Contract.V1\Enqueuer.Identity.Contract.V1.csproj" />
-    <ProjectReference Include="..\queueing-api\Enqueuer.Queueing.Contract\Enqueuer.Queueing.Contract.V1.csproj" />
+    <ProjectReference Include="..\..\Enqueuer.EventBus.RabbitMQ\Enqueuer.EventBus.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\identity-api\Enqueuer.Identity.Contract.V1\Enqueuer.Identity.Contract.V1.csproj" />
+    <ProjectReference Include="..\..\queueing-api\Enqueuer.Queueing.Contract\Enqueuer.Queueing.Contract.V1.csproj" />
     <ProjectReference Include="..\Enqueuer.Telegram.Notifications.Contract.V1\Enqueuer.Telegram.Notifications.Contract.V1.csproj" />
-    <ProjectReference Include="..\Enqueuer.Telegram.Shared\Enqueuer.Telegram.Shared.csproj" />
+    <ProjectReference Include="..\..\Enqueuer.Telegram.Shared\Enqueuer.Telegram.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

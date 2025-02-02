@@ -2,7 +2,7 @@ services:
   queueing-api:
     image: enqueuer-queueing-api
     environment:
-      - EventsDatabase__ConnectionString=mongodb://user:pass@event-storage
+      - EventsDatabase__ConnectionString=mongodb://user:pass@mongodb
       - ConnectionStrings__EventBus=amqp://guest:guest@event-bus:5672
       - OAuth__Issuer=https://identity-api:8087
       - OAuth__SigningKey=MYBIGGESTKEYPOSSIBLEJUSTLOOKATTHISDUDE
@@ -11,15 +11,28 @@ services:
       - IdentityProvider__ClientSecret=${ENQUEUER_QUEUEING_API_CLIENT_SECRET}
     depends_on:
       - event-bus
-      - event-storage
+      - mongodb
 
-  event-storage:
+  mongodb:
     image: mongodb/mongodb-community-server:latest
     ports:
       - "27017:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=user
       - MONGO_INITDB_ROOT_PASSWORD=pass
+    volumes:
+      - mongodb-data:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: user
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+      ME_CONFIG_MONGODB_URL: mongodb://user:pass@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
 
   identity-api:
     image: enqueuer-identity-api
@@ -44,6 +57,20 @@ services:
     ports:
       - 8080:8080
 
+  notifications-service:
+    image: enqueuer-notifications-service
+    restart: always
+    environment:
+      - ConnectionStrings__EventBus=amqp://guest:guest@event-bus:5672
+      - TelegramClient__AccessToken=${ENQUEUER_TELEGRAM_BOT_ACCESS_TOKEN}
+      - IdentityProvider__BaseAddress=http://identity-api:8086
+      - IdentityProvider__ClientId=${ENQUEUER_NOTIFICATIONS_CLIENT_ID}
+      - IdentityProvider__ClientSecret=${ENQUEUER_NOTIFICATIONS_CLIENT_SECRET}
+      - NotificationsDatabase__ConnectionString=mongodb://user:pass@mongodb
+    depends_on:
+      - queueing-api
+      - event-bus
+
   event-bus:
     image: rabbitmq:management-alpine
     ports:
@@ -52,3 +79,4 @@ services:
 
 volumes:
   identity-data:
+  mongodb-data:

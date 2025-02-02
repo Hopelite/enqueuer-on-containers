@@ -197,6 +197,7 @@ public class AuthorizationService : IAuthorizationService
             return;
         }
 
+        // TODO: revoke access to child resources as well
         dbContext.UserResourceRoles.Remove(accessToRevoke);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
