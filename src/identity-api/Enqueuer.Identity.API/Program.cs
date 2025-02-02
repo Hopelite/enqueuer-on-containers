@@ -49,7 +49,7 @@ public class Program
                         .Configure<JwtTokenIssuingConfiguration>(builder.Configuration.GetRequiredSection("JwtTokenIssuing"))
 
                         .AddTransient<ClientCredentialsGrantAuthorizer>()
-                        .AddSingleton<IClientCredentialsStorage, AzureKeyVaultStorage>()
+                        .AddSingleton<IClientCredentialsStorage, KeyVaultStab>()
 
                         .Configure<OAuthConfiguration>(builder.Configuration.GetRequiredSection("OAuth"));
 

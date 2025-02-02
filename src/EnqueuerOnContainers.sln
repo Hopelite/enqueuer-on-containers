@@ -17,22 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.EventBus", "Enqueu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.EventBus.RabbitMQ", "Enqueuer.EventBus.RabbitMQ\Enqueuer.EventBus.RabbitMQ.csproj", "{06B0EE15-F400-40A4-B62F-99C9E5BE2F28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.API", "Enqueuer.Identity.API\Enqueuer.Identity.API.csproj", "{2B955322-6E18-46D5-808B-AE16F5DF04B7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Authorization", "Enqueuer.Identity.Authorization\Enqueuer.Identity.Authorization.csproj", "{49116B92-E31D-4E4D-BB1E-A6CD339BB9B1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Contract.V1", "Enqueuer.Identity.Contract.V1\Enqueuer.Identity.Contract.V1.csproj", "{D15A9ADC-FC97-4F59-AC08-55D5FF552A20}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Contract.V1.OAuth", "Enqueuer.Identity.Contract.V1.OAuth\Enqueuer.Identity.Contract.V1.OAuth.csproj", "{1D6257CC-4DD0-4958-A1E5-4171CD84A521}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Contract.V1.Services", "Enqueuer.Identity.Contract.V1.Services\Enqueuer.Identity.Contract.V1.Services.csproj", "{F2866150-4A44-475A-B5FD-2A43EA37F953}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.OAuth", "Enqueuer.Identity.OAuth\Enqueuer.Identity.OAuth.csproj", "{1C01815E-71AE-4E91-B6F1-45E42C1A0A72}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.OAuth.JWT", "Enqueuer.Identity.OAuth.JWT\Enqueuer.Identity.OAuth.JWT.csproj", "{32E0FD60-06BE-425D-A80C-F9608751FBD8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Persistence", "Enqueuer.Identity.Persistence\Enqueuer.Identity.Persistence.csproj", "{FAF8F191-4A8A-4AA2-A658-5B3EB131B06C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.OAuth.Core", "Enqueuer.OAuth.Core\Enqueuer.OAuth.Core.csproj", "{0C87F2EF-7D98-44B4-9771-8543B7BF1441}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.OAuth.JWT", "Enqueuer.OAuth.JWT\Enqueuer.OAuth.JWT.csproj", "{1CCD78D5-78C1-4CBA-99BE-C67583430E31}"
@@ -48,6 +32,24 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.Notifications", "Enqueuer.Telegram.Notifications\Enqueuer.Telegram.Notifications.csproj", "{EDDD2B15-7E58-48B7-8C4E-0839E7D5357C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.Shared", "Enqueuer.Telegram.Shared\Enqueuer.Telegram.Shared.csproj", "{4877C44F-28C2-40D9-A5F0-4B23374D3303}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "identity-api", "identity-api", "{48DD3720-00E1-4974-837E-7C856B569413}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.API", "identity-api\Enqueuer.Identity.API\Enqueuer.Identity.API.csproj", "{9A6A4ADC-4D74-4CAB-BA9C-A50DB18DE0D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Authorization", "identity-api\Enqueuer.Identity.Authorization\Enqueuer.Identity.Authorization.csproj", "{580869F3-5BEA-4040-A590-506C15003D63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Contract.V1", "identity-api\Enqueuer.Identity.Contract.V1\Enqueuer.Identity.Contract.V1.csproj", "{48CC9EAA-73E4-497D-9B68-1965936B42CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Contract.V1.OAuth", "identity-api\Enqueuer.Identity.Contract.V1.OAuth\Enqueuer.Identity.Contract.V1.OAuth.csproj", "{F271238E-8CE9-4ADD-9FE2-733FBC76464C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Contract.V1.Services", "identity-api\Enqueuer.Identity.Contract.V1.Services\Enqueuer.Identity.Contract.V1.Services.csproj", "{7C34C456-5CDB-4DF1-BAE0-B11E84A0D878}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.OAuth", "identity-api\Enqueuer.Identity.OAuth\Enqueuer.Identity.OAuth.csproj", "{598C1CDE-C872-4DAC-BB41-37D92345D433}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.OAuth.JWT", "identity-api\Enqueuer.Identity.OAuth.JWT\Enqueuer.Identity.OAuth.JWT.csproj", "{1D3A4CC3-CDDB-4D9E-937F-AA4059210E49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Identity.Persistence", "identity-api\Enqueuer.Identity.Persistence\Enqueuer.Identity.Persistence.csproj", "{E7F35B9B-0D9C-4366-8BCD-76820E272FDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -146,11 +148,51 @@ Global
 		{4877C44F-28C2-40D9-A5F0-4B23374D3303}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4877C44F-28C2-40D9-A5F0-4B23374D3303}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4877C44F-28C2-40D9-A5F0-4B23374D3303}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A6A4ADC-4D74-4CAB-BA9C-A50DB18DE0D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A6A4ADC-4D74-4CAB-BA9C-A50DB18DE0D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A6A4ADC-4D74-4CAB-BA9C-A50DB18DE0D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A6A4ADC-4D74-4CAB-BA9C-A50DB18DE0D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{580869F3-5BEA-4040-A590-506C15003D63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{580869F3-5BEA-4040-A590-506C15003D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{580869F3-5BEA-4040-A590-506C15003D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{580869F3-5BEA-4040-A590-506C15003D63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48CC9EAA-73E4-497D-9B68-1965936B42CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48CC9EAA-73E4-497D-9B68-1965936B42CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48CC9EAA-73E4-497D-9B68-1965936B42CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48CC9EAA-73E4-497D-9B68-1965936B42CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F271238E-8CE9-4ADD-9FE2-733FBC76464C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F271238E-8CE9-4ADD-9FE2-733FBC76464C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F271238E-8CE9-4ADD-9FE2-733FBC76464C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F271238E-8CE9-4ADD-9FE2-733FBC76464C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C34C456-5CDB-4DF1-BAE0-B11E84A0D878}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C34C456-5CDB-4DF1-BAE0-B11E84A0D878}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C34C456-5CDB-4DF1-BAE0-B11E84A0D878}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C34C456-5CDB-4DF1-BAE0-B11E84A0D878}.Release|Any CPU.Build.0 = Release|Any CPU
+		{598C1CDE-C872-4DAC-BB41-37D92345D433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{598C1CDE-C872-4DAC-BB41-37D92345D433}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{598C1CDE-C872-4DAC-BB41-37D92345D433}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{598C1CDE-C872-4DAC-BB41-37D92345D433}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D3A4CC3-CDDB-4D9E-937F-AA4059210E49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D3A4CC3-CDDB-4D9E-937F-AA4059210E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D3A4CC3-CDDB-4D9E-937F-AA4059210E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D3A4CC3-CDDB-4D9E-937F-AA4059210E49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7F35B9B-0D9C-4366-8BCD-76820E272FDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7F35B9B-0D9C-4366-8BCD-76820E272FDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7F35B9B-0D9C-4366-8BCD-76820E272FDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7F35B9B-0D9C-4366-8BCD-76820E272FDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C247CB45-948F-48E5-81CF-5F5C28C9FB1B} = {FFDE2255-B233-44BB-9E40-24B4DF6D8AF9}
 		{B1C122B8-BAF7-4174-9A33-542CE2853D28} = {FFDE2255-B233-44BB-9E40-24B4DF6D8AF9}
 		{54DE2DFF-ECDC-474E-B3B1-8A5AFE94D64B} = {FFDE2255-B233-44BB-9E40-24B4DF6D8AF9}
 		{03564ECB-2508-48F0-BA27-FC2DEF2D52A7} = {FFDE2255-B233-44BB-9E40-24B4DF6D8AF9}
+		{9A6A4ADC-4D74-4CAB-BA9C-A50DB18DE0D1} = {48DD3720-00E1-4974-837E-7C856B569413}
+		{580869F3-5BEA-4040-A590-506C15003D63} = {48DD3720-00E1-4974-837E-7C856B569413}
+		{48CC9EAA-73E4-497D-9B68-1965936B42CD} = {48DD3720-00E1-4974-837E-7C856B569413}
+		{F271238E-8CE9-4ADD-9FE2-733FBC76464C} = {48DD3720-00E1-4974-837E-7C856B569413}
+		{7C34C456-5CDB-4DF1-BAE0-B11E84A0D878} = {48DD3720-00E1-4974-837E-7C856B569413}
+		{598C1CDE-C872-4DAC-BB41-37D92345D433} = {48DD3720-00E1-4974-837E-7C856B569413}
+		{1D3A4CC3-CDDB-4D9E-937F-AA4059210E49} = {48DD3720-00E1-4974-837E-7C856B569413}
+		{E7F35B9B-0D9C-4366-8BCD-76820E272FDD} = {48DD3720-00E1-4974-837E-7C856B569413}
 	EndGlobalSection
 EndGlobal

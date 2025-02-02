@@ -11,7 +11,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Enqueuer.EventBus\Enqueuer.EventBus.csproj" />
-		<ProjectReference Include="..\..\Enqueuer.Identity.Contract.V1.OAuth\Enqueuer.Identity.Contract.V1.OAuth.csproj" />
+		<ProjectReference Include="..\..\identity-api\Enqueuer.Identity.Contract.V1.OAuth\Enqueuer.Identity.Contract.V1.OAuth.csproj" />
 	</ItemGroup>
 
 </Project>

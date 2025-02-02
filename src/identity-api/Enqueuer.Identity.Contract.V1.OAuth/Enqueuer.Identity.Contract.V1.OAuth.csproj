@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Enqueuer.OAuth.Core\Enqueuer.OAuth.Core.csproj" />
+    <ProjectReference Include="..\..\Enqueuer.OAuth.Core\Enqueuer.OAuth.Core.csproj" />
   </ItemGroup>
 
 </Project>

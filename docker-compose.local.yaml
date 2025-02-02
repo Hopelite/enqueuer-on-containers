@@ -4,7 +4,7 @@ services:
     environment:
       - EventsDatabase__ConnectionString=mongodb://user:pass@event-storage
       - ConnectionStrings__EventBus=amqp://guest:guest@event-bus:5672
-      - OAuth__Issuer=https://enqueuer.indentity.api:8087
+      - OAuth__Issuer=https://identity-api:8087
       - OAuth__SigningKey=MYBIGGESTKEYPOSSIBLEJUSTLOOKATTHISDUDE
       - IdentityProvider__BaseAddress=http://enqueuer.indentity.api:8086
       - IdentityProvider__ClientId=${ENQUEUER_QUEUEING_API_CLIENT_ID}
@@ -21,8 +21,34 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=user
       - MONGO_INITDB_ROOT_PASSWORD=pass
 
+  identity-api:
+    image: enqueuer-identity-api
+    environment:
+      - ConnectionStrings__IdentityDB=Host=identity-database;Port=5432;Database=enqueuer-identity;Username=postgres;Password=example
+      - OAuth__Issuer=https://identity-api:8087
+    depends_on:
+      - identity-database
+
+  identity-database:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: enqueuer-identity
+      POSTGRES_PASSWORD: example
+    volumes:
+      - identity-data:/var/lib/postgresql/data 
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
   event-bus:
     image: rabbitmq:management-alpine
     ports:
       - "5672:5672" # AMQP protocol port
       - "15672:15672" # Management interface port
+
+volumes:
+  identity-data:
