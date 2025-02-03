@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.BFF.Core", "Enqueuer.Telegram.BFF.Core\Enqueuer.Telegram.BFF.Core.csproj", "{BB19A6D4-A2DA-4885-9714-B80C54A046E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.BFF", "Enqueuer.Telegram.BFF\Enqueuer.Telegram.BFF.csproj", "{72B1E87C-E749-44B4-9759-5D9585CB83A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enqueuer.Telegram.BFF.Messages", "Enqueuer.Telegram.BFF.Messages\Enqueuer.Telegram.BFF.Messages.csproj", "{BD8DA830-AEA6-4F36-8F36-400EDDEA5A7F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB19A6D4-A2DA-4885-9714-B80C54A046E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB19A6D4-A2DA-4885-9714-B80C54A046E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB19A6D4-A2DA-4885-9714-B80C54A046E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB19A6D4-A2DA-4885-9714-B80C54A046E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72B1E87C-E749-44B4-9759-5D9585CB83A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72B1E87C-E749-44B4-9759-5D9585CB83A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72B1E87C-E749-44B4-9759-5D9585CB83A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72B1E87C-E749-44B4-9759-5D9585CB83A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD8DA830-AEA6-4F36-8F36-400EDDEA5A7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD8DA830-AEA6-4F36-8F36-400EDDEA5A7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD8DA830-AEA6-4F36-8F36-400EDDEA5A7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD8DA830-AEA6-4F36-8F36-400EDDEA5A7F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
