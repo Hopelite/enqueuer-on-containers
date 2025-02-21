@@ -15,6 +15,7 @@ public class RejectedCommandTypeResolver : ITypeConverter<Infrastructure.Messagi
             QueueDoesNotExistException e => new QueueDoesNotExistEvent(source.AggregateId, e.QueueName),
             ParticipantAlreadyExistsException e => new ParticipantAlreadyExistsEvent(source.AggregateId, e.QueueName, e.ParticipantId),
             PositionReservedException e => new PositionIsReservedEvent(source.AggregateId, e.QueueName, e.Position),
+            // TODO: Implement: ParticipantDoesNotExistException e => 
             Exception e => new RejectedEvent(source.AggregateId, e.Message)
         };
     }

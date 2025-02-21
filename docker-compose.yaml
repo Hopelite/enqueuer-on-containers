@@ -1,0 +1,66 @@
+services:
+  queueing-api:
+    image: enqueuer-queueing-api
+    restart: always
+    environment:
+      - OAuth__Issuer=https://identity-api:8080
+      - IdentityProvider__BaseAddress=http://identity-api:8080
+    depends_on:
+      - event-bus
+      - mongodb
+
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+
+  identity-api:
+    image: enqueuer-identity-api
+    restart: always
+    environment:
+      - OAuth__Issuer=https://identity-api:8080
+      - JwtTokenIssuing__Issuer=https://identity-api:8080
+    depends_on:
+      - identity-database
+
+  identity-database:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: enqueuer-identity
+    volumes:
+      - identity-data:/var/lib/postgresql/data 
+
+  telegram-notifications-service:
+    image: enqueuer-notifications-service
+    restart: always
+    environment:
+      - IdentityProvider__BaseAddress=http://identity-api:8080
+    depends_on:
+      - queueing-api
+      - event-bus
+
+  telegram-bff:
+    image: enqueuer-telegram-bff
+    restart: always
+    ports:
+      - 9090:8080
+    environment:
+      - QueueingClient__BaseAddress=http://queueing-api:8080
+      - IdentityProvider__BaseAddress=http://identity-api:8080
+      - IdentityProvider__Timeout=00:00:30
+      - ChatConfigurationClient__BaseAddress=http://telegram-notifications-service:8080
+
+  event-bus:
+    image: rabbitmq:management-alpine
+    restart: always
+    ports:
+      - "5672:5672" # AMQP protocol port
+      - "15672:15672" # Management interface port
+
+volumes:
+  identity-data:
+  mongodb-data:

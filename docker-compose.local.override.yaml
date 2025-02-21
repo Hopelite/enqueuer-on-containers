@@ -1,0 +1,79 @@
+services:
+  queueing-api:
+    restart: unless-stopped
+    environment:
+      - ConnectionStrings__EventBus=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@event-bus:5672
+      - EventsDatabase__ConnectionString=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb
+      - OAuth__SigningKey=${OAUTH_SIGNING_KEY}
+      - IdentityProvider__ClientId=${QUEUEING_API_CLIENT_ID}
+      - IdentityProvider__ClientSecret=${QUEUEING_API_CLIENT_SECRET}
+      - Logging__LogLevel__Default=Debug
+      - Logging__LogLevel__Microsoft.AspNetCore=Debug
+  
+  mongodb:
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+
+  mongo-express:
+    image: mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+    depends_on:
+      - mongodb
+
+  identity-api:
+    restart: unless-stopped
+    environment:
+      - ConnectionStrings__IdentityDB=Host=identity-database;Port=5432;Database=enqueuer-identity;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      - OAuth__SigningKey=${OAUTH_SIGNING_KEY}
+      - Logging__LogLevel__Default=Debug
+      - Logging__LogLevel__Microsoft.AspNetCore=Debug
+
+  identity-database:
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - identity-database
+
+  telegram-notifications-service:
+    restart: unless-stopped
+    environment:
+      - ConnectionStrings__EventBus=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@event-bus:5672
+      - NotificationsDatabase__ConnectionString=mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongodb
+      - TelegramClient__AccessToken=${TELEGRAM_BOT_ACCESS_TOKEN}
+      - IdentityProvider__ClientId=${TELEGRAM_NOTIFICATIONS_CLIENT_ID}
+      - IdentityProvider__ClientSecret=${TELEGRAM_NOTIFICATIONS_CLIENT_SECRET}
+
+# TODO: merge client secrets and ids for all http client into single configuration block as they are same within application 
+  telegram-bff:
+    restart: unless-stopped
+    environment:
+      - ConnectionStrings__EventBus=amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@event-bus:5672
+      - TelegramClient__AccessToken=${TELEGRAM_BOT_ACCESS_TOKEN}
+      - QueueingClient__ClientId=${TELEGRAM_BFF_CLIENT_ID}
+      - QueueingClient__ClientSecret=${TELEGRAM_BFF_CLIENT_SECRET}
+      - IdentityProvider__ClientId=${TELEGRAM_BFF_CLIENT_ID}
+      - IdentityProvider__ClientSecret=${TELEGRAM_BFF_CLIENT_SECRET}
+      - Logging__LogLevel__Default=Debug
+
+  event-bus:
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
